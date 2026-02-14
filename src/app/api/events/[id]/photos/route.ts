@@ -129,13 +129,29 @@ export async function DELETE(
 
   const { data: photo } = await serviceClient
     .from('event_photos')
-    .select('storage_path')
+    .select('storage_path, is_hero, display_order')
     .eq('id', photoId)
     .single();
 
   if (photo) {
     await serviceClient.storage.from('event-photos').remove([photo.storage_path]);
     await serviceClient.from('event_photos').delete().eq('id', photoId);
+
+    // If the deleted photo was the hero, assign a new hero
+    if (photo.is_hero) {
+      const remaining = await getPhotos(serviceClient, id);
+      if (remaining.length > 0) {
+        // Pick the photo before it (by display_order), or the first one
+        const beforePhotos = remaining.filter((p) => p.display_order < photo.display_order);
+        const newHero = beforePhotos.length > 0
+          ? beforePhotos[beforePhotos.length - 1]
+          : remaining[0];
+        await serviceClient
+          .from('event_photos')
+          .update({ is_hero: true })
+          .eq('id', newHero.id);
+      }
+    }
   }
 
   const photos = await getPhotos(serviceClient, id);
