@@ -61,7 +61,7 @@ export default function DashboardEventList({ events }: { events: Event[] }) {
                         </span>
                         {event.event_date && (
                           <span>
-                            {new Date(event.event_date).toLocaleDateString('en-US', {
+                            {new Date(`${event.event_date.substring(0, 10)}T12:00:00`).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
                               year: 'numeric',
