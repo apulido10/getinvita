@@ -161,23 +161,25 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
                 className="w-full h-full object-cover"
               />
               {photo.is_hero && (
-                <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 rounded-full px-2 py-0.5 text-xs font-bold flex items-center gap-1">
-                  <Star className="h-3 w-3" /> Hero
+                <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 rounded-full px-2.5 py-1 text-xs font-bold flex items-center gap-1 shadow-md">
+                  <Star className="h-3.5 w-3.5 fill-current" /> Hero Image
                 </div>
               )}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                {!photo.is_hero && (
+              {!photo.is_hero && (
+                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleSetHero(photo.id)}
-                    className="rounded-full bg-white p-2 text-yellow-600 hover:bg-yellow-50"
+                    className="bg-white/90 backdrop-blur-sm text-yellow-600 hover:bg-yellow-50 rounded-full px-2.5 py-1 text-xs font-medium flex items-center gap-1 shadow-md"
                     title="Set as hero image"
                   >
-                    <Star className="h-4 w-4" />
+                    <Star className="h-3.5 w-3.5" /> Set as Hero
                   </button>
-                )}
+                </div>
+              )}
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => handleDelete(photo.id)}
-                  className="rounded-full bg-white p-2 text-red-600 hover:bg-red-50"
+                  className="rounded-full bg-white/90 backdrop-blur-sm p-2 text-red-600 hover:bg-red-50 shadow-md"
                   title="Delete photo"
                 >
                   <Trash2 className="h-4 w-4" />

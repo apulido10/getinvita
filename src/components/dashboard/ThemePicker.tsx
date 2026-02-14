@@ -186,10 +186,11 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
                 </button>
                 <button
                   onClick={() => setPreviewTheme(theme)}
-                  className="absolute bottom-3 right-3 h-7 w-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  className="absolute bottom-3 right-3 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center gap-1 px-2.5 py-1.5 transition-colors"
                   title="Preview theme"
                 >
                   <Eye className="h-3.5 w-3.5 text-gray-600" />
+                  <span className="text-xs font-medium text-gray-600">Preview</span>
                 </button>
               </div>
             );
@@ -266,10 +267,11 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
 
                 <button
                   onClick={() => setPreviewTheme(theme)}
-                  className="absolute bottom-3 right-3 h-7 w-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors z-10"
+                  className="absolute bottom-3 right-3 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center gap-1 px-2.5 py-1.5 transition-colors z-10"
                   title="Preview theme"
                 >
                   <Eye className="h-3.5 w-3.5 text-gray-600" />
+                  <span className="text-xs font-medium text-gray-600">Preview</span>
                 </button>
               </div>
             );
