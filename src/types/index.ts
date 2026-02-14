@@ -64,9 +64,11 @@ export interface EventPhoto {
 export interface EventMusic {
   id: string;
   event_id: string;
-  storage_path: string;
+  storage_path: string | null;
   song_title: string | null;
   artist: string | null;
+  source: 'upload' | 'spotify';
+  spotify_track_id: string | null;
   created_at: string;
 }
 
@@ -93,7 +95,7 @@ export interface EventTypeConfig {
 export interface EventFieldConfig {
   key: string;
   label: string;
-  type: 'text' | 'textarea' | 'date' | 'time' | 'url';
+  type: 'text' | 'textarea' | 'date' | 'time' | 'url' | 'address';
   placeholder?: string;
   required?: boolean;
 }

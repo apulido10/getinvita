@@ -12,6 +12,7 @@ async function getMusic(supabase: ReturnType<typeof createServiceClient>, eventI
 }
 
 // POST: Create a signed upload URL + save the DB record (client uploads directly to Supabase storage)
+// OR: Add a Spotify track (no file upload needed)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -29,6 +30,33 @@ export async function POST(
 
   const serviceClient = createServiceClient();
   const body = await request.json();
+
+  // Spotify track flow
+  if (body.source === 'spotify') {
+    const { spotifyTrackId, songTitle, artist } = body;
+
+    if (!spotifyTrackId) {
+      return NextResponse.json({ error: 'No spotifyTrackId provided' }, { status: 400 });
+    }
+
+    const { error: insertError } = await serviceClient.from('event_music').insert({
+      event_id: id,
+      source: 'spotify',
+      spotify_track_id: spotifyTrackId,
+      song_title: songTitle || 'Spotify Track',
+      artist: artist || null,
+    });
+
+    if (insertError) {
+      console.error('Spotify music insert error:', insertError);
+      return NextResponse.json({ error: `Save failed: ${insertError.message}` }, { status: 500 });
+    }
+
+    const music = await getMusic(serviceClient, id);
+    return NextResponse.json({ music });
+  }
+
+  // File upload flow (existing)
   const { fileName, songTitle, contentType } = body;
 
   if (!fileName) {
@@ -53,6 +81,7 @@ export async function POST(
     event_id: id,
     storage_path: storagePath,
     song_title: songTitle || fileName,
+    source: 'upload',
   });
 
   if (insertError) {
@@ -118,7 +147,10 @@ export async function DELETE(
     .single();
 
   if (track) {
-    await serviceClient.storage.from('event-music').remove([track.storage_path]);
+    // Only remove from storage if there's a file (Spotify tracks have no storage_path)
+    if (track.storage_path) {
+      await serviceClient.storage.from('event-music').remove([track.storage_path]);
+    }
     await serviceClient.from('event_music').delete().eq('id', musicId);
   }
 

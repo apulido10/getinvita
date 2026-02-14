@@ -10,12 +10,14 @@ interface Props {
 }
 
 export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
+  // Only play uploaded tracks — Spotify tracks are handled by SpotifyEmbed
+  const uploadTracks = tracks.filter((t) => t.source !== 'spotify');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const currentTrack = tracks[currentIndex];
+  const currentTrack = uploadTracks[currentIndex];
 
   useEffect(() => {
     if (!audioRef.current || !currentTrack) return;
@@ -51,7 +53,7 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (tracks.length === 0) return null;
+  if (uploadTracks.length === 0) return null;
 
   function togglePlay() {
     if (!audioRef.current) return;
@@ -64,7 +66,7 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
   }
 
   function nextTrack() {
-    setCurrentIndex((i) => (i + 1) % tracks.length);
+    setCurrentIndex((i) => (i + 1) % uploadTracks.length);
   }
 
   function toggleMute() {
@@ -92,7 +94,7 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
         <button onClick={togglePlay} className="p-1.5 hover:bg-white/10 rounded-full transition-colors">
           {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
         </button>
-        {tracks.length > 1 && (
+        {uploadTracks.length > 1 && (
           <button onClick={nextTrack} className="p-1.5 hover:bg-white/10 rounded-full transition-colors">
             <SkipForward className="h-4 w-4" />
           </button>

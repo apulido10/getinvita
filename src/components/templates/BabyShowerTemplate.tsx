@@ -5,7 +5,9 @@ import { getThemeById, getDefaultTheme } from '@/lib/themes';
 import Countdown from '@/components/shared/Countdown';
 import PhotoGallery from '@/components/shared/PhotoGallery';
 import MusicPlayer from '@/components/shared/MusicPlayer';
+import SpotifyEmbed from '@/components/shared/SpotifyEmbed';
 import RSVPForm from '@/components/shared/RSVPForm';
+import AddressLink from '@/components/shared/AddressLink';
 import { Baby, MapPin, Clock, Gift, ExternalLink, Heart } from 'lucide-react';
 
 interface Props {
@@ -16,6 +18,18 @@ interface Props {
 
 function getDetail(details: FullEventData['details'], key: string): string {
   return details.find((d) => d.detail_key === key)?.detail_value || '';
+}
+
+function formatDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function formatTime(timeStr: string): string {
+  const [h, m] = timeStr.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const hour = h % 12 || 12;
+  return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
 }
 
 export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp }: Props) {
@@ -65,7 +79,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
               <p className="mt-4 text-lg opacity-90">Celebrating {parentNames}</p>
               {event.event_date && (
                 <p className="mt-4 opacity-80">
-                  {new Date(event.event_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  {formatDate(event.event_date)}
                 </p>
               )}
             </div>
@@ -101,8 +115,8 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl sm:text-3xl font-bold mb-6">Church Ceremony</h2>
               {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
-              {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{churchAddress}</p>}
-              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {churchTime}</p>}
+              {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
+              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
             </div>
           </section>
         )}
@@ -115,19 +129,19 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
                   <MapPin className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
                   <h3 className="font-bold text-lg">{venueName}</h3>
-                  {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{venueAddress}</p>}
+                  {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={venueAddress} style={{ color: colors.textSecondary }} /></p>}
                 </div>
               )}
               {hasTimes && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
                   <Clock className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
                   <h3 className="font-bold">Times</h3>
-                  {showerTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Shower:</strong> {showerTime}</p>}
+                  {showerTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Shower:</strong> {formatTime(showerTime)}</p>}
                   {receptionStart && (
-                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Reception:</strong> {receptionStart}{receptionEnd ? ` – ${receptionEnd}` : ''}</p>
+                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                   )}
                   {dinnerStart && (
-                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Dinner:</strong> {dinnerStart}{dinnerEnd ? ` – ${dinnerEnd}` : ''}</p>
+                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                   )}
                 </div>
               )}
@@ -143,7 +157,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
                   <Heart className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
                   <h3 className="font-bold">Due Date</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
-                    {new Date(dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    {formatDate(dueDate)}
                   </p>
                 </div>
               )}
@@ -184,6 +198,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         </section>
 
         {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
+        {(() => { const st = music.find((t) => t.source === 'spotify'); return st?.spotify_track_id ? <SpotifyEmbed trackId={st.spotify_track_id} /> : null; })()}
       </div>
     );
   }
@@ -204,7 +219,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
             <p className="mt-4 text-lg" style={{ color: colors.textSecondary }}>Celebrating {parentNames}</p>
             {event.event_date && (
               <p className="mt-4" style={{ color: colors.textSecondary }}>
-                {new Date(event.event_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                {formatDate(event.event_date)}
               </p>
             )}
             <div className="w-12 h-0.5 mx-auto mt-8" style={{ backgroundColor: colors.accent }} />
@@ -241,8 +256,8 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl sm:text-3xl font-bold mb-8">Church Ceremony</h2>
               {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
-              {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{churchAddress}</p>}
-              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {churchTime}</p>}
+              {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
+              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
             </div>
           </section>
         )}
@@ -253,17 +268,17 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
             {venueName && (
               <div>
                 <h3 className="font-bold text-lg">{venueName}</h3>
-                {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{venueAddress}</p>}
+                {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={venueAddress} style={{ color: colors.textSecondary }} /></p>}
               </div>
             )}
             {hasTimes && (
               <div>
-                {showerTime && <p className="text-sm"><strong>Shower:</strong> {showerTime}</p>}
+                {showerTime && <p className="text-sm"><strong>Shower:</strong> {formatTime(showerTime)}</p>}
                 {receptionStart && (
-                  <p className="text-sm mt-1"><strong>Reception:</strong> {receptionStart}{receptionEnd ? ` – ${receptionEnd}` : ''}</p>
+                  <p className="text-sm mt-1"><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                 )}
                 {dinnerStart && (
-                  <p className="text-sm mt-1"><strong>Dinner:</strong> {dinnerStart}{dinnerEnd ? ` – ${dinnerEnd}` : ''}</p>
+                  <p className="text-sm mt-1"><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                 )}
               </div>
             )}
@@ -300,6 +315,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         </section>
 
         {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
+        {(() => { const st = music.find((t) => t.source === 'spotify'); return st?.spotify_track_id ? <SpotifyEmbed trackId={st.spotify_track_id} /> : null; })()}
       </div>
     );
   }
@@ -330,7 +346,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
           <p className="mt-4 text-lg" style={{ color: colors.textSecondary }}>Celebrating {parentNames}</p>
           {event.event_date && (
             <p className="mt-4" style={{ color: colors.textSecondary }}>
-              {new Date(event.event_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              {formatDate(event.event_date)}
             </p>
           )}
         </div>
@@ -364,8 +380,8 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6">Church Ceremony</h2>
             {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
-            {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{churchAddress}</p>}
-            {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {churchTime}</p>}
+            {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
+            {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
           </div>
         </section>
       )}
@@ -379,19 +395,19 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
               <div className="rounded-2xl shadow-sm p-6 text-center border" style={{ backgroundColor: colors.background, borderColor: `${colors.accent}22` }}>
                 <MapPin className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
                 <h3 className="font-bold text-lg">{venueName}</h3>
-                {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{venueAddress}</p>}
+                {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={venueAddress} style={{ color: colors.textSecondary }} /></p>}
               </div>
             )}
             {hasTimes && (
               <div className="rounded-2xl shadow-sm p-6 text-center border" style={{ backgroundColor: colors.background, borderColor: `${colors.accent}22` }}>
                 <Clock className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
                 <h3 className="font-bold">Times</h3>
-                {showerTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Shower:</strong> {showerTime}</p>}
+                {showerTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Shower:</strong> {formatTime(showerTime)}</p>}
                 {receptionStart && (
-                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Reception:</strong> {receptionStart}{receptionEnd ? ` – ${receptionEnd}` : ''}</p>
+                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                 )}
                 {dinnerStart && (
-                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Dinner:</strong> {dinnerStart}{dinnerEnd ? ` – ${dinnerEnd}` : ''}</p>
+                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                 )}
               </div>
             )}
@@ -407,7 +423,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
                 <Heart className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
                 <h3 className="font-bold">Due Date</h3>
                 <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
-                  {new Date(dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  {formatDate(dueDate)}
                 </p>
               </div>
             )}
@@ -452,6 +468,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
 
       {/* Music Player */}
       {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
+        {(() => { const st = music.find((t) => t.source === 'spotify'); return st?.spotify_track_id ? <SpotifyEmbed trackId={st.spotify_track_id} /> : null; })()}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useImperativeHandle, forwardRef } from 'react';
 import { Event, EventDetail } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
 import { Save, Loader2 } from 'lucide-react';
+import AddressAutocomplete from './AddressAutocomplete';
 
 export interface EventDetailsFormRef {
   save: () => Promise<void>;
@@ -88,6 +89,12 @@ const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDe
                 placeholder={field.placeholder}
                 rows={3}
                 className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none resize-none"
+              />
+            ) : field.type === 'address' ? (
+              <AddressAutocomplete
+                value={values[field.key] || ''}
+                onChange={(val) => handleChange(field.key, val)}
+                placeholder={field.placeholder}
               />
             ) : (
               <input
