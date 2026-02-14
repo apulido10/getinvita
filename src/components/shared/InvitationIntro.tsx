@@ -67,6 +67,8 @@ export default function InvitationIntro({
   const handleOpen = () => {
     if (envelopeOpened) return;
     setEnvelopeOpened(true);
+    // Signal MusicPlayer to start playing (user gesture context)
+    document.dispatchEvent(new CustomEvent('invitation-opened'));
     setTimeout(() => {
       setFadingOut(true);
     }, 500);

@@ -34,40 +34,72 @@ export default function MusicPlayer({ tracks, supabaseUrl, hasSpotify }: Props) 
 
   const currentTrack = playableTracks[currentIndex];
 
+  // Set audio source when track changes
   useEffect(() => {
     if (!audioRef.current || !currentTrack) return;
     const url = getTrackUrl(currentTrack, supabaseUrl);
     if (!url) return;
     audioRef.current.src = url;
+    audioRef.current.load();
     if (isPlaying) {
       audioRef.current.play().catch(() => setIsPlaying(false));
     }
-  }, [currentIndex, currentTrack, supabaseUrl]);
+  }, [currentIndex, currentTrack, supabaseUrl]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Autoplay on first user interaction (browsers block autoplay without interaction)
+  // Autoplay: listen for envelope open event + fallback to first user interaction
   useEffect(() => {
     if (!audioRef.current || !currentTrack) return;
     const audio = audioRef.current;
 
-    // Try autoplay immediately
-    audio.play().then(() => setIsPlaying(true)).catch(() => {
-      // Browser blocked autoplay — play on first user interaction
-      function playOnInteraction() {
-        audio.play().then(() => setIsPlaying(true)).catch(() => {});
-        document.removeEventListener('click', playOnInteraction);
-        document.removeEventListener('touchstart', playOnInteraction);
-        document.removeEventListener('scroll', playOnInteraction);
+    function tryPlay() {
+      // Ensure src is set
+      if (!audio.src || audio.src === window.location.href) {
+        const url = getTrackUrl(currentTrack, supabaseUrl);
+        if (url) {
+          audio.src = url;
+          audio.load();
+        }
       }
-      document.addEventListener('click', playOnInteraction, { once: true });
-      document.addEventListener('touchstart', playOnInteraction, { once: true });
-      document.addEventListener('scroll', playOnInteraction, { once: true });
+      // Wait for audio to be ready, then play
+      if (audio.readyState >= 2) {
+        audio.play().then(() => setIsPlaying(true)).catch(() => {});
+      } else {
+        audio.addEventListener('canplay', function onCanPlay() {
+          audio.removeEventListener('canplay', onCanPlay);
+          audio.play().then(() => setIsPlaying(true)).catch(() => {});
+        });
+      }
+    }
 
-      return () => {
-        document.removeEventListener('click', playOnInteraction);
-        document.removeEventListener('touchstart', playOnInteraction);
-        document.removeEventListener('scroll', playOnInteraction);
-      };
+    // Listen for envelope open event (dispatched during user gesture)
+    function onInvitationOpened() {
+      tryPlay();
+      cleanup();
+    }
+
+    // Fallback: play on first user interaction (for pages without envelope intro)
+    function onInteraction() {
+      tryPlay();
+      cleanup();
+    }
+
+    function cleanup() {
+      document.removeEventListener('invitation-opened', onInvitationOpened);
+      document.removeEventListener('click', onInteraction);
+      document.removeEventListener('touchstart', onInteraction);
+    }
+
+    // Try autoplay immediately (works if user already interacted)
+    audio.play().then(() => {
+      setIsPlaying(true);
+    }).catch(() => {
+      // Browser blocked autoplay — wait for envelope open or user interaction
+      document.addEventListener('invitation-opened', onInvitationOpened);
+      document.addEventListener('click', onInteraction, { once: true });
+      document.addEventListener('touchstart', onInteraction, { once: true });
     });
+
+    return cleanup;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (playableTracks.length === 0) return null;
