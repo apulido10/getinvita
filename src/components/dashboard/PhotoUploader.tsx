@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Event, EventPhoto } from '@/types';
 import { Upload, Star, Trash2, Loader2, ImageIcon } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 interface Props {
   event: Event;
@@ -42,19 +43,18 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
           continue;
         }
 
-        const { signedUrl } = await res.json();
+        const { storagePath, token } = await res.json();
 
         // Step 2: Upload the file directly to Supabase storage using the signed URL
-        const uploadRes = await fetch(signedUrl, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': file.type || 'image/jpeg',
-          },
-          body: file,
-        });
+        const supabase = createClient();
+        const { error: uploadError } = await supabase.storage
+          .from('event-photos')
+          .uploadToSignedUrl(storagePath, token, file, {
+            contentType: file.type || 'image/jpeg',
+          });
 
-        if (!uploadRes.ok) {
-          setError(`Storage upload failed (${uploadRes.status})`);
+        if (uploadError) {
+          setError(`Storage upload failed: ${uploadError.message}`);
           continue;
         }
 

@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Event, EventMusic } from '@/types';
 import { Upload, Trash2, Loader2, Music2, Play, Pause } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 interface Props {
   event: Event;
@@ -44,19 +45,18 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
           continue;
         }
 
-        const { signedUrl, token } = await res.json();
+        const { storagePath, token } = await res.json();
 
         // Step 2: Upload the file directly to Supabase storage using the signed URL
-        const uploadRes = await fetch(signedUrl, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': file.type || 'audio/mpeg',
-          },
-          body: file,
-        });
+        const supabase = createClient();
+        const { error: uploadError } = await supabase.storage
+          .from('event-music')
+          .uploadToSignedUrl(storagePath, token, file, {
+            contentType: file.type || 'audio/mpeg',
+          });
 
-        if (!uploadRes.ok) {
-          setError(`Storage upload failed (${uploadRes.status})`);
+        if (uploadError) {
+          setError(`Storage upload failed: ${uploadError.message}`);
           continue;
         }
 
