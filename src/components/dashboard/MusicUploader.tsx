@@ -236,9 +236,6 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
                 {track.artist && (
                   <p className="text-xs text-gray-500 truncate">{track.artist}</p>
                 )}
-                {track.source === 'spotify' && !track.storage_path && (
-                  <p className="text-xs text-amber-600">No preview available — won&apos;t auto-play</p>
-                )}
               </div>
               <button
                 onClick={() => handleDelete(track.id)}
