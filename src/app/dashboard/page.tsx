@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { requireAuth } from '@/lib/supabase/auth';
 import DashboardEventList from '@/components/dashboard/DashboardEventList';
 import { Event } from '@/types';

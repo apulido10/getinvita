@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { requireAuth } from '@/lib/supabase/auth';
 import { notFound } from 'next/navigation';
 import DashboardClient from '@/components/dashboard/DashboardClient';
