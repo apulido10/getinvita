@@ -22,7 +22,7 @@ export default function Hero() {
           </span>
         </h1>
         <p className="mt-5 text-base sm:text-lg text-purple-200 max-w-2xl mx-auto leading-relaxed">
-          Custom event pages for Quinceañeras, Weddings, Birthdays & Baby Showers.
+          Custom event pages for Quinceañeras, Weddings, Birthdays, Baby Showers, Valentine's Day, Mother's Day & Father's Day.
           Upload your photos, music, and details — we handle the rest.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">

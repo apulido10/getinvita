@@ -1,15 +1,25 @@
 'use client';
 
 import { Check } from 'lucide-react';
-import { EVENT_TYPES } from '@/lib/constants';
+import { EVENT_TYPES, CARD_EVENT_TYPES } from '@/lib/constants';
 import Link from 'next/link';
 
-const features = [
+const eventFeatures = [
   'Custom themed event page',
   'Photo gallery with lightbox',
   'Background music player',
   'Live countdown timer',
   'RSVP collection',
+  'Mobile responsive design',
+  'Shareable custom link',
+  'Unlimited photo uploads',
+];
+
+const cardFeatures = [
+  'Custom themed card page',
+  'Photo gallery with lightbox',
+  'Background music player',
+  'Personalized message',
   'Mobile responsive design',
   'Shareable custom link',
   'Unlimited photo uploads',
@@ -53,7 +63,7 @@ export default function Pricing() {
             >
               <h3 className="text-lg font-bold text-gray-900">{eventType.label}</h3>
               <ul className="mt-6 space-y-3">
-                {features.map((feature) => (
+                {(CARD_EVENT_TYPES.includes(eventType.type) ? cardFeatures : eventFeatures).map((feature) => (
                   <li key={feature} className="flex items-start gap-2 text-sm text-gray-700">
                     <Check className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
                     {feature}
