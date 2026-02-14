@@ -79,7 +79,7 @@ export interface RSVP {
   attending: boolean;
   guest_count: number;
   message: string | null;
-  song_request: string | null;
+  song_request?: string | null;
   created_at: string;
 }
 
