@@ -28,6 +28,9 @@ export default function HomePage() {
             <a href="#pricing" className="hover:text-white transition-colors">
               Event Options
             </a>
+            <Link href="/terms" className="hover:text-white transition-colors">
+              Terms & Policy
+            </Link>
           </div>
           <p className="mt-8 text-xs text-gray-600">
             &copy; {new Date().getFullYear()} GetInvita. All rights reserved.

@@ -8,7 +8,7 @@ import EventDetailsForm, { EventDetailsFormRef } from './EventDetailsForm';
 import PhotoUploader from './PhotoUploader';
 import MusicUploader from './MusicUploader';
 import ThemePicker from './ThemePicker';
-import { FileText, Image, Music, Users, Globe, Eye, ArrowLeft, LogOut, Link2, Check, ChevronRight, ChevronLeft, Trash2, X, Palette } from 'lucide-react';
+import { FileText, Image, Music, Users, Globe, Eye, ArrowLeft, LogOut, Link2, Check, ChevronRight, ChevronLeft, Trash2, X, Palette, Printer } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
@@ -261,11 +261,22 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
         )}
         {activeStep === 'rsvps' && (
           <div className="bg-white rounded-xl border p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Guest RSVPs</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-gray-900">Guest RSVPs</h2>
+              {data.rsvps.length > 0 && (
+                <button
+                  onClick={() => window.print()}
+                  className="print:hidden inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Printer className="h-4 w-4" />
+                  Print
+                </button>
+              )}
+            </div>
             {data.rsvps.length === 0 ? (
               <p className="text-gray-500 text-sm">No RSVPs yet.</p>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto print-rsvp-area">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b text-left">
