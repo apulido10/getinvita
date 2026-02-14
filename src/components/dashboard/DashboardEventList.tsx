@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Event } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
-import { Plus, Eye, Pencil, Calendar } from 'lucide-react';
+import { Plus, Eye, Pencil, Calendar, Users } from 'lucide-react';
 
 export default function DashboardEventList({ events }: { events: Event[] }) {
   return (
@@ -72,14 +72,23 @@ export default function DashboardEventList({ events }: { events: Event[] }) {
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       {event.status === 'published' && (
-                        <Link
-                          href={`/events/${event.slug}`}
-                          target="_blank"
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        >
-                          <Eye className="h-4 w-4" />
-                          View
-                        </Link>
+                        <>
+                          <Link
+                            href={`/events/${event.slug}`}
+                            target="_blank"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Eye className="h-4 w-4" />
+                            View
+                          </Link>
+                          <Link
+                            href={`/dashboard/${event.id}?tab=rsvps`}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Users className="h-4 w-4" />
+                            RSVPs
+                          </Link>
+                        </>
                       )}
                       <Link
                         href={`/dashboard/${event.id}`}

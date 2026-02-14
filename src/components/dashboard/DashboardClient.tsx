@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FullEventData } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
 import { getThemeById } from '@/lib/themes';
@@ -24,7 +24,13 @@ const steps: { id: Step; label: string; icon: React.ElementType }[] = [
 
 export default function DashboardClient({ initialData }: { initialData: FullEventData }) {
   const [data, setData] = useState(initialData);
-  const [activeStep, setActiveStep] = useState<Step>('details');
+  const [activeStep, setActiveStep] = useState<Step>(() => {
+    if (typeof window !== 'undefined') {
+      const tab = new URLSearchParams(window.location.search).get('tab') as Step | null;
+      if (tab && steps.some((s) => s.id === tab)) return tab;
+    }
+    return 'details';
+  });
   const [publishing, setPublishing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
