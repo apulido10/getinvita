@@ -24,13 +24,15 @@ const steps: { id: Step; label: string; icon: React.ElementType }[] = [
 
 export default function DashboardClient({ initialData }: { initialData: FullEventData }) {
   const [data, setData] = useState(initialData);
-  const [activeStep, setActiveStep] = useState<Step>(() => {
-    if (typeof window !== 'undefined') {
-      const tab = new URLSearchParams(window.location.search).get('tab') as Step | null;
-      if (tab && steps.some((s) => s.id === tab)) return tab;
+  const [activeStep, setActiveStep] = useState<Step>('details');
+
+  // Read ?tab= param on mount to jump to a specific tab
+  useEffect(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab') as Step | null;
+    if (tab && steps.some((s) => s.id === tab)) {
+      setActiveStep(tab);
     }
-    return 'details';
-  });
+  }, []);
   const [publishing, setPublishing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
