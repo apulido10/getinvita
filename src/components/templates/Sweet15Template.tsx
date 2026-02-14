@@ -21,9 +21,9 @@ function getDetail(details: FullEventData['details'], key: string): string {
 }
 
 function formatDate(dateStr: string): string {
-  // Handle YYYY-MM-DD by appending noon to avoid timezone shifting
-  const normalized = dateStr.length === 10 ? `${dateStr}T12:00:00` : dateStr;
-  return new Date(normalized).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  // Extract YYYY-MM-DD and parse as local noon to avoid timezone shifting
+  const datePart = dateStr.substring(0, 10);
+  return new Date(`${datePart}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function formatTime(timeStr: string): string {

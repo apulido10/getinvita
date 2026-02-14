@@ -19,8 +19,8 @@ export default function Countdown({ targetDate, className = '' }: Props) {
 
   useEffect(() => {
     function calculate() {
-      const normalized = targetDate.length === 10 ? `${targetDate}T12:00:00` : targetDate;
-      const diff = new Date(normalized).getTime() - Date.now();
+      const datePart = targetDate.substring(0, 10);
+      const diff = new Date(`${datePart}T12:00:00`).getTime() - Date.now();
       if (diff <= 0) {
         setTimeLeft(null);
         return;

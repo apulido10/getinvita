@@ -21,8 +21,8 @@ function getDetail(details: FullEventData['details'], key: string): string {
 }
 
 function formatDate(dateStr: string): string {
-  const normalized = dateStr.length === 10 ? `${dateStr}T12:00:00` : dateStr;
-  return new Date(normalized).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const datePart = dateStr.substring(0, 10);
+  return new Date(`${datePart}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function formatTime(timeStr: string): string {
