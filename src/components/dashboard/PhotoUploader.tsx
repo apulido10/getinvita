@@ -166,7 +166,7 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
                 </div>
               )}
               {!photo.is_hero && (
-                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-2 left-2">
                   <button
                     onClick={() => handleSetHero(photo.id)}
                     className="bg-white/90 backdrop-blur-sm text-yellow-600 hover:bg-yellow-50 rounded-full px-2.5 py-1 text-xs font-medium flex items-center gap-1 shadow-md"
@@ -176,7 +176,7 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
                   </button>
                 </div>
               )}
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-2 right-2">
                 <button
                   onClick={() => handleDelete(photo.id)}
                   className="rounded-full bg-white/90 backdrop-blur-sm p-2 text-red-600 hover:bg-red-50 shadow-md"
