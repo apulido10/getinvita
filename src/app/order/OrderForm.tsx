@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EVENT_TYPES } from '@/lib/constants';
 import { EventType } from '@/types';
-import { Crown, Heart, Cake, Baby, Loader2 } from 'lucide-react';
+import { Crown, Heart, Cake, Baby, Gift, Loader2 } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
   Crown,
   Heart,
   Cake,
   Baby,
+  Gift,
 };
 
 export default function OrderForm() {
@@ -27,7 +28,7 @@ export default function OrderForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedType || !eventName) {
+    if (!selectedType || !eventName || !eventDate) {
       setError('Please fill in all required fields.');
       return;
     }
@@ -123,11 +124,12 @@ export default function OrderForm() {
           {/* Event Date */}
           <div>
             <label htmlFor="eventDate" className="block text-sm font-semibold text-gray-900 mb-1">
-              Event Date
+              Event Date *
             </label>
             <input
               id="eventDate"
               type="date"
+              required
               value={eventDate}
               onChange={(e) => setEventDate(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none"

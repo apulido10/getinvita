@@ -1,4 +1,4 @@
-export type EventType = 'sweet15' | 'wedding' | 'birthday' | 'baby_shower';
+export type EventType = 'sweet15' | 'wedding' | 'birthday' | 'baby_shower' | 'valentines' | 'mothers_day' | 'fathers_day';
 export type EventStatus = 'pending' | 'paid' | 'active' | 'published';
 
 export interface Event {

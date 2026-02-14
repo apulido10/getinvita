@@ -8,6 +8,7 @@ import MusicPlayer from '@/components/shared/MusicPlayer';
 import SpotifyEmbed from '@/components/shared/SpotifyEmbed';
 import RSVPForm from '@/components/shared/RSVPForm';
 import AddressLink from '@/components/shared/AddressLink';
+import { CARD_EVENT_TYPES } from '@/lib/constants';
 import { Cake, MapPin, Clock, PartyPopper } from 'lucide-react';
 
 interface Props {
@@ -58,6 +59,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
   const specialMessage = getDetail(details, 'special_message');
   const dressCode = getDetail(details, 'dress_code');
 
+  const isCardEvent = CARD_EVENT_TYPES.includes(event.event_type);
   const hasChurch = churchName || churchAddress || churchTime;
   const hasTimes = partyTime || receptionStart || dinnerStart;
 
@@ -174,13 +176,15 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </section>
         )}
 
-        <section className="py-10 sm:py-16" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
-          <div className="max-w-lg mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-            <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
-            <RSVPForm eventId={event.id} accentColor="violet" />
-          </div>
-        </section>
+        {!isCardEvent && (
+          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
+            <div className="max-w-lg mx-auto px-4 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
+              <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
+              <RSVPForm eventId={event.id} accentColor="violet" />
+            </div>
+          </section>
+        )}
 
         {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (
           <>
@@ -279,13 +283,15 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </section>
         )}
 
-        <section className="py-16 sm:py-24" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
-          <div className="max-w-lg mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-            <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
-            <RSVPForm eventId={event.id} accentColor="violet" />
-          </div>
-        </section>
+        {!isCardEvent && (
+          <section className="py-16 sm:py-24" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
+            <div className="max-w-lg mx-auto px-4 sm:px-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
+              <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
+              <RSVPForm eventId={event.id} accentColor="violet" />
+            </div>
+          </section>
+        )}
 
         {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (
           <>
@@ -411,13 +417,15 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       )}
 
       {/* RSVP */}
-      <section className="py-10 sm:py-16" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
-        <div className="max-w-lg mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-          <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
-          <RSVPForm eventId={event.id} accentColor="violet" />
-        </div>
-      </section>
+      {!isCardEvent && (
+        <section className="py-10 sm:py-16" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
+          <div className="max-w-lg mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
+            <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
+            <RSVPForm eventId={event.id} accentColor="violet" />
+          </div>
+        </section>
+      )}
 
       {/* Music Player */}
       {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { FullEventData } from '@/types';
-import { getEventTypeConfig } from '@/lib/constants';
+import { getEventTypeConfig, CARD_EVENT_TYPES } from '@/lib/constants';
 import { getThemeById } from '@/lib/themes';
 import EventDetailsForm, { EventDetailsFormRef } from './EventDetailsForm';
 import PhotoUploader from './PhotoUploader';
@@ -41,8 +41,10 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
   const detailsFormRef = useRef<EventDetailsFormRef>(null);
 
   const config = getEventTypeConfig(data.event.event_type);
+  const isCardEvent = CARD_EVENT_TYPES.includes(data.event.event_type);
+  const visibleSteps = isCardEvent ? steps.filter((s) => s.id !== 'rsvps') : steps;
   const isPublished = data.event.status === 'published';
-  const currentIndex = steps.findIndex((s) => s.id === activeStep);
+  const currentIndex = visibleSteps.findIndex((s) => s.id === activeStep);
 
   const selectedTheme = data.event.theme_id ? getThemeById(data.event.theme_id) : null;
   const hasPremiumAddon = selectedTheme?.isPremium && !data.event.theme_premium_paid;
@@ -174,7 +176,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
       <div className="bg-white border-b">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
-            {steps.map((step, i) => (
+            {visibleSteps.map((step, i) => (
               <button
                 key={step.id}
                 onClick={() => changeStep(step.id)}
@@ -260,7 +262,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
           <div className="bg-white rounded-xl border p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Guest RSVPs</h2>
             {data.rsvps.length === 0 ? (
-              <p className="text-gray-500 text-sm">No RSVPs yet. Publish your event to start collecting responses.</p>
+              <p className="text-gray-500 text-sm">No RSVPs yet.</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -301,19 +303,19 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
         {/* Navigation arrows */}
         <div className="flex items-center justify-between mt-8">
           <button
-            onClick={() => changeStep(steps[currentIndex - 1].id)}
+            onClick={() => changeStep(visibleSteps[currentIndex - 1].id)}
             disabled={currentIndex === 0}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-0 disabled:pointer-events-none transition-all"
           >
             <ChevronLeft className="h-4 w-4" />
-            {currentIndex > 0 ? steps[currentIndex - 1].label : ''}
+            {currentIndex > 0 ? visibleSteps[currentIndex - 1].label : ''}
           </button>
           <button
-            onClick={() => changeStep(steps[currentIndex + 1].id)}
-            disabled={currentIndex === steps.length - 1}
+            onClick={() => changeStep(visibleSteps[currentIndex + 1].id)}
+            disabled={currentIndex === visibleSteps.length - 1}
             className="inline-flex items-center gap-2 rounded-lg bg-purple-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-purple-700 disabled:opacity-0 disabled:pointer-events-none transition-all"
           >
-            {currentIndex < steps.length - 1 ? steps[currentIndex + 1].label : ''}
+            {currentIndex < visibleSteps.length - 1 ? visibleSteps[currentIndex + 1].label : ''}
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>

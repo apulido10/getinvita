@@ -1,6 +1,6 @@
 'use client';
 
-import { Crown, Heart, Cake, Baby } from 'lucide-react';
+import { Crown, Heart, Cake, Baby, Gift } from 'lucide-react';
 import { EVENT_TYPES } from '@/lib/constants';
 import Link from 'next/link';
 
@@ -9,6 +9,7 @@ const iconMap: Record<string, React.ElementType> = {
   Heart,
   Cake,
   Baby,
+  Gift,
 };
 
 const colorMap: Record<string, string> = {
@@ -16,6 +17,8 @@ const colorMap: Record<string, string> = {
   emerald: 'from-emerald-500 to-teal-600 shadow-emerald-500/25',
   violet: 'from-violet-500 to-purple-600 shadow-violet-500/25',
   sky: 'from-sky-400 to-blue-500 shadow-sky-500/25',
+  pink: 'from-pink-400 to-rose-500 shadow-pink-500/25',
+  blue: 'from-blue-500 to-indigo-600 shadow-blue-500/25',
 };
 
 const bgColorMap: Record<string, string> = {
@@ -23,6 +26,8 @@ const bgColorMap: Record<string, string> = {
   emerald: 'bg-emerald-50 border-emerald-100',
   violet: 'bg-violet-50 border-violet-100',
   sky: 'bg-sky-50 border-sky-100',
+  pink: 'bg-pink-50 border-pink-100',
+  blue: 'bg-blue-50 border-blue-100',
 };
 
 export default function EventTypes() {

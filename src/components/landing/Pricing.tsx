@@ -20,6 +20,8 @@ const colorBorder: Record<string, string> = {
   emerald: 'border-emerald-200 hover:border-emerald-400',
   violet: 'border-violet-200 hover:border-violet-400',
   sky: 'border-sky-200 hover:border-sky-400',
+  pink: 'border-pink-200 hover:border-pink-400',
+  blue: 'border-blue-200 hover:border-blue-400',
 };
 
 const colorButton: Record<string, string> = {
@@ -27,6 +29,8 @@ const colorButton: Record<string, string> = {
   emerald: 'bg-emerald-600 hover:bg-emerald-700',
   violet: 'bg-violet-600 hover:bg-violet-700',
   sky: 'bg-sky-600 hover:bg-sky-700',
+  pink: 'bg-pink-600 hover:bg-pink-700',
+  blue: 'bg-blue-600 hover:bg-blue-700',
 };
 
 export default function Pricing() {

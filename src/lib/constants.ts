@@ -1,4 +1,4 @@
-import { EventTypeConfig } from '@/types';
+import { EventType, EventTypeConfig } from '@/types';
 
 export const EVENT_TYPES: EventTypeConfig[] = [
   {
@@ -106,7 +106,45 @@ export const EVENT_TYPES: EventTypeConfig[] = [
       { key: 'special_message', label: 'Message to Guests', type: 'textarea' },
     ],
   },
+  {
+    type: 'valentines',
+    label: "Valentine's Day",
+    description: 'Send a sweet Valentine\'s card to someone special with a personalized message.',
+    price: 9900,
+    icon: 'Heart',
+    color: 'rose',
+    fields: [
+      { key: 'birthday_person', label: 'To', type: 'text', required: true },
+      { key: 'special_message', label: 'Your Message', type: 'textarea' },
+    ],
+  },
+  {
+    type: 'mothers_day',
+    label: "Mother's Day",
+    description: 'Celebrate Mom with a beautiful personalized card she\'ll treasure.',
+    price: 9900,
+    icon: 'Heart',
+    color: 'pink',
+    fields: [
+      { key: 'birthday_person', label: 'To', type: 'text', required: true },
+      { key: 'special_message', label: 'Your Message', type: 'textarea' },
+    ],
+  },
+  {
+    type: 'fathers_day',
+    label: "Father's Day",
+    description: 'Show Dad some love with a personalized card just for him.',
+    price: 9900,
+    icon: 'Gift',
+    color: 'blue',
+    fields: [
+      { key: 'birthday_person', label: 'To', type: 'text', required: true },
+      { key: 'special_message', label: 'Your Message', type: 'textarea' },
+    ],
+  },
 ];
+
+export const CARD_EVENT_TYPES: EventType[] = ['valentines', 'mothers_day', 'fathers_day'];
 
 export function getEventTypeConfig(type: string): EventTypeConfig | undefined {
   return EVENT_TYPES.find((et) => et.type === type);
