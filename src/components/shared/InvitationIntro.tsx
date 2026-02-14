@@ -80,134 +80,136 @@ export default function InvitationIntro({
     }, 1100);
   };
 
-  // Before mount or if intro already seen, just render children
-  if (!mounted || !showIntro) return <>{children}</>;
-
+  // Always render children first (same tree position) to prevent unmount/remount.
+  // The overlay is a sibling that sits on top with z-index.
   return (
     <>
-      <style>{`
-        @keyframes intro-float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-12px); }
-        }
-        @keyframes intro-glow {
-          0%, 100% { filter: drop-shadow(0 0 8px ${colors.accent}66); }
-          50% { filter: drop-shadow(0 0 20px ${colors.accent}aa); }
-        }
-        @keyframes intro-envelope-open {
-          0% { transform: rotateX(0deg); }
-          100% { transform: rotateX(180deg); }
-        }
-        @keyframes intro-fade-up {
-          0% { opacity: 1; transform: translateY(0); }
-          100% { opacity: 0; transform: translateY(-60px); }
-        }
-        .intro-overlay {
-          position: fixed;
-          inset: 0;
-          z-index: 9999;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          background-color: ${colors.hero};
-          color: ${colors.heroText};
-        }
-        .intro-overlay.fading-out {
-          animation: intro-fade-up 0.6s ease-in forwards;
-        }
-        .intro-label {
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.2em;
-          margin-bottom: 0.75rem;
-          opacity: 0.85;
-        }
-        .intro-event-name {
-          font-size: clamp(1.75rem, 5vw, 3rem);
-          font-weight: 700;
-          font-family: Georgia, 'Times New Roman', serif;
-          text-align: center;
-          max-width: 80%;
-          line-height: 1.2;
-          margin-bottom: 2.5rem;
-        }
-        .intro-envelope-wrapper {
-          animation: intro-float 3s ease-in-out infinite, intro-glow 3s ease-in-out infinite;
-        }
-        .intro-envelope {
-          position: relative;
-          width: 120px;
-          height: 80px;
-        }
-        .intro-envelope-body {
-          width: 120px;
-          height: 80px;
-          border-radius: 4px;
-          position: absolute;
-          bottom: 0;
-        }
-        .intro-flap {
-          transform-origin: top center;
-          transition: transform 0.4s ease-in;
-        }
-        .intro-flap.opened {
-          animation: intro-envelope-open 0.4s ease-in forwards;
-        }
-        .intro-hint {
-          margin-top: 2.5rem;
-          font-size: 0.8rem;
-          opacity: 0.6;
-          letter-spacing: 0.1em;
-        }
-        .intro-accent-icon {
-          margin-bottom: 1rem;
-          opacity: 0.8;
-        }
-      `}</style>
+      {children}
 
-      {/* Keep children mounted but hidden so they can hydrate */}
-      <div style={{ display: 'none' }}>{children}</div>
+      {mounted && showIntro && (
+        <>
+          <style>{`
+            @keyframes intro-float {
+              0%, 100% { transform: translateY(0); }
+              50% { transform: translateY(-12px); }
+            }
+            @keyframes intro-glow {
+              0%, 100% { filter: drop-shadow(0 0 8px ${colors.accent}66); }
+              50% { filter: drop-shadow(0 0 20px ${colors.accent}aa); }
+            }
+            @keyframes intro-envelope-open {
+              0% { transform: rotateX(0deg); }
+              100% { transform: rotateX(180deg); }
+            }
+            @keyframes intro-fade-up {
+              0% { opacity: 1; transform: translateY(0); }
+              100% { opacity: 0; transform: translateY(-60px); }
+            }
+            .intro-overlay {
+              position: fixed;
+              inset: 0;
+              z-index: 9999;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              background-color: ${colors.hero};
+              color: ${colors.heroText};
+            }
+            .intro-overlay.fading-out {
+              animation: intro-fade-up 0.6s ease-in forwards;
+            }
+            .intro-label {
+              font-size: 0.75rem;
+              text-transform: uppercase;
+              letter-spacing: 0.2em;
+              margin-bottom: 0.75rem;
+              opacity: 0.85;
+            }
+            .intro-event-name {
+              font-size: clamp(1.75rem, 5vw, 3rem);
+              font-weight: 700;
+              font-family: Georgia, 'Times New Roman', serif;
+              text-align: center;
+              max-width: 80%;
+              line-height: 1.2;
+              margin-bottom: 2.5rem;
+            }
+            .intro-envelope-wrapper {
+              animation: intro-float 3s ease-in-out infinite, intro-glow 3s ease-in-out infinite;
+            }
+            .intro-envelope {
+              position: relative;
+              width: 120px;
+              height: 80px;
+            }
+            .intro-envelope-body {
+              width: 120px;
+              height: 80px;
+              border-radius: 4px;
+              position: absolute;
+              bottom: 0;
+            }
+            .intro-flap {
+              transform-origin: top center;
+              transition: transform 0.4s ease-in;
+            }
+            .intro-flap.opened {
+              animation: intro-envelope-open 0.4s ease-in forwards;
+            }
+            .intro-hint {
+              margin-top: 2.5rem;
+              font-size: 0.8rem;
+              opacity: 0.6;
+              letter-spacing: 0.1em;
+            }
+            .intro-accent-icon {
+              margin-bottom: 1rem;
+              opacity: 0.8;
+            }
+          `}</style>
 
-      <div
-        className={`intro-overlay${fadingOut ? ' fading-out' : ''}`}
-        onClick={handleOpen}
-      >
-        <div className="intro-accent-icon">
-          <AccentIcon eventType={eventType} color={colors.heroText} />
-        </div>
-        <div className="intro-label">You are invited to</div>
-        <div className="intro-event-name">{eventName}</div>
+          <div
+            className={`intro-overlay${fadingOut ? ' fading-out' : ''}`}
+            onClick={handleOpen}
+          >
+            <div className="intro-accent-icon">
+              <AccentIcon eventType={eventType} color={colors.heroText} />
+            </div>
+            <div className="intro-label">You are invited to</div>
+            <div className="intro-event-name">{eventName}</div>
 
-        <div className="intro-envelope-wrapper">
-          <div className="intro-envelope">
-            {/* Envelope body */}
-            <svg
-              className="intro-envelope-body"
-              viewBox="0 0 120 80"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect width="120" height="80" rx="4" fill={colors.heroText} opacity="0.15" />
-              <path d="M0 0L60 45L120 0" stroke={colors.heroText} strokeWidth="1.5" opacity="0.3" />
-            </svg>
-            {/* Envelope flap */}
-            <svg
-              className={`intro-flap${envelopeOpened ? ' opened' : ''}`}
-              viewBox="0 0 120 45"
-              width="120"
-              height="45"
-              style={{ position: 'absolute', top: 0, left: 0 }}
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M0 0L60 45L120 0Z" fill={colors.heroText} opacity="0.2" />
-            </svg>
+            <div className="intro-envelope-wrapper">
+              <div className="intro-envelope">
+                {/* Envelope body */}
+                <svg
+                  className="intro-envelope-body"
+                  viewBox="0 0 120 80"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="120" height="80" rx="4" fill={colors.heroText} opacity="0.15" />
+                  <path d="M0 0L60 45L120 0" stroke={colors.heroText} strokeWidth="1.5" opacity="0.3" />
+                </svg>
+                {/* Envelope flap */}
+                <svg
+                  className={`intro-flap${envelopeOpened ? ' opened' : ''}`}
+                  viewBox="0 0 120 45"
+                  width="120"
+                  height="45"
+                  style={{ position: 'absolute', top: 0, left: 0 }}
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M0 0L60 45L120 0Z" fill={colors.heroText} opacity="0.2" />
+                </svg>
+              </div>
+            </div>
+
+            <div className="intro-hint">Tap to open</div>
           </div>
-        </div>
-
-        <div className="intro-hint">Tap to open</div>
-      </div>
+        </>
+      )}
     </>
   );
 }
