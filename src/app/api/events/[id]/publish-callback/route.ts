@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -21,7 +21,7 @@ export async function GET(
     return NextResponse.redirect(new URL(`/dashboard/${id}`, request.url));
   }
 
-  const supabase = await createClient();
+  const serviceClient = createServiceClient();
 
   const updateData: Record<string, unknown> = {
     status: 'published',
@@ -33,7 +33,7 @@ export async function GET(
     updateData.theme_premium_paid = true;
   }
 
-  await supabase
+  await serviceClient
     .from('events')
     .update(updateData)
     .eq('id', id);

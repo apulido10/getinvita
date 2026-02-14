@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { getEventTypeConfig } from '@/lib/constants';
 import { getThemeById } from '@/lib/themes';
 import Stripe from 'stripe';
@@ -21,7 +21,9 @@ export async function POST(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: event, error } = await supabase
+  const serviceClient = createServiceClient();
+
+  const { data: event, error } = await serviceClient
     .from('events')
     .select('*')
     .eq('id', id)
@@ -87,7 +89,7 @@ export async function POST(
       },
     });
 
-    await supabase
+    await serviceClient
       .from('events')
       .update({ stripe_checkout_session_id: session.id })
       .eq('id', id);

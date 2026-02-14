@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { getThemeById } from '@/lib/themes';
 import Stripe from 'stripe';
 
@@ -28,7 +28,9 @@ export async function POST(
     return NextResponse.json({ error: 'Not a premium theme' }, { status: 400 });
   }
 
-  const { data: event } = await supabase
+  const serviceClient = createServiceClient();
+
+  const { data: event } = await serviceClient
     .from('events')
     .select('*')
     .eq('id', id)
@@ -94,9 +96,9 @@ export async function GET(
     return NextResponse.redirect(new URL(`/dashboard/${id}`, request.url));
   }
 
-  const supabase = await createClient();
+  const serviceClient = createServiceClient();
 
-  await supabase
+  await serviceClient
     .from('events')
     .update({
       theme_id: themeId,

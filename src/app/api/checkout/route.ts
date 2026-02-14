@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { getEventTypeConfig } from '@/lib/constants';
 import { nanoid } from 'nanoid';
 
@@ -13,6 +13,8 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const serviceClient = createServiceClient();
 
     const body = await request.json();
     const { event_type, event_name, event_date } = body;
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest) {
     const slug = `${event_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${nanoid(6)}`;
     const access_token = nanoid(32);
 
-    const { data: event, error: dbError } = await supabase
+    const { data: event, error: dbError } = await serviceClient
       .from('events')
       .insert({
         slug,
