@@ -7,9 +7,10 @@ import { Play, Pause, SkipForward, Volume2, VolumeX, Music } from 'lucide-react'
 interface Props {
   tracks: EventMusic[];
   supabaseUrl: string;
+  hasSpotify?: boolean;
 }
 
-export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
+export default function MusicPlayer({ tracks, supabaseUrl, hasSpotify }: Props) {
   // Only play uploaded tracks — Spotify tracks are handled by SpotifyEmbed
   const uploadTracks = tracks.filter((t) => t.source !== 'spotify');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -77,7 +78,7 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
   }
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 bg-black/80 backdrop-blur-xl text-white rounded-full px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 shadow-2xl max-w-[calc(100vw-2rem)] sm:max-w-sm">
+    <div className={`fixed left-1/2 -translate-x-1/2 z-40 bg-black/80 backdrop-blur-xl text-white rounded-full px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 shadow-2xl max-w-[calc(100vw-2rem)] sm:max-w-sm ${hasSpotify ? 'bottom-48' : 'bottom-4'}`}>
       <audio
         ref={audioRef}
         onEnded={nextTrack}

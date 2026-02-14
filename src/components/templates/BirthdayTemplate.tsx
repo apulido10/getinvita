@@ -21,8 +21,8 @@ function getDetail(details: FullEventData['details'], key: string): string {
 }
 
 function formatDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const normalized = dateStr.length === 10 ? `${dateStr}T12:00:00` : dateStr;
+  return new Date(normalized).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function formatTime(timeStr: string): string {
@@ -182,8 +182,12 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </div>
         </section>
 
-        {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
-        {(() => { const st = music.find((t) => t.source === 'spotify'); return st?.spotify_track_id ? <SpotifyEmbed trackId={st.spotify_track_id} /> : null; })()}
+        {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (
+          <>
+            {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} hasSpotify={!!spotifyTrack} />}
+            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} />}
+          </>
+        ); })()}
       </div>
     );
   }
@@ -283,8 +287,12 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </div>
         </section>
 
-        {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
-        {(() => { const st = music.find((t) => t.source === 'spotify'); return st?.spotify_track_id ? <SpotifyEmbed trackId={st.spotify_track_id} /> : null; })()}
+        {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (
+          <>
+            {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} hasSpotify={!!spotifyTrack} />}
+            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} />}
+          </>
+        ); })()}
       </div>
     );
   }
@@ -412,8 +420,12 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       </section>
 
       {/* Music Player */}
-      {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
-        {(() => { const st = music.find((t) => t.source === 'spotify'); return st?.spotify_track_id ? <SpotifyEmbed trackId={st.spotify_track_id} /> : null; })()}
+      {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (
+          <>
+            {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} hasSpotify={!!spotifyTrack} />}
+            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} />}
+          </>
+        ); })()}
     </div>
   );
 }
