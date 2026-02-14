@@ -9,7 +9,20 @@ import SpotifyEmbed from '@/components/shared/SpotifyEmbed';
 import RSVPForm from '@/components/shared/RSVPForm';
 import AddressLink from '@/components/shared/AddressLink';
 import { CARD_EVENT_TYPES } from '@/lib/constants';
-import { Cake, MapPin, Clock, PartyPopper } from 'lucide-react';
+import { EventType } from '@/types';
+import { Cake, Heart, Gift, MapPin, Clock, PartyPopper } from 'lucide-react';
+
+const cardEventLabels: Partial<Record<EventType, string>> = {
+  valentines: 'Happy Valentine\'s Day',
+  mothers_day: 'Happy Mother\'s Day',
+  fathers_day: 'Happy Father\'s Day',
+};
+
+const cardEventIcons: Partial<Record<EventType, React.ElementType>> = {
+  valentines: Heart,
+  mothers_day: Heart,
+  fathers_day: Gift,
+};
 
 interface Props {
   data: FullEventData;
@@ -35,7 +48,7 @@ function formatTime(timeStr: string): string {
 
 export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }: Props) {
   const { event, details, photos, music } = data;
-  const theme = themeProp ?? (event.theme_id ? getThemeById(event.theme_id) : undefined) ?? getDefaultTheme('birthday');
+  const theme = themeProp ?? (event.theme_id ? getThemeById(event.theme_id) : undefined) ?? getDefaultTheme(event.event_type);
   const { colors, layout } = theme;
 
   const heroPhoto = photos.find((p) => p.is_hero);
@@ -60,8 +73,12 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
   const dressCode = getDetail(details, 'dress_code');
 
   const isCardEvent = CARD_EVENT_TYPES.includes(event.event_type);
-  const hasChurch = churchName || churchAddress || churchTime;
-  const hasTimes = partyTime || receptionStart || dinnerStart;
+  const heroSubtitle = isCardEvent ? cardEventLabels[event.event_type] : (turningAge ? `Turning ${turningAge}!` : 'Birthday Celebration');
+  const HeroIcon = isCardEvent ? (cardEventIcons[event.event_type] ?? Heart) : PartyPopper;
+  const MessageIcon = isCardEvent ? (cardEventIcons[event.event_type] ?? Heart) : Cake;
+  const hasChurch = !isCardEvent && (churchName || churchAddress || churchTime);
+  const hasTimes = !isCardEvent && (partyTime || receptionStart || dinnerStart);
+  const hasPartyDetails = !isCardEvent && (venueName || hasTimes || partyTheme || dressCode);
 
   // ── Split Layout ──
   if (layout === 'split') {
@@ -73,14 +90,14 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
             style={{ backgroundColor: colors.hero }}
           >
             <div className="text-center" style={{ color: colors.heroText }}>
-              <PartyPopper className="h-12 w-12 mx-auto mb-6" style={{ color: colors.accent }} />
-              {turningAge && (
+              <HeroIcon className="h-12 w-12 mx-auto mb-6" style={{ color: colors.accent }} />
+              {!isCardEvent && turningAge && (
                 <div className="inline-flex items-center justify-center w-24 h-24 rounded-full border-4 mb-6" style={{ borderColor: colors.accent }}>
                   <span className="text-4xl font-bold" style={{ color: colors.accent }}>{turningAge}</span>
                 </div>
               )}
               <p className="uppercase tracking-[0.2em] text-xs sm:text-sm mb-4 opacity-80">
-                {turningAge ? `Turning ${turningAge}!` : 'Birthday Celebration'}
+                {heroSubtitle}
               </p>
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight">{birthdayPerson}</h1>
               {event.event_date && (
@@ -96,7 +113,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           />
         </section>
 
-        {event.event_date && (
+        {!isCardEvent && event.event_date && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
               <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>Party Starts In</p>
@@ -108,7 +125,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {specialMessage && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-              <Cake className="h-8 w-8 mx-auto mb-4" style={{ color: colors.accent }} />
+              <MessageIcon className="h-8 w-8 mx-auto mb-4" style={{ color: colors.accent }} />
               <p className="text-lg leading-relaxed" style={{ color: colors.textSecondary }}>{specialMessage}</p>
             </div>
           </section>
@@ -125,6 +142,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </section>
         )}
 
+        {hasPartyDetails && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Party Details</h2>
@@ -166,6 +184,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
             </div>
           </div>
         </section>
+        )}
 
         {photos.length > 0 && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
@@ -202,10 +221,10 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       <div className="min-h-screen" style={{ backgroundColor: colors.background, color: colors.text }}>
         <section className="py-24 sm:py-40 text-center px-6">
           <div className="max-w-xl mx-auto">
-            <PartyPopper className="h-10 w-10 mx-auto mb-6" style={{ color: colors.accent }} />
-            {turningAge && <p className="text-6xl font-bold mb-4" style={{ color: colors.accent }}>{turningAge}</p>}
+            <HeroIcon className="h-10 w-10 mx-auto mb-6" style={{ color: colors.accent }} />
+            {!isCardEvent && turningAge && <p className="text-6xl font-bold mb-4" style={{ color: colors.accent }}>{turningAge}</p>}
             <p className="uppercase tracking-[0.2em] text-xs mb-4" style={{ color: colors.textSecondary }}>
-              {turningAge ? `Turning ${turningAge}!` : 'Birthday Celebration'}
+              {heroSubtitle}
             </p>
             <h1 className="text-4xl sm:text-6xl font-bold leading-tight">{birthdayPerson}</h1>
             {event.event_date && (
@@ -223,7 +242,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </section>
         )}
 
-        {event.event_date && (
+        {!isCardEvent && event.event_date && (
           <section className="py-12 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
               <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>Party Starts In</p>
@@ -235,6 +254,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {specialMessage && (
           <section className="py-12 sm:py-16">
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
+              <MessageIcon className="h-8 w-8 mx-auto mb-4" style={{ color: colors.accent }} />
               <p className="text-lg leading-relaxed" style={{ color: colors.textSecondary }}>{specialMessage}</p>
             </div>
           </section>
@@ -251,6 +271,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </section>
         )}
 
+        {hasPartyDetails && (
         <section className="py-16 sm:py-24" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-xl mx-auto px-4 sm:px-6 text-center space-y-8">
             <h2 className="text-2xl sm:text-3xl font-bold mb-10">Party Details</h2>
@@ -273,6 +294,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
             )}
           </div>
         </section>
+        )}
 
         {photos.length > 0 && (
           <section className="py-16 sm:py-24">
@@ -313,14 +335,14 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       >
         <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${colors.background}4D, ${colors.surface}33, ${colors.background}66)` }} />
         <div className="relative z-10 max-w-2xl" style={{ color: heroUrl ? '#ffffff' : colors.heroText }}>
-          <PartyPopper className="h-12 w-12 mx-auto mb-6" style={{ color: colors.accent }} />
-          {turningAge && (
+          <HeroIcon className="h-12 w-12 mx-auto mb-6" style={{ color: colors.accent }} />
+          {!isCardEvent && turningAge && (
             <div className="inline-flex items-center justify-center w-24 h-24 rounded-full border-4 mb-6" style={{ borderColor: colors.accent }}>
               <span className="text-4xl font-bold" style={{ color: colors.accent }}>{turningAge}</span>
             </div>
           )}
           <p className="uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-4" style={{ color: colors.textSecondary }}>
-            {turningAge ? `Turning ${turningAge}!` : 'Birthday Celebration'}
+            {heroSubtitle}
           </p>
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold leading-tight">{birthdayPerson}</h1>
           {event.event_date && (
@@ -332,7 +354,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       </section>
 
       {/* Countdown */}
-      {event.event_date && (
+      {!isCardEvent && event.event_date && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>Party Starts In</p>
@@ -345,7 +367,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       {specialMessage && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <Cake className="h-8 w-8 mx-auto mb-4" style={{ color: colors.accent }} />
+            <MessageIcon className="h-8 w-8 mx-auto mb-4" style={{ color: colors.accent }} />
             <p className="text-lg leading-relaxed" style={{ color: colors.textSecondary }}>{specialMessage}</p>
           </div>
         </section>
@@ -364,6 +386,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       )}
 
       {/* Party Details */}
+      {hasPartyDetails && (
       <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Party Details</h2>
@@ -405,6 +428,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </div>
         </div>
       </section>
+      )}
 
       {/* Photo Gallery */}
       {photos.length > 0 && (
