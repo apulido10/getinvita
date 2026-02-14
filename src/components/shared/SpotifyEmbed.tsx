@@ -109,7 +109,7 @@ export default function SpotifyEmbed({ trackId }: Props) {
   }, [ready]);
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-2rem)] max-w-[280px] opacity-70 hover:opacity-100 transition-opacity scale-90">
       <div
         ref={containerRef}
         className="rounded-xl shadow-2xl overflow-hidden"
