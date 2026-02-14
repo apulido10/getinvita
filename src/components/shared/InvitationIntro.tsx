@@ -48,11 +48,13 @@ export default function InvitationIntro({
   children,
 }: InvitationIntroProps) {
   const storageKey = `intro-seen-${eventId}`;
+  const [mounted, setMounted] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [envelopeOpened, setEnvelopeOpened] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     try {
       if (!sessionStorage.getItem(storageKey)) {
         setShowIntro(true);
@@ -76,7 +78,8 @@ export default function InvitationIntro({
     }, 1100);
   };
 
-  if (!showIntro) return <>{children}</>;
+  // Before mount or if intro already seen, just render children
+  if (!mounted || !showIntro) return <>{children}</>;
 
   return (
     <>
