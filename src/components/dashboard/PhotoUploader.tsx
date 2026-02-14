@@ -12,25 +12,67 @@ interface Props {
 
 export default function PhotoUploader({ event, photos, onUpdate }: Props) {
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = useCallback(async (files: FileList) => {
     setUploading(true);
+    setError(null);
     try {
       for (const file of Array.from(files)) {
-        if (!file.type.startsWith('image/')) continue;
-        const formData = new FormData();
-        formData.append('file', file);
+        if (!file.type.startsWith('image/')) {
+          setError(`"${file.name}" is not an image file`);
+          continue;
+        }
+
+        // Step 1: Get a signed upload URL from our API
         const res = await fetch(`/api/events/${event.id}/photos`, {
           method: 'POST',
-          body: formData,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName: file.name,
+            contentType: file.type,
+          }),
         });
-        if (res.ok) {
-          const data = await res.json();
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({ error: 'Upload failed' }));
+          setError(data.error || `Upload failed (${res.status})`);
+          continue;
+        }
+
+        const { signedUrl } = await res.json();
+
+        // Step 2: Upload the file directly to Supabase storage using the signed URL
+        const uploadRes = await fetch(signedUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': file.type || 'image/jpeg',
+          },
+          body: file,
+        });
+
+        if (!uploadRes.ok) {
+          setError(`Storage upload failed (${uploadRes.status})`);
+          continue;
+        }
+
+        // Step 3: Get updated photos list
+        const confirmRes = await fetch(`/api/events/${event.id}/photos`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh: true }),
+        });
+
+        if (confirmRes.ok) {
+          const data = await confirmRes.json();
           onUpdate(data.photos);
         }
       }
+    } catch (err) {
+      setError('Network error — check your connection and try again');
+      console.error('Photo upload error:', err);
     } finally {
       setUploading(false);
     }
@@ -101,6 +143,12 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
           </div>
         )}
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
       {/* Photo Grid */}
       {photos.length > 0 ? (

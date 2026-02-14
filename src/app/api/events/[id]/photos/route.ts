@@ -11,6 +11,7 @@ async function getPhotos(supabase: ReturnType<typeof createServiceClient>, event
   return data || [];
 }
 
+// POST: Create a signed upload URL + save the DB record (client uploads directly to Supabase storage)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -27,37 +28,46 @@ export async function POST(
   }
 
   const serviceClient = createServiceClient();
+  const body = await request.json();
+  const { fileName, contentType } = body;
 
-  const formData = await request.formData();
-  const file = formData.get('file') as File;
-
-  if (!file) {
-    return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+  if (!fileName) {
+    return NextResponse.json({ error: 'No fileName provided' }, { status: 400 });
   }
 
-  const ext = file.name.split('.').pop();
+  const ext = fileName.split('.').pop();
   const storagePath = `${id}/${nanoid()}.${ext}`;
 
-  const { error: uploadError } = await serviceClient.storage
+  // Create a signed upload URL so the client can upload directly to Supabase storage
+  const { data: signedData, error: signedError } = await serviceClient.storage
     .from('event-photos')
-    .upload(storagePath, file);
+    .createSignedUploadUrl(storagePath);
 
-  if (uploadError) {
-    console.error('Upload error:', uploadError);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+  if (signedError || !signedData) {
+    console.error('Signed URL error:', signedError);
+    return NextResponse.json({ error: `Failed to create upload URL: ${signedError?.message}` }, { status: 500 });
   }
 
   const existingPhotos = await getPhotos(serviceClient, id);
 
-  await serviceClient.from('event_photos').insert({
+  const { error: insertError } = await serviceClient.from('event_photos').insert({
     event_id: id,
     storage_path: storagePath,
     display_order: existingPhotos.length,
     is_hero: existingPhotos.length === 0,
   });
 
-  const photos = await getPhotos(serviceClient, id);
-  return NextResponse.json({ photos });
+  if (insertError) {
+    console.error('Photo insert error:', insertError);
+    return NextResponse.json({ error: `Save failed: ${insertError.message}` }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    signedUrl: signedData.signedUrl,
+    token: signedData.token,
+    storagePath,
+    contentType: contentType || 'image/jpeg',
+  });
 }
 
 export async function PUT(
@@ -79,7 +89,7 @@ export async function PUT(
   const body = await request.json();
   const { photoId, is_hero } = body;
 
-  if (is_hero) {
+  if (is_hero && photoId) {
     await serviceClient
       .from('event_photos')
       .update({ is_hero: false })

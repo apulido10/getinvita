@@ -12,27 +12,67 @@ interface Props {
 
 export default function MusicUploader({ event, music, onUpdate }: Props) {
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleUpload(files: FileList) {
     setUploading(true);
+    setError(null);
     try {
       for (const file of Array.from(files)) {
-        if (!file.type.startsWith('audio/')) continue;
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('song_title', file.name.replace(/\.[^/.]+$/, ''));
+        if (!file.type.startsWith('audio/')) {
+          setError(`"${file.name}" is not an audio file`);
+          continue;
+        }
+
+        // Step 1: Get a signed upload URL from our API
         const res = await fetch(`/api/events/${event.id}/music`, {
           method: 'POST',
-          body: formData,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName: file.name,
+            songTitle: file.name.replace(/\.[^/.]+$/, ''),
+            contentType: file.type,
+          }),
         });
-        if (res.ok) {
-          const data = await res.json();
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({ error: 'Upload failed' }));
+          setError(data.error || `Upload failed (${res.status})`);
+          continue;
+        }
+
+        const { signedUrl, token } = await res.json();
+
+        // Step 2: Upload the file directly to Supabase storage using the signed URL
+        const uploadRes = await fetch(signedUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': file.type || 'audio/mpeg',
+          },
+          body: file,
+        });
+
+        if (!uploadRes.ok) {
+          setError(`Storage upload failed (${uploadRes.status})`);
+          continue;
+        }
+
+        // Step 3: Confirm upload and get updated music list
+        const confirmRes = await fetch(`/api/events/${event.id}/music`, {
+          method: 'PUT',
+        });
+
+        if (confirmRes.ok) {
+          const data = await confirmRes.json();
           onUpdate(data.music);
         }
       }
+    } catch (err) {
+      setError('Network error — check your connection and try again');
+      console.error('Music upload error:', err);
     } finally {
       setUploading(false);
     }
@@ -98,6 +138,12 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
           </div>
         )}
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
       {/* Track List */}
       {music.length > 0 ? (

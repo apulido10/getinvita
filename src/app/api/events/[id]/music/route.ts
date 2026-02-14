@@ -11,6 +11,7 @@ async function getMusic(supabase: ReturnType<typeof createServiceClient>, eventI
   return data || [];
 }
 
+// POST: Create a signed upload URL + save the DB record (client uploads directly to Supabase storage)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -27,33 +28,63 @@ export async function POST(
   }
 
   const serviceClient = createServiceClient();
+  const body = await request.json();
+  const { fileName, songTitle, contentType } = body;
 
-  const formData = await request.formData();
-  const file = formData.get('file') as File;
-  const songTitle = formData.get('song_title') as string;
-
-  if (!file) {
-    return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+  if (!fileName) {
+    return NextResponse.json({ error: 'No fileName provided' }, { status: 400 });
   }
 
-  const ext = file.name.split('.').pop();
+  const ext = fileName.split('.').pop();
   const storagePath = `${id}/${nanoid()}.${ext}`;
 
-  const { error: uploadError } = await serviceClient.storage
+  // Create a signed upload URL so the client can upload directly to Supabase storage
+  const { data: signedData, error: signedError } = await serviceClient.storage
     .from('event-music')
-    .upload(storagePath, file);
+    .createSignedUploadUrl(storagePath);
 
-  if (uploadError) {
-    console.error('Upload error:', uploadError);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+  if (signedError || !signedData) {
+    console.error('Signed URL error:', signedError);
+    return NextResponse.json({ error: `Failed to create upload URL: ${signedError?.message}` }, { status: 500 });
   }
 
-  await serviceClient.from('event_music').insert({
+  // Save the DB record now (the file will be uploaded by the client)
+  const { error: insertError } = await serviceClient.from('event_music').insert({
     event_id: id,
     storage_path: storagePath,
-    song_title: songTitle || file.name,
+    song_title: songTitle || fileName,
   });
 
+  if (insertError) {
+    console.error('Music insert error:', insertError);
+    return NextResponse.json({ error: `Save failed: ${insertError.message}` }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    signedUrl: signedData.signedUrl,
+    token: signedData.token,
+    storagePath,
+    contentType: contentType || 'audio/mpeg',
+  });
+}
+
+// PUT: Confirm upload complete — return updated music list
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const serviceClient = createServiceClient();
   const music = await getMusic(serviceClient, id);
   return NextResponse.json({ music });
 }
