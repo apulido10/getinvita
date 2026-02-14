@@ -29,16 +29,25 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
     : null;
 
   const honoreeName = getDetail(details, 'honoree_name') || event.event_name;
+  const churchName = getDetail(details, 'church_name');
+  const churchAddress = getDetail(details, 'church_address');
+  const churchTime = getDetail(details, 'church_time');
   const venueName = getDetail(details, 'venue_name');
   const venueAddress = getDetail(details, 'venue_address');
   const ceremonyTime = getDetail(details, 'ceremony_time');
-  const receptionTime = getDetail(details, 'reception_time');
+  const receptionStart = getDetail(details, 'reception_start');
+  const receptionEnd = getDetail(details, 'reception_end');
+  const dinnerStart = getDetail(details, 'dinner_start');
+  const dinnerEnd = getDetail(details, 'dinner_end');
   const quinceTheme = getDetail(details, 'theme');
   const courtOfHonor = getDetail(details, 'court_of_honor');
   const specialMessage = getDetail(details, 'special_message');
   const dressCode = getDetail(details, 'dress_code');
   const parentNames = getDetail(details, 'parent_names');
   const godparents = getDetail(details, 'godparents');
+
+  const hasChurch = churchName || churchAddress || churchTime;
+  const hasTimes = ceremonyTime || receptionStart || dinnerStart;
 
   // ── Split Layout ──
   if (layout === 'split') {
@@ -82,33 +91,48 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
           </section>
         )}
 
-        <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
+        {hasChurch && (
+          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-8">Church Ceremony</h2>
+              <div className="rounded-2xl p-6" style={{ backgroundColor: colors.background }}>
+                <MapPin className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
+                {churchName && <h3 className="font-bold text-lg">{churchName}</h3>}
+                {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{churchAddress}</p>}
+                {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {churchTime}</p>}
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Celebration Details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {venueName && (
-                <div className="rounded-2xl p-6" style={{ backgroundColor: colors.background }}>
+                <div className="rounded-2xl p-6" style={{ backgroundColor: colors.surface }}>
                   <MapPin className="h-6 w-6 mb-3" style={{ color: colors.accent }} />
                   <h3 className="font-bold text-lg">{venueName}</h3>
                   {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{venueAddress}</p>}
                 </div>
               )}
-              {(ceremonyTime || receptionTime) && (
-                <div className="rounded-2xl p-6" style={{ backgroundColor: colors.background }}>
+              {hasTimes && (
+                <div className="rounded-2xl p-6" style={{ backgroundColor: colors.surface }}>
                   <Clock className="h-6 w-6 mb-3" style={{ color: colors.accent }} />
                   {ceremonyTime && <p className="text-sm"><strong>Ceremony:</strong> {ceremonyTime}</p>}
-                  {receptionTime && <p className="text-sm mt-1"><strong>Reception:</strong> {receptionTime}</p>}
+                  {receptionStart && <p className="text-sm mt-1"><strong>Reception:</strong> {receptionStart}{receptionEnd ? ` – ${receptionEnd}` : ''}</p>}
+                  {dinnerStart && <p className="text-sm mt-1"><strong>Dinner:</strong> {dinnerStart}{dinnerEnd ? ` – ${dinnerEnd}` : ''}</p>}
                 </div>
               )}
               {quinceTheme && (
-                <div className="rounded-2xl p-6" style={{ backgroundColor: colors.background }}>
+                <div className="rounded-2xl p-6" style={{ backgroundColor: colors.surface }}>
                   <Sparkles className="h-6 w-6 mb-3" style={{ color: colors.accent }} />
                   <h3 className="font-bold">Theme</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{quinceTheme}</p>
                 </div>
               )}
               {dressCode && (
-                <div className="rounded-2xl p-6" style={{ backgroundColor: colors.background }}>
+                <div className="rounded-2xl p-6" style={{ backgroundColor: colors.surface }}>
                   <Crown className="h-6 w-6 mb-3" style={{ color: colors.accent }} />
                   <h3 className="font-bold">Dress Code</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{dressCode}</p>
@@ -119,7 +143,7 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
         </section>
 
         {courtOfHonor && (
-          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
+          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl sm:text-3xl font-bold mb-6">Court of Honor</h2>
               <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{courtOfHonor}</p>
@@ -128,7 +152,7 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
         )}
 
         {godparents && (
-          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
+          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl sm:text-3xl font-bold mb-6">Padrinos</h2>
               <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
@@ -200,6 +224,17 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
           </section>
         )}
 
+        {hasChurch && (
+          <section className="py-16 sm:py-20" style={{ backgroundColor: colors.surface }}>
+            <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-2xl font-bold mb-6">Church Ceremony</h2>
+              {churchName && <h3 className="font-bold text-lg">{churchName}</h3>}
+              {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{churchAddress}</p>}
+              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {churchTime}</p>}
+            </div>
+          </section>
+        )}
+
         <section className="py-16 sm:py-24" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-xl mx-auto px-4 sm:px-6 text-center space-y-8">
             <h2 className="text-2xl sm:text-3xl font-bold mb-10">Details</h2>
@@ -209,10 +244,11 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
                 {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{venueAddress}</p>}
               </div>
             )}
-            {(ceremonyTime || receptionTime) && (
+            {hasTimes && (
               <div>
                 {ceremonyTime && <p className="text-sm"><strong>Ceremony:</strong> {ceremonyTime}</p>}
-                {receptionTime && <p className="text-sm mt-1"><strong>Reception:</strong> {receptionTime}</p>}
+                {receptionStart && <p className="text-sm mt-1"><strong>Reception:</strong> {receptionStart}{receptionEnd ? ` – ${receptionEnd}` : ''}</p>}
+                {dinnerStart && <p className="text-sm mt-1"><strong>Dinner:</strong> {dinnerStart}{dinnerEnd ? ` – ${dinnerEnd}` : ''}</p>}
               </div>
             )}
             {dressCode && (
@@ -306,6 +342,21 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
         </section>
       )}
 
+      {/* Church */}
+      {hasChurch && (
+        <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-8">Church Ceremony</h2>
+            <div className="backdrop-blur-sm rounded-2xl p-6" style={{ backgroundColor: colors.surface }}>
+              <MapPin className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
+              {churchName && <h3 className="font-bold text-lg">{churchName}</h3>}
+              {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{churchAddress}</p>}
+              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {churchTime}</p>}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Details */}
       <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -318,11 +369,12 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
                 {venueAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{venueAddress}</p>}
               </div>
             )}
-            {(ceremonyTime || receptionTime) && (
+            {hasTimes && (
               <div className="backdrop-blur-sm rounded-2xl p-6" style={{ backgroundColor: colors.background }}>
                 <Clock className="h-6 w-6 mb-3" style={{ color: colors.accent }} />
                 {ceremonyTime && <p className="text-sm"><strong>Ceremony:</strong> {ceremonyTime}</p>}
-                {receptionTime && <p className="text-sm mt-1"><strong>Reception:</strong> {receptionTime}</p>}
+                {receptionStart && <p className="text-sm mt-1"><strong>Reception:</strong> {receptionStart}{receptionEnd ? ` – ${receptionEnd}` : ''}</p>}
+                {dinnerStart && <p className="text-sm mt-1"><strong>Dinner:</strong> {dinnerStart}{dinnerEnd ? ` – ${dinnerEnd}` : ''}</p>}
               </div>
             )}
             {quinceTheme && (
@@ -349,6 +401,16 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6">Court of Honor</h2>
             <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{courtOfHonor}</p>
+          </div>
+        </section>
+      )}
+
+      {/* Godparents */}
+      {godparents && (
+        <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6">Padrinos</h2>
+            <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
           </div>
         </section>
       )}
