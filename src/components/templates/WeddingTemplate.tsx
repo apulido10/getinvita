@@ -38,6 +38,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
   const registryUrl = getDetail(details, 'registry_url');
   const dressCode = getDetail(details, 'dress_code');
   const accommodations = getDetail(details, 'accommodations');
+  const godparents = getDetail(details, 'godparents');
 
   const title = partner1 && partner2 ? `${partner1} & ${partner2}` : event.event_name;
 
@@ -131,6 +132,15 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
                 style={{ backgroundColor: colors.accent, color: colors.accentText }}>
                 View Registry <ExternalLink className="h-4 w-4" />
               </a>
+            </div>
+          </section>
+        )}
+
+        {godparents && (
+          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
+            <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>Padrinos</h2>
+              <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
             </div>
           </section>
         )}
@@ -233,6 +243,15 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
               style={{ backgroundColor: colors.accent, color: colors.accentText }}>
               View Registry <ExternalLink className="h-4 w-4" />
             </a>
+          </section>
+        )}
+
+        {godparents && (
+          <section className="py-12 sm:py-16" style={{ backgroundColor: colors.surface }}>
+            <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-2xl font-serif italic mb-6" style={{ color: colors.text }}>Padrinos</h2>
+              <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
+            </div>
           </section>
         )}
 

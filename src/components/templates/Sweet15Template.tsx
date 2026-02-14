@@ -38,6 +38,7 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
   const specialMessage = getDetail(details, 'special_message');
   const dressCode = getDetail(details, 'dress_code');
   const parentNames = getDetail(details, 'parent_names');
+  const godparents = getDetail(details, 'godparents');
 
   // ── Split Layout ──
   if (layout === 'split') {
@@ -122,6 +123,15 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl sm:text-3xl font-bold mb-6">Court of Honor</h2>
               <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{courtOfHonor}</p>
+            </div>
+          </section>
+        )}
+
+        {godparents && (
+          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
+            <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-6">Padrinos</h2>
+              <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
             </div>
           </section>
         )}
@@ -219,6 +229,15 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl font-bold mb-6">Court of Honor</h2>
               <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{courtOfHonor}</p>
+            </div>
+          </section>
+        )}
+
+        {godparents && (
+          <section className="py-16 sm:py-20" style={{ backgroundColor: colors.surface }}>
+            <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-2xl font-bold mb-6">Padrinos</h2>
+              <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
             </div>
           </section>
         )}
