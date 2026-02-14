@@ -48,7 +48,7 @@ export default function SpotifyEmbed({ trackId }: Props) {
         {
           uri: `spotify:track:${trackId}`,
           width: '100%',
-          height: 80,
+          height: 30,
         },
         (controller) => {
           controllerRef.current = controller;
