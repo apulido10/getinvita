@@ -107,7 +107,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
               <p className="text-sm text-gray-500 mt-0.5">{config?.label}</p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               {isPublished ? (
                 <>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-3 py-1.5 text-xs font-semibold text-green-700">
@@ -208,17 +208,36 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
           />
         )}
         {activeStep === 'theme' && (
-          <ThemePicker
-            event={data.event}
-            data={data}
-            supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
-            onThemeChange={(themeId) =>
-              setData((prev) => ({
-                ...prev,
-                event: { ...prev.event, theme_id: themeId },
-              }))
-            }
-          />
+          <>
+            <ThemePicker
+              event={data.event}
+              data={data}
+              supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
+              onThemeChange={(themeId) =>
+                setData((prev) => ({
+                  ...prev,
+                  event: { ...prev.event, theme_id: themeId },
+                }))
+              }
+            />
+            {!isPublished && (
+              <div className="mt-6 text-center">
+                <button
+                  onClick={handlePublish}
+                  disabled={publishing}
+                  className="inline-flex items-center gap-2 rounded-lg bg-purple-600 text-white px-6 py-3 text-sm font-semibold hover:bg-purple-700 disabled:opacity-50 transition-colors"
+                >
+                  <Globe className="h-4 w-4" />
+                  {publishing
+                    ? 'Redirecting...'
+                    : hasPremiumAddon
+                    ? 'Pay & Publish (+$50 theme)'
+                    : 'Pay & Publish'}
+                </button>
+                <p className="text-xs text-gray-400 mt-2">Ready? Hit publish to take your event live.</p>
+              </div>
+            )}
+          </>
         )}
         {activeStep === 'rsvps' && (
           <div className="bg-white rounded-xl border p-6">
