@@ -272,6 +272,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                       <th className="pb-2 font-semibold text-gray-900">Guest</th>
                       <th className="pb-2 font-semibold text-gray-900">Attending</th>
                       <th className="pb-2 font-semibold text-gray-900">Guests</th>
+                      <th className="pb-2 font-semibold text-gray-900">Song Request</th>
                       <th className="pb-2 font-semibold text-gray-900">Message</th>
                     </tr>
                   </thead>
@@ -291,6 +292,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                           </span>
                         </td>
                         <td className="py-2 text-gray-600">{rsvp.guest_count}</td>
+                        <td className="py-2 text-gray-600">{rsvp.song_request || '—'}</td>
                         <td className="py-2 text-gray-600">{rsvp.message || '—'}</td>
                       </tr>
                     ))}

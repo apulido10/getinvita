@@ -13,6 +13,7 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
   const [attending, setAttending] = useState(true);
   const [guestCount, setGuestCount] = useState(1);
   const [message, setMessage] = useState('');
+  const [songRequest, setSongRequest] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,6 +35,7 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
           attending,
           guest_count: attending ? guestCount : 0,
           message: message || null,
+          song_request: songRequest || null,
         }),
       });
 
@@ -115,6 +117,18 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
               <option key={n} value={n} className="text-gray-900">{n}</option>
             ))}
           </select>
+        </div>
+      )}
+
+      {attending && (
+        <div>
+          <input
+            type="text"
+            value={songRequest}
+            onChange={(e) => setSongRequest(e.target.value)}
+            placeholder="Song request (optional)"
+            className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm placeholder:text-white/50 focus:border-white/40 focus:ring-1 focus:ring-white/40 outline-none backdrop-blur-sm"
+          />
         </div>
       )}
 

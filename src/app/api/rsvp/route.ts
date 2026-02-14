@@ -4,7 +4,7 @@ import { createServiceClient } from '@/lib/supabase/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { event_id, guest_name, attending, guest_count, message } = body;
+    const { event_id, guest_name, attending, guest_count, message, song_request } = body;
 
     if (!event_id || !guest_name) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       attending: attending ?? true,
       guest_count: guest_count ?? 1,
       message: message || null,
+      song_request: song_request || null,
     });
 
     if (error) {
