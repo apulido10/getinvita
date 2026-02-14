@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
 
-type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
-
-async function getMusic(supabase: SupabaseClient, eventId: string) {
+async function getMusic(supabase: ReturnType<typeof createServiceClient>, eventId: string) {
   const { data } = await supabase
     .from('event_music')
     .select('*')
@@ -28,6 +26,8 @@ export async function POST(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const serviceClient = createServiceClient();
+
   const formData = await request.formData();
   const file = formData.get('file') as File;
   const songTitle = formData.get('song_title') as string;
@@ -39,7 +39,7 @@ export async function POST(
   const ext = file.name.split('.').pop();
   const storagePath = `${id}/${nanoid()}.${ext}`;
 
-  const { error: uploadError } = await supabase.storage
+  const { error: uploadError } = await serviceClient.storage
     .from('event-music')
     .upload(storagePath, file);
 
@@ -48,13 +48,13 @@ export async function POST(
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 
-  await supabase.from('event_music').insert({
+  await serviceClient.from('event_music').insert({
     event_id: id,
     storage_path: storagePath,
     song_title: songTitle || file.name,
   });
 
-  const music = await getMusic(supabase, id);
+  const music = await getMusic(serviceClient, id);
   return NextResponse.json({ music });
 }
 
@@ -73,23 +73,24 @@ export async function DELETE(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const serviceClient = createServiceClient();
   const musicId = request.nextUrl.searchParams.get('musicId');
 
   if (!musicId) {
     return NextResponse.json({ error: 'Missing musicId' }, { status: 400 });
   }
 
-  const { data: track } = await supabase
+  const { data: track } = await serviceClient
     .from('event_music')
     .select('storage_path')
     .eq('id', musicId)
     .single();
 
   if (track) {
-    await supabase.storage.from('event-music').remove([track.storage_path]);
-    await supabase.from('event_music').delete().eq('id', musicId);
+    await serviceClient.storage.from('event-music').remove([track.storage_path]);
+    await serviceClient.from('event_music').delete().eq('id', musicId);
   }
 
-  const music = await getMusic(supabase, id);
+  const music = await getMusic(serviceClient, id);
   return NextResponse.json({ music });
 }
