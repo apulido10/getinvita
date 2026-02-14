@@ -210,6 +210,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
             event={data.event}
             details={data.details}
             onUpdate={(details) => setData((prev) => ({ ...prev, details }))}
+            onEventNameChange={(name) => setData((prev) => ({ ...prev, event: { ...prev.event, event_name: name } }))}
           />
         )}
         {activeStep === 'photos' && (

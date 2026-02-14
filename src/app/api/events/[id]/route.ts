@@ -19,7 +19,7 @@ export async function PUT(
 
   const serviceClient = createServiceClient();
   const body = await request.json();
-  const { details, theme_id } = body;
+  const { details, theme_id, event_name } = body;
 
   // If updating theme_id directly
   if (theme_id !== undefined) {
@@ -48,6 +48,14 @@ export async function PUT(
       .eq('id', id);
 
     return NextResponse.json({ theme_id });
+  }
+
+  // Update event name if provided
+  if (event_name !== undefined) {
+    await serviceClient
+      .from('events')
+      .update({ event_name })
+      .eq('id', id);
   }
 
   // Upsert each detail key-value pair
