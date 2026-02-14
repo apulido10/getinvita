@@ -86,6 +86,11 @@ export default async function PreviewPage({
     case 'baby_shower':
       template = <BabyShowerTemplate {...templateProps} />;
       break;
+    case 'valentines':
+    case 'mothers_day':
+    case 'fathers_day':
+      template = <BirthdayTemplate {...templateProps} />;
+      break;
     default:
       notFound();
   }
