@@ -1,9 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useImperativeHandle, forwardRef } from 'react';
 import { Event, EventDetail } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
 import { Save, Loader2 } from 'lucide-react';
+
+export interface EventDetailsFormRef {
+  save: () => Promise<void>;
+}
 
 interface Props {
   event: Event;
@@ -11,7 +15,7 @@ interface Props {
   onUpdate: (details: EventDetail[]) => void;
 }
 
-export default function EventDetailsForm({ event, details, onUpdate }: Props) {
+const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDetailsForm({ event, details, onUpdate }, ref) {
   const config = getEventTypeConfig(event.event_type);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -45,6 +49,10 @@ export default function EventDetailsForm({ event, details, onUpdate }: Props) {
       setSaving(false);
     }
   }
+
+  useImperativeHandle(ref, () => ({
+    save: handleSave,
+  }));
 
   if (!config) return null;
 
@@ -95,4 +103,6 @@ export default function EventDetailsForm({ event, details, onUpdate }: Props) {
       </div>
     </div>
   );
-}
+});
+
+export default EventDetailsForm;
