@@ -33,7 +33,7 @@ export async function POST(
 
   // Spotify track flow
   if (body.source === 'spotify') {
-    const { spotifyTrackId, songTitle, artist } = body;
+    const { spotifyTrackId, songTitle, artist, previewUrl } = body;
 
     if (!spotifyTrackId) {
       return NextResponse.json({ error: 'No spotifyTrackId provided' }, { status: 400 });
@@ -45,6 +45,7 @@ export async function POST(
       spotify_track_id: spotifyTrackId,
       song_title: songTitle || 'Spotify Track',
       artist: artist || null,
+      storage_path: previewUrl || null,
     });
 
     if (insertError) {
@@ -142,13 +143,13 @@ export async function DELETE(
 
   const { data: track } = await serviceClient
     .from('event_music')
-    .select('storage_path')
+    .select('storage_path, source')
     .eq('id', musicId)
     .single();
 
   if (track) {
-    // Only remove from storage if there's a file (Spotify tracks have no storage_path)
-    if (track.storage_path) {
+    // Only remove from storage for uploaded files (not Spotify preview URLs)
+    if (track.storage_path && track.source !== 'spotify') {
       await serviceClient.storage.from('event-music').remove([track.storage_path]);
     }
     await serviceClient.from('event_music').delete().eq('id', musicId);

@@ -79,7 +79,7 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
     }
   }
 
-  async function handleSpotifySelect(track: { id: string; name: string; artist: string }) {
+  async function handleSpotifySelect(track: { id: string; name: string; artist: string; previewUrl: string | null }) {
     setError(null);
     try {
       const res = await fetch(`/api/events/${event.id}/music`, {
@@ -90,6 +90,7 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
           spotifyTrackId: track.id,
           songTitle: track.name,
           artist: track.artist,
+          previewUrl: track.previewUrl,
         }),
       });
 

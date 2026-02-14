@@ -89,6 +89,7 @@ interface SpotifyTrack {
   name: string;
   artists: { name: string }[];
   album: { images: { url: string; width: number }[] };
+  preview_url: string | null;
 }
 
 function formatTracks(data: { tracks?: { items?: SpotifyTrack[] } }) {
@@ -97,5 +98,6 @@ function formatTracks(data: { tracks?: { items?: SpotifyTrack[] } }) {
     name: track.name,
     artist: track.artists.map((a) => a.name).join(', '),
     albumArt: track.album.images.find((img) => img.width <= 300)?.url || track.album.images[0]?.url || null,
+    previewUrl: track.preview_url,
   }));
 }

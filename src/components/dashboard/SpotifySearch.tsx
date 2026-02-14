@@ -8,6 +8,7 @@ interface SpotifyTrackResult {
   name: string;
   artist: string;
   albumArt: string | null;
+  previewUrl: string | null;
 }
 
 interface Props {
