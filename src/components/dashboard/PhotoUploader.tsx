@@ -162,7 +162,7 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
               />
               {photo.is_hero && (
                 <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 rounded-full px-2.5 py-1 text-xs font-bold flex items-center gap-1 shadow-md">
-                  <Star className="h-3.5 w-3.5 fill-current" /> Hero Image
+                  <Star className="h-3.5 w-3.5 fill-current" /> Cover Photo
                 </div>
               )}
               {!photo.is_hero && (
@@ -170,9 +170,9 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
                   <button
                     onClick={() => handleSetHero(photo.id)}
                     className="bg-white/90 backdrop-blur-sm text-yellow-600 hover:bg-yellow-50 rounded-full px-2.5 py-1 text-xs font-medium flex items-center gap-1 shadow-md"
-                    title="Set as hero image"
+                    title="Set as cover photo"
                   >
-                    <Star className="h-3.5 w-3.5" /> Set as Hero
+                    <Star className="h-3.5 w-3.5" /> Set as Cover
                   </button>
                 </div>
               )}
