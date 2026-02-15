@@ -109,7 +109,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           </div>
           <div
             className="min-h-[50vh] md:min-h-0 -mt-12 md:mt-0"
-            style={heroUrl ? { backgroundImage: `url(${heroUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { backgroundColor: colors.accent }}
+            style={heroUrl ? { backgroundImage: `url(${heroUrl})`, backgroundSize: 'cover', backgroundPosition: 'center top' } : { backgroundColor: colors.accent }}
           />
         </section>
 
@@ -238,7 +238,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
 
         {heroUrl && (
           <section className="max-w-4xl mx-auto px-6 pb-16">
-            <img src={heroUrl} alt="" className="w-full h-auto rounded-lg object-cover max-h-[60vh]" />
+            <img src={heroUrl} alt="" className="w-full h-auto rounded-lg object-cover object-top max-h-[60vh]" />
           </section>
         )}
 
@@ -331,7 +331,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       {/* Hero */}
       <section
         className="relative min-h-[60vh] sm:min-h-screen flex items-center justify-center text-center px-6 py-20"
-        style={heroUrl ? { backgroundImage: `url(${heroUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+        style={heroUrl ? { backgroundImage: `url(${heroUrl})`, backgroundSize: 'cover', backgroundPosition: 'center top' } : undefined}
       >
         <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${colors.background}4D, ${colors.surface}33, ${colors.background}66)` }} />
         <div className="relative z-10 max-w-2xl" style={{ color: heroUrl ? '#ffffff' : colors.heroText }}>
