@@ -7,7 +7,6 @@ import { Play, Pause, SkipForward, Volume2, VolumeX, Music } from 'lucide-react'
 interface Props {
   tracks: EventMusic[];
   supabaseUrl: string;
-  hasSpotify?: boolean;
 }
 
 function getTrackUrl(track: EventMusic, supabaseUrl: string): string | null {
@@ -21,7 +20,7 @@ function getTrackUrl(track: EventMusic, supabaseUrl: string): string | null {
   return null;
 }
 
-export default function MusicPlayer({ tracks, supabaseUrl, hasSpotify }: Props) {
+export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
   // Include uploaded tracks + spotify tracks that have a preview URL
   const playableTracks = tracks.filter((t) => {
     if (t.source === 'spotify') return !!t.storage_path; // has preview URL
@@ -126,7 +125,7 @@ export default function MusicPlayer({ tracks, supabaseUrl, hasSpotify }: Props) 
   }
 
   return (
-    <div className={`fixed left-1/2 -translate-x-1/2 z-40 bg-black/80 backdrop-blur-xl text-white rounded-full px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 shadow-2xl max-w-[calc(100vw-2rem)] sm:max-w-sm ${hasSpotify ? 'bottom-48' : 'bottom-4'}`}>
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 bg-black/80 backdrop-blur-xl text-white rounded-full px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 shadow-2xl max-w-[calc(100vw-2rem)] sm:max-w-sm">
       <audio
         ref={audioRef}
         onEnded={nextTrack}

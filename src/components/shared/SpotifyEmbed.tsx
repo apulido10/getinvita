@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Music, X } from 'lucide-react';
 
 interface Props {
   trackId: string;
@@ -32,13 +33,13 @@ export default function SpotifyEmbed({ trackId }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const controllerRef = useRef<SpotifyEmbedController | null>(null);
   const [ready, setReady] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
 
     function initController(IFrameAPI: SpotifyIFrameAPI) {
-      // Clear any previous content
       container.innerHTML = '';
       const el = document.createElement('div');
       container.appendChild(el);
@@ -48,7 +49,7 @@ export default function SpotifyEmbed({ trackId }: Props) {
         {
           uri: `spotify:track:${trackId}`,
           width: '100%',
-          height: 70,
+          height: 80,
         },
         (controller) => {
           controllerRef.current = controller;
@@ -57,11 +58,9 @@ export default function SpotifyEmbed({ trackId }: Props) {
       );
     }
 
-    // If API is already loaded, use it directly
     if (window.__spotifyIFrameAPI) {
       initController(window.__spotifyIFrameAPI);
     } else {
-      // Set up the callback for when the script loads
       const existingCallback = window.onSpotifyIframeApiReady;
       window.onSpotifyIframeApiReady = (IFrameAPI) => {
         window.__spotifyIFrameAPI = IFrameAPI;
@@ -69,7 +68,6 @@ export default function SpotifyEmbed({ trackId }: Props) {
         initController(IFrameAPI);
       };
 
-      // Load the script if not already present
       if (!document.querySelector('script[src*="spotify.com/embed/iframe-api"]')) {
         const script = document.createElement('script');
         script.src = 'https://open.spotify.com/embed/iframe-api/v1';
@@ -88,14 +86,11 @@ export default function SpotifyEmbed({ trackId }: Props) {
     if (!ready || !controllerRef.current) return;
 
     function handleInvitationOpened() {
-      // togglePlay starts playback — called during user gesture context
       controllerRef.current?.togglePlay();
     }
 
-    // Listen for envelope open event
     document.addEventListener('invitation-opened', handleInvitationOpened);
 
-    // Also try to play on next user click (fallback for pages without envelope)
     function handleClick() {
       controllerRef.current?.togglePlay();
       document.removeEventListener('click', handleClick);
@@ -109,11 +104,27 @@ export default function SpotifyEmbed({ trackId }: Props) {
   }, [ready]);
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-2rem)] max-w-[280px] opacity-70 hover:opacity-100 transition-opacity scale-90">
+    <div className="fixed bottom-6 right-4 z-50 flex flex-col items-end gap-2">
+      {/* Expanded player */}
       <div
-        ref={containerRef}
-        className="rounded-xl shadow-2xl overflow-hidden"
-      />
+        className="overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 ease-in-out origin-bottom-right"
+        style={{
+          width: expanded ? 300 : 0,
+          height: expanded ? 80 : 0,
+          opacity: expanded ? 1 : 0,
+        }}
+      >
+        <div ref={containerRef} className="w-[300px] h-[80px]" />
+      </div>
+
+      {/* Floating bubble */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="h-12 w-12 rounded-full bg-[#1DB954] text-white shadow-lg flex items-center justify-center transition-transform duration-200 active:scale-90 hover:scale-105"
+        aria-label={expanded ? 'Close Spotify player' : 'Open Spotify player'}
+      >
+        {expanded ? <X className="h-5 w-5" /> : <Music className="h-5 w-5" />}
+      </button>
     </div>
   );
 }
