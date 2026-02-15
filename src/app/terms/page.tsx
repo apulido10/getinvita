@@ -1,7 +1,8 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Terms of Service & Policy - GetInvita',
+  title: 'Terms of Service & Policy',
+  description: 'GetInvita terms of service, privacy policy, refund policy, and user responsibilities.',
 };
 
 export default function TermsPage() {

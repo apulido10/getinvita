@@ -1,12 +1,78 @@
+import { Metadata } from 'next';
 import { createServiceClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import { FullEventData } from '@/types';
+import { FullEventData, EventType } from '@/types';
 import { getThemeById, getDefaultTheme } from '@/lib/themes';
 import Sweet15Template from '@/components/templates/Sweet15Template';
 import WeddingTemplate from '@/components/templates/WeddingTemplate';
 import BirthdayTemplate from '@/components/templates/BirthdayTemplate';
 import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
 import InvitationIntro from '@/components/shared/InvitationIntro';
+
+const eventTypeLabels: Record<EventType, string> = {
+  sweet15: 'Quinceañera',
+  wedding: 'Wedding',
+  birthday: 'Birthday',
+  baby_shower: 'Baby Shower',
+  valentines: "Valentine's Day",
+  mothers_day: "Mother's Day",
+  fathers_day: "Father's Day",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = createServiceClient();
+
+  const { data: event } = await supabase
+    .from('events')
+    .select('*')
+    .eq('slug', slug)
+    .eq('status', 'published')
+    .single();
+
+  if (!event) {
+    return { title: 'Event Not Found' };
+  }
+
+  const { data: photos } = await supabase
+    .from('event_photos')
+    .select('*')
+    .eq('event_id', event.id)
+    .eq('is_hero', true)
+    .limit(1);
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const heroPhoto = photos?.[0];
+  const ogImage = heroPhoto
+    ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
+    : undefined;
+
+  const typeLabel = eventTypeLabels[event.event_type as EventType] || 'Event';
+  const title = event.event_name;
+  const description = `You're invited to ${event.event_name} — a ${typeLabel} celebration. View details, RSVP, and more.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://getinvita.com/events/${slug}`,
+      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: event.event_name }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      ...(ogImage && { images: [ogImage] }),
+    },
+  };
+}
 
 export default async function EventPage({
   params,
@@ -78,14 +144,40 @@ export default async function EventPage({
       notFound();
   }
 
+  const typeLabel = eventTypeLabels[event.event_type as EventType] || 'Event';
+  const heroPhoto = (photos || []).find((p) => p.is_hero);
+  const ogImage = heroPhoto
+    ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
+    : undefined;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.event_name,
+    description: `You're invited to ${event.event_name} — a ${typeLabel} celebration.`,
+    ...(event.event_date && { startDate: event.event_date }),
+    ...(ogImage && { image: ogImage }),
+    organizer: {
+      '@type': 'Organization',
+      name: 'GetInvita',
+      url: 'https://getinvita.com',
+    },
+  };
+
   return (
-    <InvitationIntro
-      eventName={event.event_name}
-      eventType={event.event_type}
-      colors={theme!.colors}
-      eventId={event.id}
-    >
-      {template}
-    </InvitationIntro>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <InvitationIntro
+        eventName={event.event_name}
+        eventType={event.event_type}
+        colors={theme!.colors}
+        eventId={event.id}
+      >
+        {template}
+      </InvitationIntro>
+    </>
   );
 }
