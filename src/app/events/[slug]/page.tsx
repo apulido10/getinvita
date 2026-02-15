@@ -8,6 +8,7 @@ import WeddingTemplate from '@/components/templates/WeddingTemplate';
 import BirthdayTemplate from '@/components/templates/BirthdayTemplate';
 import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
 import InvitationIntro from '@/components/shared/InvitationIntro';
+import PoweredByFooter from '@/components/shared/PoweredByFooter';
 
 const eventTypeLabels: Record<EventType, string> = {
   sweet15: 'Quinceañera',
@@ -177,6 +178,7 @@ export default async function EventPage({
         eventId={event.id}
       >
         {template}
+        <PoweredByFooter colors={theme!.colors} />
       </InvitationIntro>
     </>
   );
