@@ -205,7 +205,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (
           <>
             {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
-            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} />}
+            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} accentColor={colors.accent} accentText={colors.accentText} />}
           </>
         ); })()}
       </div>
@@ -336,7 +336,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (
           <>
             {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
-            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} />}
+            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} accentColor={colors.accent} accentText={colors.accentText} />}
           </>
         ); })()}
       </div>
@@ -485,7 +485,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {(() => { const spotifyTrack = music.find((t) => t.source === 'spotify'); return (
           <>
             {music.length > 0 && <MusicPlayer tracks={music} supabaseUrl={supabaseUrl} />}
-            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} />}
+            {spotifyTrack?.spotify_track_id && <SpotifyEmbed trackId={spotifyTrack.spotify_track_id} accentColor={colors.accent} accentText={colors.accentText} />}
           </>
         ); })()}
     </div>

@@ -5,6 +5,8 @@ import { Music, X } from 'lucide-react';
 
 interface Props {
   trackId: string;
+  accentColor?: string;
+  accentText?: string;
 }
 
 declare global {
@@ -29,7 +31,7 @@ interface SpotifyEmbedController {
   destroy: () => void;
 }
 
-export default function SpotifyEmbed({ trackId }: Props) {
+export default function SpotifyEmbed({ trackId, accentColor, accentText }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const controllerRef = useRef<SpotifyEmbedController | null>(null);
   const [ready, setReady] = useState(false);
@@ -120,7 +122,8 @@ export default function SpotifyEmbed({ trackId }: Props) {
       {/* Floating bubble */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="h-12 w-12 rounded-full bg-[#1DB954] text-white shadow-lg flex items-center justify-center transition-transform duration-200 active:scale-90 hover:scale-105"
+        className="h-12 w-12 rounded-full shadow-lg flex items-center justify-center transition-transform duration-200 active:scale-90 hover:scale-105"
+        style={{ backgroundColor: accentColor || '#1DB954', color: accentText || '#ffffff' }}
         aria-label={expanded ? 'Close Spotify player' : 'Open Spotify player'}
       >
         {expanded ? <X className="h-5 w-5" /> : <Music className="h-5 w-5" />}
