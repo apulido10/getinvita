@@ -223,7 +223,7 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp }:
 
         {heroUrl && (
           <section className="max-w-4xl mx-auto px-6 pb-16">
-            <img src={heroUrl} alt="" className="w-full h-auto rounded-lg object-cover object-top max-h-[60vh]" />
+            <img src={heroUrl} alt="" className="max-w-full h-auto rounded-lg max-h-[70vh] mx-auto block" />
           </section>
         )}
 
