@@ -7,16 +7,17 @@ const DEMO_SLUG = 'stephanie-quincenera-tjH8cN';
 
 export default function LiveDemo({ lang }: { lang: Lang }) {
   const [isActive, setIsActive] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const [prefetch, setPrefetch] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
+  // Prefetch the demo page resources when section is near viewport
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setShouldLoad(true);
+          setPrefetch(true);
           observer.disconnect();
         }
       },
@@ -28,6 +29,11 @@ export default function LiveDemo({ lang }: { lang: Lang }) {
 
   return (
     <section ref={sectionRef} className="py-20 sm:py-28 bg-gradient-to-b from-gray-50 to-white">
+      {/* Prefetch link to warm the cache without rendering or playing audio */}
+      {prefetch && !isActive && (
+        <link rel="prefetch" href={`/events/${DEMO_SLUG}?demo=true`} />
+      )}
+
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
@@ -48,16 +54,14 @@ export default function LiveDemo({ lang }: { lang: Lang }) {
 
               {/* Screen */}
               <div className="relative bg-white" style={{ height: '680px' }}>
-                {/* Preload iframe when section is near viewport */}
-                {shouldLoad && (
+                {isActive ? (
                   <iframe
                     src={`/events/${DEMO_SLUG}?demo=true`}
-                    className={`absolute inset-0 w-full h-full border-0 ${isActive ? 'z-10' : 'z-0 invisible'}`}
+                    className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay"
                     title="GetInvita Live Demo"
                   />
-                )}
-                {!isActive && (
+                ) : (
                   <button
                     onClick={() => setIsActive(true)}
                     className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gradient-to-br from-rose-50 to-pink-100 cursor-pointer group"
