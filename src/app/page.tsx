@@ -12,8 +12,8 @@ export default function HomePage() {
     <main>
       <Navbar />
       <Hero />
-      <EventTypes />
       <LiveDemo />
+      <EventTypes />
       <HowItWorks />
       <Testimonials />
       <Pricing />

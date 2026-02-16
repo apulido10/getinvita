@@ -75,6 +75,11 @@ export default function InvitationIntro({
 
   useEffect(() => {
     setMounted(true);
+    const isDemo = new URLSearchParams(window.location.search).get('demo') === 'true';
+    if (isDemo) {
+      setShowIntro(true);
+      return;
+    }
     try {
       if (!sessionStorage.getItem(storageKey)) {
         setShowIntro(true);
@@ -87,26 +92,34 @@ export default function InvitationIntro({
   const handleOpen = () => {
     if (envelopeOpened) return;
     setEnvelopeOpened(true);
+    window.scrollTo(0, 0);
     // Signal MusicPlayer to start playing (user gesture context)
     document.dispatchEvent(new CustomEvent('invitation-opened'));
     setTimeout(() => {
       setFadingOut(true);
     }, 500);
     setTimeout(() => {
-      try {
-        sessionStorage.setItem(storageKey, '1');
-      } catch {}
+      const isDemo = new URLSearchParams(window.location.search).get('demo') === 'true';
+      if (!isDemo) {
+        try {
+          sessionStorage.setItem(storageKey, '1');
+        } catch {}
+      }
       setShowIntro(false);
     }, 1100);
   };
 
-  // Always render children first (same tree position) to prevent unmount/remount.
-  // The overlay is a sibling that sits on top with z-index.
+  // Don't render anything until we've determined whether to show the intro.
+  // This prevents the flash of content before the envelope overlay appears.
+  if (!mounted) {
+    return <div style={{ minHeight: '100vh', backgroundColor: colors.hero }} />;
+  }
+
   return (
     <>
       {children}
 
-      {mounted && showIntro && (
+      {showIntro && (
         <>
           <style>{`
             @keyframes intro-float {
