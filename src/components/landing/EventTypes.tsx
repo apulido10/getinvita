@@ -30,33 +30,73 @@ const bgColorMap: Record<string, string> = {
   blue: 'bg-blue-50 border-blue-100',
 };
 
+const FEATURED_TYPES = ['wedding', 'sweet15'];
+
 export default function EventTypes() {
+  const featured = EVENT_TYPES.filter((et) => FEATURED_TYPES.includes(et.type));
+  const others = EVENT_TYPES.filter((et) => !FEATURED_TYPES.includes(et.type));
+
   return (
     <section id="event-types" className="py-20 sm:py-28 bg-white">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-            Every Celebration, Beautifully Designed
+            Built for Your Biggest Moments
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Choose your event type and get a custom-themed website with all the features you need.
+            Premium event websites for weddings and quinceañeras — plus cards and sites for every other celebration.
           </p>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {EVENT_TYPES.map((eventType) => {
+
+        {/* Featured: Wedding & Quinceañera */}
+        <div className="grid sm:grid-cols-2 gap-8 mb-16">
+          {featured.map((eventType) => {
             const Icon = iconMap[eventType.icon];
             return (
               <div
                 key={eventType.type}
-                className={`rounded-2xl border p-6 ${bgColorMap[eventType.color]} hover:shadow-lg transition-shadow`}
+                className={`rounded-3xl border-2 p-8 sm:p-10 ${bgColorMap[eventType.color]} hover:shadow-xl transition-shadow`}
               >
                 <div
-                  className={`inline-flex rounded-xl bg-gradient-to-br ${colorMap[eventType.color]} p-3 shadow-lg`}
+                  className={`inline-flex rounded-xl bg-gradient-to-br ${colorMap[eventType.color]} p-4 shadow-lg`}
                 >
-                  <Icon className="h-6 w-6 text-white" />
+                  <Icon className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="mt-4 text-xl font-bold text-gray-900">{eventType.label}</h3>
-                <p className="mt-2 text-sm text-gray-600 leading-relaxed">{eventType.description}</p>
+                <h3 className="mt-5 text-2xl sm:text-3xl font-bold text-gray-900">{eventType.label}</h3>
+                <p className="mt-3 text-base text-gray-600 leading-relaxed">{eventType.description}</p>
+                <p className="mt-2 text-sm font-semibold text-gray-500">Starting at ${(eventType.price / 100).toFixed(0)}</p>
+                <Link
+                  href={`/order?type=${eventType.type}`}
+                  className={`mt-6 block w-full text-center rounded-xl bg-gradient-to-r ${colorMap[eventType.color]} text-white py-3.5 text-base font-semibold hover:opacity-90 transition-opacity`}
+                >
+                  Get Started
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Other Celebrations */}
+        <div className="text-center mb-8">
+          <h3 className="text-xl font-semibold text-gray-500">Other Celebrations</h3>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {others.map((eventType) => {
+            const Icon = iconMap[eventType.icon];
+            return (
+              <div
+                key={eventType.type}
+                className={`rounded-2xl border p-5 ${bgColorMap[eventType.color]} hover:shadow-lg transition-shadow`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`inline-flex rounded-lg bg-gradient-to-br ${colorMap[eventType.color]} p-2.5 shadow-md`}
+                  >
+                    <Icon className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900">{eventType.label}</h3>
+                </div>
+                <p className="mt-3 text-sm text-gray-600 leading-relaxed">{eventType.description}</p>
                 <Link
                   href={`/order?type=${eventType.type}`}
                   className={`mt-4 block w-full text-center rounded-lg bg-gradient-to-r ${colorMap[eventType.color]} text-white py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity`}

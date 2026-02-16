@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Send, CheckCircle, Loader2 } from 'lucide-react';
 
 interface Props {
@@ -17,6 +17,12 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isDemo, setIsDemo] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setIsDemo(params.get('demo') === 'true');
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,6 +30,14 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
 
     setLoading(true);
     setError('');
+
+    // Demo mode: fake the submission
+    if (isDemo) {
+      await new Promise((r) => setTimeout(r, 800));
+      setSubmitted(true);
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch('/api/rsvp', {

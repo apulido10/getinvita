@@ -32,7 +32,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'wedding',
     label: 'Wedding',
     description: 'Share your love story with an elegant ivory & sage wedding website with RSVP and registry.',
-    price: 19900,
+    price: 14900,
     icon: 'Heart',
     color: 'emerald',
     fields: [

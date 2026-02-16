@@ -1,6 +1,8 @@
 import Hero from '@/components/landing/Hero';
 import EventTypes from '@/components/landing/EventTypes';
+import LiveDemo from '@/components/landing/LiveDemo';
 import HowItWorks from '@/components/landing/HowItWorks';
+import Testimonials from '@/components/landing/Testimonials';
 import Pricing from '@/components/landing/Pricing';
 import Navbar from '@/components/landing/Navbar';
 import Link from 'next/link';
@@ -11,7 +13,9 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <EventTypes />
+      <LiveDemo />
       <HowItWorks />
+      <Testimonials />
       <Pricing />
 
       <footer className="bg-gray-900 text-gray-400 py-12">
