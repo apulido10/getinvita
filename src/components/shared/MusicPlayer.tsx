@@ -88,15 +88,10 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
       document.removeEventListener('touchstart', onInteraction);
     }
 
-    // Try autoplay immediately (works if user already interacted)
-    audio.play().then(() => {
-      setIsPlaying(true);
-    }).catch(() => {
-      // Browser blocked autoplay — wait for envelope open or user interaction
-      document.addEventListener('invitation-opened', onInvitationOpened);
-      document.addEventListener('click', onInteraction, { once: true });
-      document.addEventListener('touchstart', onInteraction, { once: true });
-    });
+    // Wait for envelope open or user interaction — don't autoplay immediately
+    document.addEventListener('invitation-opened', onInvitationOpened);
+    document.addEventListener('click', onInteraction, { once: true });
+    document.addEventListener('touchstart', onInteraction, { once: true });
 
     return cleanup;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
