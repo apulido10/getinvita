@@ -18,6 +18,10 @@ export default function PhotoGallery({ photos, supabaseUrl }: Props) {
     return `${supabaseUrl}/storage/v1/object/public/event-photos/${path}`;
   }
 
+  function getThumbUrl(path: string) {
+    return `${supabaseUrl}/storage/v1/render/image/public/event-photos/${path}?width=400&quality=75`;
+  }
+
   function prev() {
     setLightboxIndex((i) => (i !== null ? (i - 1 + photos.length) % photos.length : null));
   }
@@ -36,7 +40,7 @@ export default function PhotoGallery({ photos, supabaseUrl }: Props) {
             className="aspect-square rounded-lg sm:rounded-xl overflow-hidden hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-white/50"
           >
             <img
-              src={getUrl(photo.storage_path)}
+              src={getThumbUrl(photo.storage_path)}
               alt={photo.caption || 'Event photo'}
               className="w-full h-full object-cover"
               loading="lazy"

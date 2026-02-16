@@ -54,7 +54,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp, 
 
   const heroPhoto = photos.find((p) => p.is_hero);
   const heroUrl = heroPhoto
-    ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
+    ? `${supabaseUrl}/storage/v1/render/image/public/event-photos/${heroPhoto.storage_path}?width=1200&quality=75`
     : null;
 
   const birthdayPerson = getDetail(details, 'birthday_person') || event.event_name;
