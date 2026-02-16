@@ -35,7 +35,7 @@ export default function LiveDemo({ lang }: { lang: Lang }) {
   return (
     <section ref={sectionRef} className="py-20 sm:py-28 bg-gradient-to-b from-gray-50 to-white">
       {prefetch && activeIndex === null && (
-        <link rel="prefetch" href={`/events/${currentDemo.slug}?demo=true`} />
+        <link rel="prefetch" href={`/events/${currentDemo.slug}?demo=true${lang === 'es' ? '&lang=es' : ''}`} />
       )}
 
       <div className="mx-auto max-w-6xl px-6">
@@ -80,7 +80,7 @@ export default function LiveDemo({ lang }: { lang: Lang }) {
               <div className="relative bg-white" style={{ height: '680px' }}>
                 {activeIndex === selectedIndex ? (
                   <iframe
-                    src={`/events/${currentDemo.slug}?demo=true`}
+                    src={`/events/${currentDemo.slug}?demo=true${lang === 'es' ? '&lang=es' : ''}`}
                     className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay"
                     title="GetInvita Live Demo"
