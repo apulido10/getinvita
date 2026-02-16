@@ -40,7 +40,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp, l
 
   const heroPhoto = photos.find((p) => p.is_hero);
   const heroUrl = heroPhoto
-    ? `${supabaseUrl}/storage/v1/render/image/public/event-photos/${heroPhoto.storage_path}?width=1200&quality=75`
+    ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
     : null;
 
   const partner1 = getDetail(details, 'partner1_name');

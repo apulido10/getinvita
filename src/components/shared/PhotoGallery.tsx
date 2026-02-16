@@ -19,7 +19,7 @@ export default function PhotoGallery({ photos, supabaseUrl }: Props) {
   }
 
   function getThumbUrl(path: string) {
-    return `${supabaseUrl}/storage/v1/render/image/public/event-photos/${path}?width=400&quality=75`;
+    return `${supabaseUrl}/storage/v1/object/public/event-photos/${path}`;
   }
 
   function prev() {
