@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { t, type Lang } from '@/lib/translations';
 
-const DEMO_SLUG = 'stephanie-quincenera-tjH8cN';
+const DEMO_SLUG = 'sarah-mike-s-wedding-na2hWl';
 
 export default function LiveDemo({ lang }: { lang: Lang }) {
   const [isActive, setIsActive] = useState(false);

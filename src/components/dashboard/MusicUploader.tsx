@@ -197,7 +197,12 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
 
       {/* Spotify Tab */}
       {tab === 'spotify' && (
-        <SpotifySearch onSelect={handleSpotifySelect} />
+        <>
+          <SpotifySearch onSelect={handleSpotifySelect} />
+          <p className="text-xs text-gray-400 text-center mt-2">
+            Spotify tracks play a 30-second preview. Upload an MP3 for the full song.
+          </p>
+        </>
       )}
 
       {error && (
