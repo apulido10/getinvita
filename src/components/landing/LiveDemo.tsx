@@ -3,14 +3,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { t, type Lang } from '@/lib/translations';
 
-const DEMO_SLUG = 'sarah-mike-s-wedding-na2hWl';
+const DEMOS = [
+  { slug: 'sarah-mike-s-wedding-na2hWl', label: 'Wedding', labelEs: 'Boda' },
+  { slug: 'stephanie-quincenera-tjH8cN', label: 'Quinceañera', labelEs: 'Quinceañera' },
+];
 
 export default function LiveDemo({ lang }: { lang: Lang }) {
-  const [isActive, setIsActive] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [prefetch, setPrefetch] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Prefetch the demo page resources when section is near viewport
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -27,11 +30,12 @@ export default function LiveDemo({ lang }: { lang: Lang }) {
     return () => observer.disconnect();
   }, []);
 
+  const currentDemo = DEMOS[selectedIndex];
+
   return (
     <section ref={sectionRef} className="py-20 sm:py-28 bg-gradient-to-b from-gray-50 to-white">
-      {/* Prefetch link to warm the cache without rendering or playing audio */}
-      {prefetch && !isActive && (
-        <link rel="prefetch" href={`/events/${DEMO_SLUG}?demo=true`} />
+      {prefetch && activeIndex === null && (
+        <link rel="prefetch" href={`/events/${currentDemo.slug}?demo=true`} />
       )}
 
       <div className="mx-auto max-w-6xl px-6">
@@ -44,6 +48,26 @@ export default function LiveDemo({ lang }: { lang: Lang }) {
           </p>
         </div>
 
+        {/* Demo selector tabs */}
+        <div className="flex justify-center gap-3 mb-8">
+          {DEMOS.map((demo, i) => (
+            <button
+              key={demo.slug}
+              onClick={() => {
+                setSelectedIndex(i);
+                setActiveIndex(null);
+              }}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
+                selectedIndex === i
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {lang === 'es' ? demo.labelEs : demo.label}
+            </button>
+          ))}
+        </div>
+
         <div className="flex justify-center">
           {/* Phone mockup frame */}
           <div className="relative mx-auto w-[320px] sm:w-[375px]">
@@ -54,16 +78,16 @@ export default function LiveDemo({ lang }: { lang: Lang }) {
 
               {/* Screen */}
               <div className="relative bg-white" style={{ height: '680px' }}>
-                {isActive ? (
+                {activeIndex === selectedIndex ? (
                   <iframe
-                    src={`/events/${DEMO_SLUG}?demo=true`}
+                    src={`/events/${currentDemo.slug}?demo=true`}
                     className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay"
                     title="GetInvita Live Demo"
                   />
                 ) : (
                   <button
-                    onClick={() => setIsActive(true)}
+                    onClick={() => setActiveIndex(selectedIndex)}
                     className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gradient-to-br from-rose-50 to-pink-100 cursor-pointer group"
                   >
                     <div className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
