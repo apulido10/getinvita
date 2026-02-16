@@ -1,4 +1,5 @@
 import { Star } from 'lucide-react';
+import { t, type Lang } from '@/lib/translations';
 
 const testimonials = [
   {
@@ -21,23 +22,23 @@ const testimonials = [
   },
 ];
 
-export default function Testimonials() {
+export default function Testimonials({ lang }: { lang: Lang }) {
   return (
     <section className="py-20 sm:py-28 bg-white">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-            Loved by Families
+            {t('landing.testimonials.heading', lang)}
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            See what our customers have to say.
+            {t('landing.testimonials.subheading', lang)}
           </p>
         </div>
 
         <div className="grid sm:grid-cols-3 gap-8">
-          {testimonials.map((t) => (
+          {testimonials.map((testimonial) => (
             <div
-              key={t.name}
+              key={testimonial.name}
               className="rounded-2xl border border-gray-100 bg-gray-50 p-6 sm:p-8"
             >
               <div className="flex gap-1 mb-4">
@@ -45,10 +46,10 @@ export default function Testimonials() {
                   <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                 ))}
               </div>
-              <p className="text-gray-700 leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
+              <p className="text-gray-700 leading-relaxed">&ldquo;{testimonial.quote}&rdquo;</p>
               <div className="mt-6 border-t border-gray-200 pt-4">
-                <p className="font-semibold text-gray-900">{t.name}</p>
-                <p className="text-sm text-gray-500">{t.event}</p>
+                <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                <p className="text-sm text-gray-500">{testimonial.event}</p>
               </div>
             </div>
           ))}

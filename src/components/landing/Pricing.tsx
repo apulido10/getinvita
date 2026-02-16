@@ -2,27 +2,28 @@
 
 import { Check } from 'lucide-react';
 import { EVENT_TYPES, CARD_EVENT_TYPES } from '@/lib/constants';
+import { t, type Lang } from '@/lib/translations';
 import Link from 'next/link';
 
-const eventFeatures = [
-  'Custom themed event page',
-  'Photo gallery with lightbox',
-  'Background music player',
-  'Live countdown timer',
-  'RSVP collection',
-  'Mobile responsive design',
-  'Shareable custom link',
-  'Unlimited photo uploads',
+const eventFeatureKeys = [
+  'landing.pricing.feature.customThemed',
+  'landing.pricing.feature.photoGallery',
+  'landing.pricing.feature.musicPlayer',
+  'landing.pricing.feature.countdown',
+  'landing.pricing.feature.rsvp',
+  'landing.pricing.feature.responsive',
+  'landing.pricing.feature.shareableLink',
+  'landing.pricing.feature.unlimitedPhotos',
 ];
 
-const cardFeatures = [
-  'Custom themed card page',
-  'Photo gallery with lightbox',
-  'Background music player',
-  'Personalized message',
-  'Mobile responsive design',
-  'Shareable custom link',
-  'Unlimited photo uploads',
+const cardFeatureKeys = [
+  'landing.pricing.feature.customThemedCard',
+  'landing.pricing.feature.photoGallery',
+  'landing.pricing.feature.musicPlayer',
+  'landing.pricing.feature.personalizedMessage',
+  'landing.pricing.feature.responsive',
+  'landing.pricing.feature.shareableLink',
+  'landing.pricing.feature.unlimitedPhotos',
 ];
 
 const colorBorder: Record<string, string> = {
@@ -43,41 +44,45 @@ const colorButton: Record<string, string> = {
   blue: 'bg-blue-600 hover:bg-blue-700',
 };
 
-export default function Pricing() {
+export default function Pricing({ lang }: { lang: Lang }) {
   return (
     <section id="pricing" className="py-20 sm:py-28 bg-white">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-            Choose Your Event Type
+            {t('landing.pricing.heading', lang)}
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            Pick the perfect template for your celebration and get started in minutes.
+            {t('landing.pricing.subheading', lang)}
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {EVENT_TYPES.map((eventType) => (
-            <div
-              key={eventType.type}
-              className={`rounded-2xl border-2 ${colorBorder[eventType.color]} p-6 transition-colors`}
-            >
-              <h3 className="text-lg font-bold text-gray-900">{eventType.label}</h3>
-              <ul className="mt-6 space-y-3">
-                {(CARD_EVENT_TYPES.includes(eventType.type) ? cardFeatures : eventFeatures).map((feature) => (
-                  <li key={feature} className="flex items-start gap-2 text-sm text-gray-700">
-                    <Check className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={`/order?type=${eventType.type}`}
-                className={`mt-6 block w-full text-center rounded-lg ${colorButton[eventType.color]} text-white py-3 text-sm font-semibold transition-colors`}
+          {EVENT_TYPES.map((eventType) => {
+            const featureKeys = CARD_EVENT_TYPES.includes(eventType.type) ? cardFeatureKeys : eventFeatureKeys;
+            const label = t(`landing.eventType.${eventType.type}.label`, lang);
+            return (
+              <div
+                key={eventType.type}
+                className={`rounded-2xl border-2 ${colorBorder[eventType.color]} p-6 transition-colors`}
               >
-                Create Your Site
-              </Link>
-            </div>
-          ))}
+                <h3 className="text-lg font-bold text-gray-900">{label}</h3>
+                <ul className="mt-6 space-y-3">
+                  {featureKeys.map((key) => (
+                    <li key={key} className="flex items-start gap-2 text-sm text-gray-700">
+                      <Check className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                      {t(key, lang)}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href={`/order?type=${eventType.type}`}
+                  className={`mt-6 block w-full text-center rounded-lg ${colorButton[eventType.color]} text-white py-3 text-sm font-semibold transition-colors`}
+                >
+                  {t('landing.pricing.createYourSite', lang)}
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

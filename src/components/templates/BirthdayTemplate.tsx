@@ -10,6 +10,7 @@ import RSVPForm from '@/components/shared/RSVPForm';
 import AddressLink from '@/components/shared/AddressLink';
 import { CARD_EVENT_TYPES } from '@/lib/constants';
 import { EventType } from '@/types';
+import { Lang, t, formatDateLocalized } from '@/lib/translations';
 import { Cake, Heart, Gift, MapPin, Clock, PartyPopper } from 'lucide-react';
 
 const cardEventLabels: Partial<Record<EventType, string>> = {
@@ -28,15 +29,15 @@ interface Props {
   data: FullEventData;
   supabaseUrl: string;
   theme?: ThemeVariant;
+  lang?: Lang;
 }
 
 function getDetail(details: FullEventData['details'], key: string): string {
   return details.find((d) => d.detail_key === key)?.detail_value || '';
 }
 
-function formatDate(dateStr: string): string {
-  const datePart = dateStr.substring(0, 10);
-  return new Date(`${datePart}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+function formatDate(dateStr: string, locale: Lang = 'en'): string {
+  return formatDateLocalized(dateStr, locale);
 }
 
 function formatTime(timeStr: string): string {
@@ -46,7 +47,7 @@ function formatTime(timeStr: string): string {
   return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
 }
 
-export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }: Props) {
+export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp, lang = 'en' }: Props) {
   const { event, details, photos, music } = data;
   const theme = themeProp ?? (event.theme_id ? getThemeById(event.theme_id) : undefined) ?? getDefaultTheme(event.event_type);
   const { colors, layout } = theme;
@@ -73,7 +74,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
   const dressCode = getDetail(details, 'dress_code');
 
   const isCardEvent = CARD_EVENT_TYPES.includes(event.event_type);
-  const heroSubtitle = isCardEvent ? cardEventLabels[event.event_type] : (turningAge ? `Turning ${turningAge}!` : 'Birthday Celebration');
+  const heroSubtitle = isCardEvent ? cardEventLabels[event.event_type] : (turningAge ? t('birthday.turning', lang, { age: turningAge }) : t('birthday.celebration', lang));
   const HeroIcon = isCardEvent ? (cardEventIcons[event.event_type] ?? Heart) : PartyPopper;
   const MessageIcon = isCardEvent ? (cardEventIcons[event.event_type] ?? Heart) : Cake;
   const hasChurch = !isCardEvent && (churchName || churchAddress || churchTime);
@@ -102,7 +103,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight">{birthdayPerson}</h1>
               {event.event_date && (
                 <p className="mt-6 text-lg opacity-90">
-                  {formatDate(event.event_date)}
+                  {formatDate(event.event_date, lang)}
                 </p>
               )}
             </div>
@@ -116,8 +117,8 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {!isCardEvent && event.event_date && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-              <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>Party Starts In</p>
-              <Countdown targetDate={event.event_date} />
+              <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>{t('birthday.partyStartsIn', lang)}</p>
+              <Countdown targetDate={event.event_date} lang={lang} />
             </div>
           </section>
         )}
@@ -134,10 +135,10 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {hasChurch && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-6">Church Ceremony</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('birthday.churchCeremony', lang)}</h2>
               {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
               {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+              {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
             </div>
           </section>
         )}
@@ -145,7 +146,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {hasPartyDetails && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Party Details</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">{t('birthday.partyDetails', lang)}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {venueName && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
@@ -157,27 +158,27 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
               {hasTimes && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
                   <Clock className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                  <h3 className="font-bold">Times</h3>
-                  {partyTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Party:</strong> {formatTime(partyTime)}</p>}
+                  <h3 className="font-bold">{t('birthday.times', lang)}</h3>
+                  {partyTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.party', lang)}</strong> {formatTime(partyTime)}</p>}
                   {receptionStart && (
-                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                   )}
                   {dinnerStart && (
-                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                   )}
                 </div>
               )}
               {partyTheme && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
                   <PartyPopper className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                  <h3 className="font-bold">Theme</h3>
+                  <h3 className="font-bold">{t('birthday.theme', lang)}</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{partyTheme}</p>
                 </div>
               )}
               {dressCode && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
                   <Cake className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                  <h3 className="font-bold">Dress Code</h3>
+                  <h3 className="font-bold">{t('birthday.dressCode', lang)}</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{dressCode}</p>
                 </div>
               )}
@@ -189,7 +190,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {photos.length > 0 && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
             <div className="max-w-5xl mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Photo Gallery</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">{t('birthday.photoGallery', lang)}</h2>
               <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
             </div>
           </section>
@@ -198,9 +199,9 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {!isCardEvent && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
             <div className="max-w-lg mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-              <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
-              <RSVPForm eventId={event.id} accentColor="violet" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">{t('birthday.rsvp', lang)}</h2>
+              <p className="text-center mb-8 opacity-70">{t('birthday.rsvpMessage', lang)}</p>
+              <RSVPForm eventId={event.id} accentColor="violet" lang={lang} />
             </div>
           </section>
         )}
@@ -229,7 +230,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
             <h1 className="text-4xl sm:text-6xl font-bold leading-tight">{birthdayPerson}</h1>
             {event.event_date && (
               <p className="mt-6 text-lg" style={{ color: colors.textSecondary }}>
-                {formatDate(event.event_date)}
+                {formatDate(event.event_date, lang)}
               </p>
             )}
             <div className="w-12 h-0.5 mx-auto mt-8" style={{ backgroundColor: colors.accent }} />
@@ -245,8 +246,8 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {!isCardEvent && event.event_date && (
           <section className="py-12 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-              <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>Party Starts In</p>
-              <Countdown targetDate={event.event_date} />
+              <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>{t('birthday.partyStartsIn', lang)}</p>
+              <Countdown targetDate={event.event_date} lang={lang} />
             </div>
           </section>
         )}
@@ -263,10 +264,10 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {hasChurch && (
           <section className="py-16 sm:py-24">
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-8">Church Ceremony</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-8">{t('birthday.churchCeremony', lang)}</h2>
               {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
               {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+              {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
             </div>
           </section>
         )}
@@ -274,7 +275,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {hasPartyDetails && (
         <section className="py-16 sm:py-24" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-xl mx-auto px-4 sm:px-6 text-center space-y-8">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-10">Party Details</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-10">{t('birthday.partyDetails', lang)}</h2>
             {venueName && (
               <div>
                 <h3 className="font-bold text-lg">{venueName}</h3>
@@ -283,12 +284,12 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
             )}
             {hasTimes && (
               <div>
-                {partyTime && <p className="text-sm"><strong>Party:</strong> {formatTime(partyTime)}</p>}
+                {partyTime && <p className="text-sm"><strong>{t('time.party', lang)}</strong> {formatTime(partyTime)}</p>}
                 {receptionStart && (
-                  <p className="text-sm mt-1"><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                  <p className="text-sm mt-1"><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                 )}
                 {dinnerStart && (
-                  <p className="text-sm mt-1"><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                  <p className="text-sm mt-1"><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                 )}
               </div>
             )}
@@ -299,7 +300,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {photos.length > 0 && (
           <section className="py-16 sm:py-24">
             <div className="max-w-5xl mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">Photos</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">{t('birthday.photos', lang)}</h2>
               <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
             </div>
           </section>
@@ -308,9 +309,9 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
         {!isCardEvent && (
           <section className="py-16 sm:py-24" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
             <div className="max-w-lg mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-              <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
-              <RSVPForm eventId={event.id} accentColor="violet" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">{t('birthday.rsvp', lang)}</h2>
+              <p className="text-center mb-8 opacity-70">{t('birthday.rsvpMessage', lang)}</p>
+              <RSVPForm eventId={event.id} accentColor="violet" lang={lang} />
             </div>
           </section>
         )}
@@ -347,7 +348,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold leading-tight">{birthdayPerson}</h1>
           {event.event_date && (
             <p className="mt-6 text-lg opacity-90">
-              {formatDate(event.event_date)}
+              {formatDate(event.event_date, lang)}
             </p>
           )}
         </div>
@@ -357,8 +358,8 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       {!isCardEvent && event.event_date && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>Party Starts In</p>
-            <Countdown targetDate={event.event_date} />
+            <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>{t('birthday.partyStartsIn', lang)}</p>
+            <Countdown targetDate={event.event_date} lang={lang} />
           </div>
         </section>
       )}
@@ -377,10 +378,10 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       {hasChurch && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6">Church Ceremony</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('birthday.churchCeremony', lang)}</h2>
             {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
             {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-            {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+            {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
           </div>
         </section>
       )}
@@ -389,7 +390,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       {hasPartyDetails && (
       <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Party Details</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">{t('birthday.partyDetails', lang)}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {venueName && (
               <div className="backdrop-blur-sm rounded-2xl p-6 text-center" style={{ backgroundColor: `${colors.background}` }}>
@@ -401,27 +402,27 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
             {hasTimes && (
               <div className="backdrop-blur-sm rounded-2xl p-6 text-center" style={{ backgroundColor: `${colors.background}` }}>
                 <Clock className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                <h3 className="font-bold">Times</h3>
-                {partyTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Party:</strong> {formatTime(partyTime)}</p>}
+                <h3 className="font-bold">{t('birthday.times', lang)}</h3>
+                {partyTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.party', lang)}</strong> {formatTime(partyTime)}</p>}
                 {receptionStart && (
-                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                 )}
                 {dinnerStart && (
-                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                 )}
               </div>
             )}
             {partyTheme && (
               <div className="backdrop-blur-sm rounded-2xl p-6 text-center" style={{ backgroundColor: `${colors.background}` }}>
                 <PartyPopper className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                <h3 className="font-bold">Theme</h3>
+                <h3 className="font-bold">{t('birthday.theme', lang)}</h3>
                 <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{partyTheme}</p>
               </div>
             )}
             {dressCode && (
               <div className="backdrop-blur-sm rounded-2xl p-6 text-center" style={{ backgroundColor: `${colors.background}` }}>
                 <Cake className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                <h3 className="font-bold">Dress Code</h3>
+                <h3 className="font-bold">{t('birthday.dressCode', lang)}</h3>
                 <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{dressCode}</p>
               </div>
             )}
@@ -434,7 +435,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       {photos.length > 0 && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Photo Gallery</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">{t('birthday.photoGallery', lang)}</h2>
             <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
           </div>
         </section>
@@ -444,9 +445,9 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp }
       {!isCardEvent && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
           <div className="max-w-lg mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-            <p className="text-center mb-8 opacity-70">Let us know if you can make it!</p>
-            <RSVPForm eventId={event.id} accentColor="violet" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">{t('birthday.rsvp', lang)}</h2>
+            <p className="text-center mb-8 opacity-70">{t('birthday.rsvpMessage', lang)}</p>
+            <RSVPForm eventId={event.id} accentColor="violet" lang={lang} />
           </div>
         </section>
       )}

@@ -3,11 +3,12 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { EventType, ThemeColors } from '@/types';
 import { CARD_EVENT_TYPES } from '@/lib/constants';
+import { Lang, t } from '@/lib/translations';
 
-const cardEventGreetings: Partial<Record<EventType, string>> = {
-  valentines: 'Happy Valentine\'s Day',
-  mothers_day: 'Happy Mother\'s Day',
-  fathers_day: 'Happy Father\'s Day',
+const cardEventGreetingKeys: Partial<Record<EventType, string>> = {
+  valentines: 'intro.happyValentines',
+  mothers_day: 'intro.happyMothersDay',
+  fathers_day: 'intro.happyFathersDay',
 };
 
 interface InvitationIntroProps {
@@ -15,6 +16,7 @@ interface InvitationIntroProps {
   eventType: EventType;
   colors: ThemeColors;
   eventId: string;
+  lang?: Lang;
   children: ReactNode;
 }
 
@@ -65,6 +67,7 @@ export default function InvitationIntro({
   eventType,
   colors,
   eventId,
+  lang = 'en',
   children,
 }: InvitationIntroProps) {
   const storageKey = `intro-seen-${eventId}`;
@@ -211,10 +214,10 @@ export default function InvitationIntro({
               <AccentIcon eventType={eventType} color={colors.heroText} />
             </div>
             {CARD_EVENT_TYPES.includes(eventType) ? (
-              <div className="intro-event-name">{cardEventGreetings[eventType]}</div>
+              <div className="intro-event-name">{t(cardEventGreetingKeys[eventType]!, lang)}</div>
             ) : (
               <>
-                <div className="intro-label">You are invited to</div>
+                <div className="intro-label">{t('intro.youAreInvitedTo', lang)}</div>
                 <div className="intro-event-name">{eventName}</div>
               </>
             )}
@@ -245,7 +248,7 @@ export default function InvitationIntro({
               </div>
             </div>
 
-            <div className="intro-hint">Tap to open</div>
+            <div className="intro-hint">{t('intro.tapToOpen', lang)}</div>
           </div>
         </>
       )}

@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { Send, CheckCircle, Loader2 } from 'lucide-react';
+import { Lang, t } from '@/lib/translations';
 
 interface Props {
   eventId: string;
   accentColor?: string;
+  lang?: Lang;
 }
 
-export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
+export default function RSVPForm({ eventId, accentColor = 'purple', lang = 'en' }: Props) {
   const [guestName, setGuestName] = useState('');
   const [attending, setAttending] = useState(true);
   const [guestCount, setGuestCount] = useState(1);
@@ -56,10 +58,10 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
       if (res.ok) {
         setSubmitted(true);
       } else {
-        setError('Failed to submit. Please try again.');
+        setError(t('rsvp.error', lang));
       }
     } catch {
-      setError('Failed to submit. Please try again.');
+      setError(t('rsvp.error', lang));
     } finally {
       setLoading(false);
     }
@@ -69,9 +71,9 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
     return (
       <div className="text-center py-8">
         <CheckCircle className="h-12 w-12 mx-auto mb-3 text-green-500" />
-        <p className="text-lg font-semibold">Thank you, {guestName}!</p>
+        <p className="text-lg font-semibold">{t('rsvp.thankYou', lang, { name: guestName })}</p>
         <p className="text-sm mt-1 opacity-80">
-          {attending ? 'We look forward to seeing you there!' : 'We\'ll miss you!'}
+          {attending ? t('rsvp.lookForward', lang) : t('rsvp.missYou', lang)}
         </p>
       </div>
     );
@@ -93,7 +95,7 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
           required
           value={guestName}
           onChange={(e) => setGuestName(e.target.value)}
-          placeholder="Your name"
+          placeholder={t('rsvp.yourName', lang)}
           className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm placeholder:text-white/50 focus:border-white/40 focus:ring-1 focus:ring-white/40 outline-none backdrop-blur-sm"
         />
       </div>
@@ -106,7 +108,7 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
             attending ? 'bg-white text-gray-900 border-white' : 'border-white/30 hover:border-white/50'
           }`}
         >
-          Attending
+          {t('rsvp.attending', lang)}
         </button>
         <button
           type="button"
@@ -115,13 +117,13 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
             !attending ? 'bg-white text-gray-900 border-white' : 'border-white/30 hover:border-white/50'
           }`}
         >
-          Not Attending
+          {t('rsvp.notAttending', lang)}
         </button>
       </div>
 
       {attending && (
         <div>
-          <label className="block text-sm mb-1 opacity-80">Number of guests</label>
+          <label className="block text-sm mb-1 opacity-80">{t('rsvp.numberOfGuests', lang)}</label>
           <select
             value={guestCount}
             onChange={(e) => setGuestCount(Number(e.target.value))}
@@ -140,7 +142,7 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
             type="text"
             value={songRequest}
             onChange={(e) => setSongRequest(e.target.value)}
-            placeholder="Song request (optional)"
+            placeholder={t('rsvp.songRequest', lang)}
             className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm placeholder:text-white/50 focus:border-white/40 focus:ring-1 focus:ring-white/40 outline-none backdrop-blur-sm"
           />
         </div>
@@ -150,7 +152,7 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Leave a message (optional)"
+          placeholder={t('rsvp.leaveMessage', lang)}
           rows={3}
           className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm placeholder:text-white/50 focus:border-white/40 outline-none backdrop-blur-sm resize-none"
         />
@@ -168,7 +170,7 @@ export default function RSVPForm({ eventId, accentColor = 'purple' }: Props) {
         ) : (
           <Send className="h-4 w-4" />
         )}
-        {loading ? 'Sending...' : 'Send RSVP'}
+        {loading ? t('rsvp.sending', lang) : t('rsvp.sendRsvp', lang)}
       </button>
     </form>
   );

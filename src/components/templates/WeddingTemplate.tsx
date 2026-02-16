@@ -2,6 +2,7 @@
 
 import { FullEventData, ThemeVariant } from '@/types';
 import { getThemeById, getDefaultTheme } from '@/lib/themes';
+import { Lang, t, formatDateLocalized } from '@/lib/translations';
 import Countdown from '@/components/shared/Countdown';
 import PhotoGallery from '@/components/shared/PhotoGallery';
 import MusicPlayer from '@/components/shared/MusicPlayer';
@@ -14,15 +15,15 @@ interface Props {
   data: FullEventData;
   supabaseUrl: string;
   theme?: ThemeVariant;
+  lang?: Lang;
 }
 
 function getDetail(details: FullEventData['details'], key: string): string {
   return details.find((d) => d.detail_key === key)?.detail_value || '';
 }
 
-function formatDate(dateStr: string): string {
-  const datePart = dateStr.substring(0, 10);
-  return new Date(`${datePart}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+function formatDate(dateStr: string, locale: Lang = 'en'): string {
+  return formatDateLocalized(dateStr, locale);
 }
 
 function formatTime(timeStr: string): string {
@@ -32,7 +33,7 @@ function formatTime(timeStr: string): string {
   return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
 }
 
-export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }: Props) {
+export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp, lang = 'en' }: Props) {
   const { event, details, photos, music } = data;
   const theme = themeProp ?? (event.theme_id ? getThemeById(event.theme_id) : undefined) ?? getDefaultTheme('wedding');
   const { colors, layout } = theme;
@@ -76,11 +77,11 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
             style={{ backgroundColor: colors.hero }}
           >
             <div className="text-center" style={{ color: colors.heroText }}>
-              <p className="uppercase tracking-[0.3em] text-xs sm:text-sm mb-4 opacity-80">We&apos;re Getting Married</p>
+              <p className="uppercase tracking-[0.3em] text-xs sm:text-sm mb-4 opacity-80">{t('wedding.gettingMarried', lang)}</p>
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif italic leading-tight">{title}</h1>
               {event.event_date && (
                 <p className="mt-8 text-lg opacity-90">
-                  {formatDate(event.event_date)}
+                  {formatDate(event.event_date, lang)}
                 </p>
               )}
               <Heart className="h-6 w-6 mx-auto mt-6 opacity-70" />
@@ -96,8 +97,8 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {event.event_date && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.accent, color: colors.accentText }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-              <p className="uppercase tracking-widest text-sm mb-6 opacity-80">Days Until We Say I Do</p>
-              <Countdown targetDate={event.event_date} />
+              <p className="uppercase tracking-widest text-sm mb-6 opacity-80">{t('wedding.daysUntilIDo', lang)}</p>
+              <Countdown targetDate={event.event_date} lang={lang} />
             </div>
           </section>
         )}
@@ -105,7 +106,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {ourStory && (
           <section className="py-12 sm:py-20" style={{ backgroundColor: colors.background }}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>Our Story</h2>
+              <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>{t('wedding.ourStory', lang)}</h2>
               <div className="w-12 h-0.5 mx-auto mb-8" style={{ backgroundColor: colors.accent }} />
               <p className="leading-relaxed whitespace-pre-line" style={{ color: colors.textSecondary }}>{ourStory}</p>
             </div>
@@ -115,18 +116,18 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {hasChurch && (
           <section className="py-12 sm:py-20" style={{ backgroundColor: colors.background }}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>Church Ceremony</h2>
+              <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>{t('wedding.churchCeremony', lang)}</h2>
               <div className="w-12 h-0.5 mx-auto mb-8" style={{ backgroundColor: colors.accent }} />
               {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
               {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+              {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
             </div>
           </section>
         )}
 
         <section className="py-12 sm:py-20" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-8 sm:mb-10" style={{ color: colors.text }}>Wedding Details</h2>
+            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-8 sm:mb-10" style={{ color: colors.text }}>{t('wedding.weddingDetails', lang)}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
               {venueName && (
                 <div className="text-center">
@@ -138,24 +139,24 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
               {hasTimes && (
                 <div className="text-center">
                   <Clock className="h-8 w-8 mx-auto mb-3" style={{ color: colors.accent }} />
-                  {ceremonyTime && <p className="text-sm"><strong>Ceremony:</strong> {formatTime(ceremonyTime)}</p>}
+                  {ceremonyTime && <p className="text-sm"><strong>{t('time.ceremony', lang)}</strong> {formatTime(ceremonyTime)}</p>}
                   {receptionStart && (
-                    <p className="text-sm mt-1"><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                    <p className="text-sm mt-1"><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                   )}
                   {dinnerStart && (
-                    <p className="text-sm mt-1"><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                    <p className="text-sm mt-1"><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                   )}
                 </div>
               )}
               {dressCode && (
                 <div className="text-center">
-                  <h3 className="font-semibold">Dress Code</h3>
+                  <h3 className="font-semibold">{t('wedding.dressCode', lang)}</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{dressCode}</p>
                 </div>
               )}
               {accommodations && (
                 <div className="text-center">
-                  <h3 className="font-semibold">Accommodations</h3>
+                  <h3 className="font-semibold">{t('wedding.accommodations', lang)}</h3>
                   <p className="text-sm mt-1 whitespace-pre-line" style={{ color: colors.textSecondary }}>{accommodations}</p>
                 </div>
               )}
@@ -166,11 +167,11 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {registryUrl && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
             <div className="max-w-md mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl font-serif italic mb-4" style={{ color: colors.text }}>Gift Registry</h2>
+              <h2 className="text-2xl font-serif italic mb-4" style={{ color: colors.text }}>{t('wedding.giftRegistry', lang)}</h2>
               <a href={registryUrl} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors hover:opacity-90"
                 style={{ backgroundColor: colors.accent, color: colors.accentText }}>
-                View Registry <ExternalLink className="h-4 w-4" />
+                {t('wedding.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
               </a>
             </div>
           </section>
@@ -179,7 +180,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {godparents && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>Padrinos</h2>
+              <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>{t('wedding.padrinos', lang)}</h2>
               <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
             </div>
           </section>
@@ -188,7 +189,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {photos.length > 0 && (
           <section className="py-12 sm:py-20" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
             <div className="max-w-5xl mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-8 sm:mb-10">Our Moments</h2>
+              <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-8 sm:mb-10">{t('wedding.ourMoments', lang)}</h2>
               <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
             </div>
           </section>
@@ -196,9 +197,9 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
 
         <section className="py-12 sm:py-20" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
           <div className="max-w-lg mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-2">RSVP</h2>
-            <p className="text-center mb-8 opacity-70">Kindly respond by your earliest convenience</p>
-            <RSVPForm eventId={event.id} accentColor="emerald" />
+            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-2">{t('wedding.rsvp', lang)}</h2>
+            <p className="text-center mb-8 opacity-70">{t('wedding.kindlyRespond', lang)}</p>
+            <RSVPForm eventId={event.id} accentColor="emerald" lang={lang} />
           </div>
         </section>
 
@@ -219,11 +220,11 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {/* Minimal Hero */}
         <section className="py-24 sm:py-40 text-center px-6">
           <div className="max-w-xl mx-auto">
-            <p className="uppercase tracking-[0.3em] text-xs mb-6" style={{ color: colors.textSecondary }}>We&apos;re Getting Married</p>
+            <p className="uppercase tracking-[0.3em] text-xs mb-6" style={{ color: colors.textSecondary }}>{t('wedding.gettingMarried', lang)}</p>
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif italic leading-tight" style={{ color: colors.text }}>{title}</h1>
             {event.event_date && (
               <p className="mt-8 text-lg" style={{ color: colors.textSecondary }}>
-                {formatDate(event.event_date)}
+                {formatDate(event.event_date, lang)}
               </p>
             )}
             <div className="w-12 h-0.5 mx-auto mt-8" style={{ backgroundColor: colors.accent }} />
@@ -239,8 +240,8 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {event.event_date && (
           <section className="py-12 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-              <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>Days Until We Say I Do</p>
-              <Countdown targetDate={event.event_date} />
+              <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>{t('wedding.daysUntilIDo', lang)}</p>
+              <Countdown targetDate={event.event_date} lang={lang} />
             </div>
           </section>
         )}
@@ -248,7 +249,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {ourStory && (
           <section className="py-16 sm:py-24">
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-serif italic mb-8" style={{ color: colors.text }}>Our Story</h2>
+              <h2 className="text-2xl sm:text-3xl font-serif italic mb-8" style={{ color: colors.text }}>{t('wedding.ourStory', lang)}</h2>
               <p className="leading-relaxed whitespace-pre-line" style={{ color: colors.textSecondary }}>{ourStory}</p>
             </div>
           </section>
@@ -257,17 +258,17 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {hasChurch && (
           <section className="py-16 sm:py-24">
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-serif italic mb-8" style={{ color: colors.text }}>Church Ceremony</h2>
+              <h2 className="text-2xl sm:text-3xl font-serif italic mb-8" style={{ color: colors.text }}>{t('wedding.churchCeremony', lang)}</h2>
               {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
               {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+              {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
             </div>
           </section>
         )}
 
         <section className="py-16 sm:py-24" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-10" style={{ color: colors.text }}>Details</h2>
+            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-10" style={{ color: colors.text }}>{t('wedding.details', lang)}</h2>
             <div className="space-y-8 text-center">
               {venueName && (
                 <div>
@@ -277,18 +278,18 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
               )}
               {hasTimes && (
                 <div>
-                  {ceremonyTime && <p className="text-sm"><strong>Ceremony:</strong> {formatTime(ceremonyTime)}</p>}
+                  {ceremonyTime && <p className="text-sm"><strong>{t('time.ceremony', lang)}</strong> {formatTime(ceremonyTime)}</p>}
                   {receptionStart && (
-                    <p className="text-sm mt-1"><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                    <p className="text-sm mt-1"><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                   )}
                   {dinnerStart && (
-                    <p className="text-sm mt-1"><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                    <p className="text-sm mt-1"><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                   )}
                 </div>
               )}
               {dressCode && (
                 <div>
-                  <h3 className="font-semibold">Dress Code</h3>
+                  <h3 className="font-semibold">{t('wedding.dressCode', lang)}</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{dressCode}</p>
                 </div>
               )}
@@ -298,11 +299,11 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
 
         {registryUrl && (
           <section className="py-12 sm:py-16 text-center">
-            <h2 className="text-xl font-serif italic mb-4">Gift Registry</h2>
+            <h2 className="text-xl font-serif italic mb-4">{t('wedding.giftRegistry', lang)}</h2>
             <a href={registryUrl} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold hover:opacity-90"
               style={{ backgroundColor: colors.accent, color: colors.accentText }}>
-              View Registry <ExternalLink className="h-4 w-4" />
+              {t('wedding.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
             </a>
           </section>
         )}
@@ -310,7 +311,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {godparents && (
           <section className="py-12 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl font-serif italic mb-6" style={{ color: colors.text }}>Padrinos</h2>
+              <h2 className="text-2xl font-serif italic mb-6" style={{ color: colors.text }}>{t('wedding.padrinos', lang)}</h2>
               <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
             </div>
           </section>
@@ -319,7 +320,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
         {photos.length > 0 && (
           <section className="py-16 sm:py-24" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-5xl mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-10">Our Moments</h2>
+              <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-10">{t('wedding.ourMoments', lang)}</h2>
               <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
             </div>
           </section>
@@ -327,9 +328,9 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
 
         <section className="py-16 sm:py-24" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
           <div className="max-w-lg mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-2">RSVP</h2>
-            <p className="text-center mb-8 opacity-70">Kindly respond by your earliest convenience</p>
-            <RSVPForm eventId={event.id} accentColor="emerald" />
+            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-2">{t('wedding.rsvp', lang)}</h2>
+            <p className="text-center mb-8 opacity-70">{t('wedding.kindlyRespond', lang)}</p>
+            <RSVPForm eventId={event.id} accentColor="emerald" lang={lang} />
           </div>
         </section>
 
@@ -353,11 +354,11 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       >
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 max-w-2xl" style={{ color: colors.heroText }}>
-          <p className="uppercase tracking-[0.2em] sm:tracking-[0.4em] text-xs sm:text-sm mb-4 sm:mb-6 opacity-80">We&apos;re Getting Married</p>
+          <p className="uppercase tracking-[0.2em] sm:tracking-[0.4em] text-xs sm:text-sm mb-4 sm:mb-6 opacity-80">{t('wedding.gettingMarried', lang)}</p>
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif italic leading-tight">{title}</h1>
           {event.event_date && (
             <p className="mt-8 text-lg opacity-90">
-              {formatDate(event.event_date)}
+              {formatDate(event.event_date, lang)}
             </p>
           )}
           <Heart className="h-6 w-6 mx-auto mt-6 opacity-70" />
@@ -368,8 +369,8 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {event.event_date && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.accent, color: colors.accentText }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <p className="uppercase tracking-widest text-sm mb-6 opacity-80">Days Until We Say I Do</p>
-            <Countdown targetDate={event.event_date} />
+            <p className="uppercase tracking-widest text-sm mb-6 opacity-80">{t('wedding.daysUntilIDo', lang)}</p>
+            <Countdown targetDate={event.event_date} lang={lang} />
           </div>
         </section>
       )}
@@ -378,7 +379,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {ourStory && (
         <section className="py-12 sm:py-20" style={{ backgroundColor: colors.background }}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>Our Story</h2>
+            <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>{t('wedding.ourStory', lang)}</h2>
             <div className="w-12 h-0.5 mx-auto mb-8" style={{ backgroundColor: colors.accent }} />
             <p className="leading-relaxed whitespace-pre-line" style={{ color: colors.textSecondary }}>{ourStory}</p>
           </div>
@@ -389,11 +390,11 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {hasChurch && (
         <section className="py-12 sm:py-20" style={{ backgroundColor: colors.background }}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>Church Ceremony</h2>
+            <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>{t('wedding.churchCeremony', lang)}</h2>
             <div className="w-12 h-0.5 mx-auto mb-8" style={{ backgroundColor: colors.accent }} />
             {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
             {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-            {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+            {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
           </div>
         </section>
       )}
@@ -401,7 +402,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {/* Details */}
       <section className="py-12 sm:py-20" style={{ backgroundColor: colors.surface }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-8 sm:mb-10" style={{ color: colors.text }}>Wedding Details</h2>
+          <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-8 sm:mb-10" style={{ color: colors.text }}>{t('wedding.weddingDetails', lang)}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
             {venueName && (
               <div className="text-center">
@@ -413,24 +414,24 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
             {hasTimes && (
               <div className="text-center">
                 <Clock className="h-8 w-8 mx-auto mb-3" style={{ color: colors.accent }} />
-                {ceremonyTime && <p className="text-sm"><strong>Ceremony:</strong> {formatTime(ceremonyTime)}</p>}
+                {ceremonyTime && <p className="text-sm"><strong>{t('time.ceremony', lang)}</strong> {formatTime(ceremonyTime)}</p>}
                 {receptionStart && (
-                  <p className="text-sm mt-1"><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                  <p className="text-sm mt-1"><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                 )}
                 {dinnerStart && (
-                  <p className="text-sm mt-1"><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                  <p className="text-sm mt-1"><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                 )}
               </div>
             )}
             {dressCode && (
               <div className="text-center">
-                <h3 className="font-semibold">Dress Code</h3>
+                <h3 className="font-semibold">{t('wedding.dressCode', lang)}</h3>
                 <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{dressCode}</p>
               </div>
             )}
             {accommodations && (
               <div className="text-center">
-                <h3 className="font-semibold">Accommodations</h3>
+                <h3 className="font-semibold">{t('wedding.accommodations', lang)}</h3>
                 <p className="text-sm mt-1 whitespace-pre-line" style={{ color: colors.textSecondary }}>{accommodations}</p>
               </div>
             )}
@@ -442,11 +443,11 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {registryUrl && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
           <div className="max-w-md mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-2xl font-serif italic mb-4" style={{ color: colors.text }}>Gift Registry</h2>
+            <h2 className="text-2xl font-serif italic mb-4" style={{ color: colors.text }}>{t('wedding.giftRegistry', lang)}</h2>
             <a href={registryUrl} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors hover:opacity-90"
               style={{ backgroundColor: colors.accent, color: colors.accentText }}>
-              View Registry <ExternalLink className="h-4 w-4" />
+              {t('wedding.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
             </a>
           </div>
         </section>
@@ -456,7 +457,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {godparents && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>Padrinos</h2>
+            <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>{t('wedding.padrinos', lang)}</h2>
             <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
           </div>
         </section>
@@ -466,7 +467,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {photos.length > 0 && (
         <section className="py-12 sm:py-20" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-8 sm:mb-10">Our Moments</h2>
+            <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-8 sm:mb-10">{t('wedding.ourMoments', lang)}</h2>
             <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
           </div>
         </section>
@@ -475,9 +476,9 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp }:
       {/* RSVP */}
       <section className="py-12 sm:py-20" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
         <div className="max-w-lg mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-2">RSVP</h2>
-          <p className="text-center mb-8 opacity-70">Kindly respond by your earliest convenience</p>
-          <RSVPForm eventId={event.id} accentColor="emerald" />
+          <h2 className="text-2xl sm:text-3xl font-serif italic text-center mb-2">{t('wedding.rsvp', lang)}</h2>
+          <p className="text-center mb-8 opacity-70">{t('wedding.kindlyRespond', lang)}</p>
+          <RSVPForm eventId={event.id} accentColor="emerald" lang={lang} />
         </div>
       </section>
 

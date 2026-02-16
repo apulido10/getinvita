@@ -2,6 +2,7 @@
 
 import { Crown, Heart, Cake, Baby, Gift } from 'lucide-react';
 import { EVENT_TYPES } from '@/lib/constants';
+import { t, type Lang } from '@/lib/translations';
 import Link from 'next/link';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -32,7 +33,7 @@ const bgColorMap: Record<string, string> = {
 
 const FEATURED_TYPES = ['wedding', 'sweet15'];
 
-export default function EventTypes() {
+export default function EventTypes({ lang }: { lang: Lang }) {
   const featured = EVENT_TYPES.filter((et) => FEATURED_TYPES.includes(et.type));
   const others = EVENT_TYPES.filter((et) => !FEATURED_TYPES.includes(et.type));
 
@@ -41,10 +42,10 @@ export default function EventTypes() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-            Built for Your Biggest Moments
+            {t('landing.eventTypes.heading', lang)}
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Premium event websites for weddings and quinceañeras — plus cards and sites for every other celebration.
+            {t('landing.eventTypes.subheading', lang)}
           </p>
         </div>
 
@@ -52,6 +53,8 @@ export default function EventTypes() {
         <div className="grid sm:grid-cols-2 gap-8 mb-16">
           {featured.map((eventType) => {
             const Icon = iconMap[eventType.icon];
+            const label = t(`landing.eventType.${eventType.type}.label`, lang);
+            const description = t(`landing.eventType.${eventType.type}.description`, lang);
             return (
               <div
                 key={eventType.type}
@@ -62,14 +65,14 @@ export default function EventTypes() {
                 >
                   <Icon className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="mt-5 text-2xl sm:text-3xl font-bold text-gray-900">{eventType.label}</h3>
-                <p className="mt-3 text-base text-gray-600 leading-relaxed">{eventType.description}</p>
-                <p className="mt-2 text-sm font-semibold text-gray-500">Starting at ${(eventType.price / 100).toFixed(0)}</p>
+                <h3 className="mt-5 text-2xl sm:text-3xl font-bold text-gray-900">{label}</h3>
+                <p className="mt-3 text-base text-gray-600 leading-relaxed">{description}</p>
+                <p className="mt-2 text-sm font-semibold text-gray-500">{t('landing.eventTypes.startingAt', lang)}{(eventType.price / 100).toFixed(0)}</p>
                 <Link
                   href={`/order?type=${eventType.type}`}
                   className={`mt-6 block w-full text-center rounded-xl bg-gradient-to-r ${colorMap[eventType.color]} text-white py-3.5 text-base font-semibold hover:opacity-90 transition-opacity`}
                 >
-                  Get Started
+                  {t('landing.eventTypes.getStarted', lang)}
                 </Link>
               </div>
             );
@@ -78,11 +81,13 @@ export default function EventTypes() {
 
         {/* Other Celebrations */}
         <div className="text-center mb-8">
-          <h3 className="text-xl font-semibold text-gray-500">Other Celebrations</h3>
+          <h3 className="text-xl font-semibold text-gray-500">{t('landing.eventTypes.otherCelebrations', lang)}</h3>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {others.map((eventType) => {
             const Icon = iconMap[eventType.icon];
+            const label = t(`landing.eventType.${eventType.type}.label`, lang);
+            const description = t(`landing.eventType.${eventType.type}.description`, lang);
             return (
               <div
                 key={eventType.type}
@@ -94,14 +99,14 @@ export default function EventTypes() {
                   >
                     <Icon className="h-5 w-5 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900">{eventType.label}</h3>
+                  <h3 className="text-lg font-bold text-gray-900">{label}</h3>
                 </div>
-                <p className="mt-3 text-sm text-gray-600 leading-relaxed">{eventType.description}</p>
+                <p className="mt-3 text-sm text-gray-600 leading-relaxed">{description}</p>
                 <Link
                   href={`/order?type=${eventType.type}`}
                   className={`mt-4 block w-full text-center rounded-lg bg-gradient-to-r ${colorMap[eventType.color]} text-white py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity`}
                 >
-                  Get Started
+                  {t('landing.eventTypes.getStarted', lang)}
                 </Link>
               </div>
             );

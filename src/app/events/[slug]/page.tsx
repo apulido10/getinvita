@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
 import { createServiceClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import { FullEventData, EventType } from '@/types';
+import { FullEventData } from '@/types';
 import { getThemeById, getDefaultTheme } from '@/lib/themes';
+import { Lang, t } from '@/lib/translations';
 import Sweet15Template from '@/components/templates/Sweet15Template';
 import WeddingTemplate from '@/components/templates/WeddingTemplate';
 import BirthdayTemplate from '@/components/templates/BirthdayTemplate';
@@ -10,22 +11,20 @@ import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
 import InvitationIntro from '@/components/shared/InvitationIntro';
 import PoweredByFooter from '@/components/shared/PoweredByFooter';
 
-const eventTypeLabels: Record<EventType, string> = {
-  sweet15: 'Quinceañera',
-  wedding: 'Wedding',
-  birthday: 'Birthday',
-  baby_shower: 'Baby Shower',
-  valentines: "Valentine's Day",
-  mothers_day: "Mother's Day",
-  fathers_day: "Father's Day",
-};
+function parseLang(raw?: string): Lang {
+  return raw === 'es' ? 'es' : 'en';
+}
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ lang?: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const { lang: langParam } = await searchParams;
+  const lang = parseLang(langParam);
   const supabase = createServiceClient();
 
   const { data: event } = await supabase
@@ -52,9 +51,9 @@ export async function generateMetadata({
     ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
     : undefined;
 
-  const typeLabel = eventTypeLabels[event.event_type as EventType] || 'Event';
+  const typeLabel = t(`eventType.${event.event_type}`, lang) || 'Event';
   const title = event.event_name;
-  const description = `You're invited to ${event.event_name} — a ${typeLabel} celebration. View details, RSVP, and more.`;
+  const description = t('meta.description', lang, { name: event.event_name, type: typeLabel });
 
   return {
     title,
@@ -77,10 +76,14 @@ export async function generateMetadata({
 
 export default async function EventPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ lang?: string }>;
 }) {
   const { slug } = await params;
+  const { lang: langParam } = await searchParams;
+  const lang = parseLang(langParam);
   const supabase = createServiceClient();
 
   const { data: event } = await supabase
@@ -120,7 +123,7 @@ export default async function EventPage({
     ? getThemeById(event.theme_id)
     : getDefaultTheme(event.event_type);
 
-  const templateProps = { data: eventData, supabaseUrl, theme };
+  const templateProps = { data: eventData, supabaseUrl, theme, lang };
 
   let template;
   switch (event.event_type) {
@@ -145,7 +148,7 @@ export default async function EventPage({
       notFound();
   }
 
-  const typeLabel = eventTypeLabels[event.event_type as EventType] || 'Event';
+  const typeLabel = t(`eventType.${event.event_type}`, lang) || 'Event';
   const heroPhoto = (photos || []).find((p) => p.is_hero);
   const ogImage = heroPhoto
     ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
@@ -155,7 +158,7 @@ export default async function EventPage({
     '@context': 'https://schema.org',
     '@type': 'Event',
     name: event.event_name,
-    description: `You're invited to ${event.event_name} — a ${typeLabel} celebration.`,
+    description: t('meta.description', lang, { name: event.event_name, type: typeLabel }),
     ...(event.event_date && { startDate: event.event_date }),
     ...(ogImage && { image: ogImage }),
     organizer: {
@@ -176,9 +179,10 @@ export default async function EventPage({
         eventType={event.event_type}
         colors={theme!.colors}
         eventId={event.id}
+        lang={lang}
       >
         {template}
-        <PoweredByFooter colors={theme!.colors} />
+        <PoweredByFooter colors={theme!.colors} lang={lang} />
       </InvitationIntro>
     </>
   );

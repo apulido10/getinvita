@@ -9,20 +9,21 @@ import SpotifyEmbed from '@/components/shared/SpotifyEmbed';
 import RSVPForm from '@/components/shared/RSVPForm';
 import AddressLink from '@/components/shared/AddressLink';
 import { Baby, MapPin, Clock, Gift, ExternalLink, Heart } from 'lucide-react';
+import { Lang, t, formatDateLocalized } from '@/lib/translations';
 
 interface Props {
   data: FullEventData;
   supabaseUrl: string;
   theme?: ThemeVariant;
+  lang?: Lang;
 }
 
 function getDetail(details: FullEventData['details'], key: string): string {
   return details.find((d) => d.detail_key === key)?.detail_value || '';
 }
 
-function formatDate(dateStr: string): string {
-  const datePart = dateStr.substring(0, 10);
-  return new Date(`${datePart}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+function formatDate(dateStr: string, locale: Lang = 'en'): string {
+  return formatDateLocalized(dateStr, locale);
 }
 
 function formatTime(timeStr: string): string {
@@ -32,7 +33,7 @@ function formatTime(timeStr: string): string {
   return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
 }
 
-export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp }: Props) {
+export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp, lang = 'en' }: Props) {
   const { event, details, photos, music } = data;
   const theme = themeProp ?? (event.theme_id ? getThemeById(event.theme_id) : undefined) ?? getDefaultTheme('baby_shower');
   const { colors, layout } = theme;
@@ -70,16 +71,16 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
           <div className="split-hero-clip relative z-10 min-h-[55vh] md:min-h-0 flex items-center justify-center p-8 md:p-16 pb-20 md:pb-16" style={{ backgroundColor: colors.hero }}>
             <div className="text-center" style={{ color: colors.heroText }}>
               <Baby className="h-14 w-14 mx-auto mb-6" style={{ color: colors.accent }} />
-              <p className="uppercase tracking-[0.2em] text-xs sm:text-sm mb-4 opacity-80">Baby Shower</p>
+              <p className="uppercase tracking-[0.2em] text-xs sm:text-sm mb-4 opacity-80">{t('babyShower.title', lang)}</p>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
                 {babyName ? (
-                  <>Welcome Baby <span style={{ color: colors.accent }}>{babyName}</span></>
+                  <>{t('babyShower.welcomeBaby', lang)} <span style={{ color: colors.accent }}>{babyName}</span></>
                 ) : event.event_name}
               </h1>
-              <p className="mt-4 text-lg opacity-90">Celebrating {parentNames}</p>
+              <p className="mt-4 text-lg opacity-90">{t('babyShower.celebrating', lang)} {parentNames}</p>
               {event.event_date && (
                 <p className="mt-4 opacity-80">
-                  {formatDate(event.event_date)}
+                  {formatDate(event.event_date, lang)}
                 </p>
               )}
             </div>
@@ -94,9 +95,9 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
               <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>
-                {dueDate ? 'Baby Arrives In' : 'Shower Day In'}
+                {dueDate ? t('babyShower.babyArrivesIn', lang) : t('babyShower.showerDayIn', lang)}
               </p>
-              <Countdown targetDate={dueDate || event.event_date} />
+              <Countdown targetDate={dueDate || event.event_date} lang={lang} />
             </div>
           </section>
         )}
@@ -113,17 +114,17 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         {hasChurch && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-6">Church Ceremony</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('babyShower.churchCeremony', lang)}</h2>
               {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
               {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+              {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
             </div>
           </section>
         )}
 
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Shower Details</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">{t('babyShower.showerDetails', lang)}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {venueName && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
@@ -135,29 +136,29 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
               {hasTimes && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
                   <Clock className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                  <h3 className="font-bold">Times</h3>
-                  {showerTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Shower:</strong> {formatTime(showerTime)}</p>}
+                  <h3 className="font-bold">{t('babyShower.times', lang)}</h3>
+                  {showerTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('babyShower.shower', lang)}:</strong> {formatTime(showerTime)}</p>}
                   {receptionStart && (
-                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                   )}
                   {dinnerStart && (
-                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                    <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                   )}
                 </div>
               )}
               {showerTheme && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
                   <Baby className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                  <h3 className="font-bold">Theme</h3>
+                  <h3 className="font-bold">{t('babyShower.theme', lang)}</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{showerTheme}</p>
                 </div>
               )}
               {dueDate && (
                 <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: colors.background }}>
                   <Heart className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                  <h3 className="font-bold">Due Date</h3>
+                  <h3 className="font-bold">{t('babyShower.dueDate', lang)}</h3>
                   <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
-                    {formatDate(dueDate)}
+                    {formatDate(dueDate, lang)}
                   </p>
                 </div>
               )}
@@ -169,12 +170,12 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
             <div className="max-w-md mx-auto px-4 sm:px-6 text-center">
               <Gift className="h-10 w-10 mx-auto mb-4" style={{ color: colors.accent }} />
-              <h2 className="text-xl sm:text-2xl font-bold mb-4">Gift Registry</h2>
-              <p className="text-sm mb-6" style={{ color: colors.textSecondary }}>Help welcome the little one with something special!</p>
+              <h2 className="text-xl sm:text-2xl font-bold mb-4">{t('babyShower.giftRegistry', lang)}</h2>
+              <p className="text-sm mb-6" style={{ color: colors.textSecondary }}>{t('babyShower.registryMessage', lang)}</p>
               <a href={registryUrl} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold hover:opacity-90"
                 style={{ backgroundColor: colors.accent, color: colors.accentText }}>
-                View Registry <ExternalLink className="h-4 w-4" />
+                {t('babyShower.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
               </a>
             </div>
           </section>
@@ -183,7 +184,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         {photos.length > 0 && (
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-5xl mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Photos</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">{t('babyShower.photos', lang)}</h2>
               <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
             </div>
           </section>
@@ -191,9 +192,9 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
 
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
           <div className="max-w-lg mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-            <p className="text-center mb-8 opacity-70">Please let us know if you can join us!</p>
-            <RSVPForm eventId={event.id} accentColor="sky" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">{t('babyShower.rsvp', lang)}</h2>
+            <p className="text-center mb-8 opacity-70">{t('babyShower.rsvpMessage', lang)}</p>
+            <RSVPForm eventId={event.id} accentColor="sky" lang={lang} />
           </div>
         </section>
 
@@ -214,16 +215,16 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         <section className="py-24 sm:py-40 text-center px-6">
           <div className="max-w-xl mx-auto">
             <Baby className="h-12 w-12 mx-auto mb-6" style={{ color: colors.accent }} />
-            <p className="uppercase tracking-[0.3em] text-xs mb-6" style={{ color: colors.textSecondary }}>Baby Shower</p>
+            <p className="uppercase tracking-[0.3em] text-xs mb-6" style={{ color: colors.textSecondary }}>{t('babyShower.title', lang)}</p>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
               {babyName ? (
-                <>Welcome Baby <span style={{ color: colors.accent }}>{babyName}</span></>
+                <>{t('babyShower.welcomeBaby', lang)} <span style={{ color: colors.accent }}>{babyName}</span></>
               ) : event.event_name}
             </h1>
-            <p className="mt-4 text-lg" style={{ color: colors.textSecondary }}>Celebrating {parentNames}</p>
+            <p className="mt-4 text-lg" style={{ color: colors.textSecondary }}>{t('babyShower.celebrating', lang)} {parentNames}</p>
             {event.event_date && (
               <p className="mt-4" style={{ color: colors.textSecondary }}>
-                {formatDate(event.event_date)}
+                {formatDate(event.event_date, lang)}
               </p>
             )}
             <div className="w-12 h-0.5 mx-auto mt-8" style={{ backgroundColor: colors.accent }} />
@@ -240,9 +241,9 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
           <section className="py-12 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
               <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>
-                {dueDate ? 'Baby Arrives In' : 'Shower Day In'}
+                {dueDate ? t('babyShower.babyArrivesIn', lang) : t('babyShower.showerDayIn', lang)}
               </p>
-              <Countdown targetDate={dueDate || event.event_date} />
+              <Countdown targetDate={dueDate || event.event_date} lang={lang} />
             </div>
           </section>
         )}
@@ -258,17 +259,17 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         {hasChurch && (
           <section className="py-16 sm:py-24">
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-8">Church Ceremony</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-8">{t('babyShower.churchCeremony', lang)}</h2>
               {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
               {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-              {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+              {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
             </div>
           </section>
         )}
 
         <section className="py-16 sm:py-24" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-xl mx-auto px-4 sm:px-6 text-center space-y-8">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-10">Details</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-10">{t('babyShower.details', lang)}</h2>
             {venueName && (
               <div>
                 <h3 className="font-bold text-lg">{venueName}</h3>
@@ -277,12 +278,12 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
             )}
             {hasTimes && (
               <div>
-                {showerTime && <p className="text-sm"><strong>Shower:</strong> {formatTime(showerTime)}</p>}
+                {showerTime && <p className="text-sm"><strong>{t('babyShower.shower', lang)}:</strong> {formatTime(showerTime)}</p>}
                 {receptionStart && (
-                  <p className="text-sm mt-1"><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                  <p className="text-sm mt-1"><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                 )}
                 {dinnerStart && (
-                  <p className="text-sm mt-1"><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                  <p className="text-sm mt-1"><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                 )}
               </div>
             )}
@@ -292,11 +293,11 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         {registryUrl && (
           <section className="py-12 sm:py-16 text-center">
             <Gift className="h-10 w-10 mx-auto mb-4" style={{ color: colors.accent }} />
-            <h2 className="text-xl font-bold mb-4">Gift Registry</h2>
+            <h2 className="text-xl font-bold mb-4">{t('babyShower.giftRegistry', lang)}</h2>
             <a href={registryUrl} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold hover:opacity-90"
               style={{ backgroundColor: colors.accent, color: colors.accentText }}>
-              View Registry <ExternalLink className="h-4 w-4" />
+              {t('babyShower.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
             </a>
           </section>
         )}
@@ -304,7 +305,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         {photos.length > 0 && (
           <section className="py-16 sm:py-24" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-5xl mx-auto px-4 sm:px-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">Photos</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">{t('babyShower.photos', lang)}</h2>
               <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
             </div>
           </section>
@@ -312,9 +313,9 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
 
         <section className="py-16 sm:py-24" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
           <div className="max-w-lg mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-            <p className="text-center mb-8 opacity-70">Please let us know if you can join us!</p>
-            <RSVPForm eventId={event.id} accentColor="sky" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">{t('babyShower.rsvp', lang)}</h2>
+            <p className="text-center mb-8 opacity-70">{t('babyShower.rsvpMessage', lang)}</p>
+            <RSVPForm eventId={event.id} accentColor="sky" lang={lang} />
           </div>
         </section>
 
@@ -339,11 +340,11 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         {heroUrl && <div className="absolute inset-0 bg-white/20" />}
         <div className="relative z-10 max-w-2xl">
           <Baby className="h-14 w-14 mx-auto mb-6" style={{ color: colors.accent }} />
-          <p className="uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-4" style={{ color: colors.textSecondary }}>Baby Shower</p>
+          <p className="uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs sm:text-sm mb-4" style={{ color: colors.textSecondary }}>{t('babyShower.title', lang)}</p>
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight">
             {babyName ? (
               <>
-                Welcome Baby
+                {t('babyShower.welcomeBaby', lang)}
                 <br />
                 <span style={{ color: colors.accent }}>{babyName}</span>
               </>
@@ -351,10 +352,10 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
               event.event_name
             )}
           </h1>
-          <p className="mt-4 text-lg" style={{ color: colors.textSecondary }}>Celebrating {parentNames}</p>
+          <p className="mt-4 text-lg" style={{ color: colors.textSecondary }}>{t('babyShower.celebrating', lang)} {parentNames}</p>
           {event.event_date && (
             <p className="mt-4" style={{ color: colors.textSecondary }}>
-              {formatDate(event.event_date)}
+              {formatDate(event.event_date, lang)}
             </p>
           )}
         </div>
@@ -365,9 +366,9 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>
-              {dueDate ? 'Baby Arrives In' : 'Shower Day In'}
+              {dueDate ? t('babyShower.babyArrivesIn', lang) : t('babyShower.showerDayIn', lang)}
             </p>
-            <Countdown targetDate={dueDate || event.event_date} />
+            <Countdown targetDate={dueDate || event.event_date} lang={lang} />
           </div>
         </section>
       )}
@@ -386,10 +387,10 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
       {hasChurch && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6">Church Ceremony</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('babyShower.churchCeremony', lang)}</h2>
             {churchName && <h3 className="font-semibold text-lg">{churchName}</h3>}
             {churchAddress && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><AddressLink address={churchAddress} style={{ color: colors.textSecondary }} /></p>}
-            {churchTime && <p className="text-sm mt-2"><strong>Time:</strong> {formatTime(churchTime)}</p>}
+            {churchTime && <p className="text-sm mt-2"><strong>{t('time.label', lang)}</strong> {formatTime(churchTime)}</p>}
           </div>
         </section>
       )}
@@ -397,7 +398,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
       {/* Details */}
       <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Shower Details</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">{t('babyShower.showerDetails', lang)}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {venueName && (
               <div className="rounded-2xl shadow-sm p-6 text-center border" style={{ backgroundColor: colors.background, borderColor: `${colors.accent}22` }}>
@@ -409,29 +410,29 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
             {hasTimes && (
               <div className="rounded-2xl shadow-sm p-6 text-center border" style={{ backgroundColor: colors.background, borderColor: `${colors.accent}22` }}>
                 <Clock className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                <h3 className="font-bold">Times</h3>
-                {showerTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Shower:</strong> {formatTime(showerTime)}</p>}
+                <h3 className="font-bold">{t('babyShower.times', lang)}</h3>
+                {showerTime && <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('babyShower.shower', lang)}:</strong> {formatTime(showerTime)}</p>}
                 {receptionStart && (
-                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Reception:</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
+                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.reception', lang)}</strong> {formatTime(receptionStart)}{receptionEnd ? ` – ${formatTime(receptionEnd)}` : ''}</p>
                 )}
                 {dinnerStart && (
-                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>Dinner:</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
+                  <p className="text-sm mt-1" style={{ color: colors.textSecondary }}><strong>{t('time.dinner', lang)}</strong> {formatTime(dinnerStart)}{dinnerEnd ? ` – ${formatTime(dinnerEnd)}` : ''}</p>
                 )}
               </div>
             )}
             {showerTheme && (
               <div className="rounded-2xl shadow-sm p-6 text-center border" style={{ backgroundColor: colors.background, borderColor: `${colors.accent}22` }}>
                 <Baby className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                <h3 className="font-bold">Theme</h3>
+                <h3 className="font-bold">{t('babyShower.theme', lang)}</h3>
                 <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>{showerTheme}</p>
               </div>
             )}
             {dueDate && (
               <div className="rounded-2xl shadow-sm p-6 text-center border" style={{ backgroundColor: colors.background, borderColor: `${colors.accent}22` }}>
                 <Heart className="h-6 w-6 mx-auto mb-3" style={{ color: colors.accent }} />
-                <h3 className="font-bold">Due Date</h3>
+                <h3 className="font-bold">{t('babyShower.dueDate', lang)}</h3>
                 <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
-                  {formatDate(dueDate)}
+                  {formatDate(dueDate, lang)}
                 </p>
               </div>
             )}
@@ -444,12 +445,12 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
           <div className="max-w-md mx-auto px-4 sm:px-6 text-center">
             <Gift className="h-10 w-10 mx-auto mb-4" style={{ color: colors.accent }} />
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">Gift Registry</h2>
-            <p className="text-sm mb-6" style={{ color: colors.textSecondary }}>Help welcome the little one with something special!</p>
+            <h2 className="text-xl sm:text-2xl font-bold mb-4">{t('babyShower.giftRegistry', lang)}</h2>
+            <p className="text-sm mb-6" style={{ color: colors.textSecondary }}>{t('babyShower.registryMessage', lang)}</p>
             <a href={registryUrl} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors hover:opacity-90"
               style={{ backgroundColor: colors.accent, color: colors.accentText }}>
-              View Registry <ExternalLink className="h-4 w-4" />
+              {t('babyShower.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
             </a>
           </div>
         </section>
@@ -459,7 +460,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
       {photos.length > 0 && (
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">Photos</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-10">{t('babyShower.photos', lang)}</h2>
             <PhotoGallery photos={photos} supabaseUrl={supabaseUrl} />
           </div>
         </section>
@@ -468,9 +469,9 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
       {/* RSVP */}
       <section className="py-10 sm:py-16" style={{ backgroundColor: colors.hero, color: colors.heroText }}>
         <div className="max-w-lg mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">RSVP</h2>
-          <p className="text-center mb-8 opacity-70">Please let us know if you can join us!</p>
-          <RSVPForm eventId={event.id} accentColor="sky" />
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2">{t('babyShower.rsvp', lang)}</h2>
+          <p className="text-center mb-8 opacity-70">{t('babyShower.rsvpMessage', lang)}</p>
+          <RSVPForm eventId={event.id} accentColor="sky" lang={lang} />
         </div>
       </section>
 

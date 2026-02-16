@@ -34,7 +34,8 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
     }
   }, []);
   const [publishing, setPublishing] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copiedEn, setCopiedEn] = useState(false);
+  const [copiedEs, setCopiedEs] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleting, setDeleting] = useState(false);
@@ -144,13 +145,25 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                     onClick={() => {
                       const url = `${window.location.origin}/events/${data.event.slug}`;
                       navigator.clipboard.writeText(url);
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
+                      setCopiedEn(true);
+                      setTimeout(() => setCopiedEn(false), 2000);
                     }}
                     className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   >
-                    {copied ? <Check className="h-4 w-4 text-green-600" /> : <Link2 className="h-4 w-4" />}
-                    {copied ? 'Copied!' : 'Share'}
+                    {copiedEn ? <Check className="h-4 w-4 text-green-600" /> : <Link2 className="h-4 w-4" />}
+                    {copiedEn ? 'Copied!' : 'English Link'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      const url = `${window.location.origin}/events/${data.event.slug}?lang=es`;
+                      navigator.clipboard.writeText(url);
+                      setCopiedEs(true);
+                      setTimeout(() => setCopiedEs(false), 2000);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    {copiedEs ? <Check className="h-4 w-4 text-green-600" /> : <Link2 className="h-4 w-4" />}
+                    {copiedEs ? 'Copied!' : 'Spanish Link'}
                   </button>
                 </>
               ) : (

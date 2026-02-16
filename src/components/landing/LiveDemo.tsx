@@ -1,21 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { t, type Lang } from '@/lib/translations';
 
 const DEMO_SLUG = 'stephanie-quincenera-tjH8cN';
 
-export default function LiveDemo() {
+export default function LiveDemo({ lang }: { lang: Lang }) {
   const [isActive, setIsActive] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section className="py-20 sm:py-28 bg-gradient-to-b from-gray-50 to-white">
+    <section ref={sectionRef} className="py-20 sm:py-28 bg-gradient-to-b from-gray-50 to-white">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-            See It in Action
+            {t('landing.liveDemo.heading', lang)}
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            This is a real event site built with GetInvita. Scroll, tap, and turn up the volume.
+            {t('landing.liveDemo.subheading', lang)}
           </p>
         </div>
 
@@ -29,7 +48,16 @@ export default function LiveDemo() {
 
               {/* Screen */}
               <div className="relative bg-white" style={{ height: '680px' }}>
-                {!isActive ? (
+                {/* Preload iframe when section is near viewport */}
+                {shouldLoad && (
+                  <iframe
+                    src={`/events/${DEMO_SLUG}?demo=true`}
+                    className={`absolute inset-0 w-full h-full border-0 ${isActive ? 'z-10' : 'z-0 invisible'}`}
+                    allow="autoplay"
+                    title="GetInvita Live Demo"
+                  />
+                )}
+                {!isActive && (
                   <button
                     onClick={() => setIsActive(true)}
                     className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gradient-to-br from-rose-50 to-pink-100 cursor-pointer group"
@@ -39,16 +67,9 @@ export default function LiveDemo() {
                         <path d="M8 5v14l11-7z" />
                       </svg>
                     </div>
-                    <p className="mt-4 text-base font-semibold text-gray-900">Tap to Explore</p>
-                    <p className="mt-1 text-sm text-gray-500">Interactive demo with audio</p>
+                    <p className="mt-4 text-base font-semibold text-gray-900">{t('landing.liveDemo.tapToExplore', lang)}</p>
+                    <p className="mt-1 text-sm text-gray-500">{t('landing.liveDemo.interactiveDemo', lang)}</p>
                   </button>
-                ) : (
-                  <iframe
-                    src={`/events/${DEMO_SLUG}?demo=true`}
-                    className="w-full h-full border-0"
-                    allow="autoplay"
-                    title="GetInvita Live Demo"
-                  />
                 )}
               </div>
 

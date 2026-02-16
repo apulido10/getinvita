@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Lang, t } from '@/lib/translations';
 
 interface Props {
   targetDate: string;
   className?: string;
+  lang?: Lang;
 }
 
 interface TimeLeft {
@@ -14,7 +16,7 @@ interface TimeLeft {
   seconds: number;
 }
 
-export default function Countdown({ targetDate, className = '' }: Props) {
+export default function Countdown({ targetDate, className = '', lang = 'en' }: Props) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
 
   useEffect(() => {
@@ -41,16 +43,16 @@ export default function Countdown({ targetDate, className = '' }: Props) {
   if (!timeLeft) {
     return (
       <div className={className}>
-        <p className="text-xl font-semibold">The celebration is here!</p>
+        <p className="text-xl font-semibold">{t('countdown.celebrationIsHere', lang)}</p>
       </div>
     );
   }
 
   const units = [
-    { label: 'Days', value: timeLeft.days },
-    { label: 'Hours', value: timeLeft.hours },
-    { label: 'Minutes', value: timeLeft.minutes },
-    { label: 'Seconds', value: timeLeft.seconds },
+    { label: t('countdown.days', lang), value: timeLeft.days },
+    { label: t('countdown.hours', lang), value: timeLeft.hours },
+    { label: t('countdown.minutes', lang), value: timeLeft.minutes },
+    { label: t('countdown.seconds', lang), value: timeLeft.seconds },
   ];
 
   return (

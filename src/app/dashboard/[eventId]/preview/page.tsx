@@ -4,21 +4,27 @@ import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { FullEventData } from '@/types';
 import { getThemeById, getDefaultTheme } from '@/lib/themes';
+import { Lang } from '@/lib/translations';
 import Sweet15Template from '@/components/templates/Sweet15Template';
 import WeddingTemplate from '@/components/templates/WeddingTemplate';
 import BirthdayTemplate from '@/components/templates/BirthdayTemplate';
 import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
 import InvitationIntro from '@/components/shared/InvitationIntro';
 
+function parseLang(raw?: string): Lang {
+  return raw === 'es' ? 'es' : 'en';
+}
+
 export default async function PreviewPage({
   params,
   searchParams,
 }: {
   params: Promise<{ eventId: string }>;
-  searchParams: Promise<{ theme_id?: string }>;
+  searchParams: Promise<{ theme_id?: string; lang?: string }>;
 }) {
   const { eventId } = await params;
-  const { theme_id } = await searchParams;
+  const { theme_id, lang: langParam } = await searchParams;
+  const lang = parseLang(langParam);
 
   const supabase = await createClient();
   const {
@@ -70,7 +76,7 @@ export default async function PreviewPage({
     ? getThemeById(event.theme_id)
     : getDefaultTheme(event.event_type);
 
-  const templateProps = { data: eventData, supabaseUrl, theme };
+  const templateProps = { data: eventData, supabaseUrl, theme, lang };
 
   let template;
   switch (event.event_type) {
@@ -101,6 +107,7 @@ export default async function PreviewPage({
       eventType={event.event_type}
       colors={theme!.colors}
       eventId={event.id}
+      lang={lang}
     >
       {template}
     </InvitationIntro>

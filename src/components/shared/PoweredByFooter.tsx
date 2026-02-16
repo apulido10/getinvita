@@ -1,6 +1,7 @@
 import { ThemeColors } from '@/types';
+import { Lang, t } from '@/lib/translations';
 
-export default function PoweredByFooter({ colors }: { colors: ThemeColors }) {
+export default function PoweredByFooter({ colors, lang = 'en' }: { colors: ThemeColors; lang?: Lang }) {
   return (
     <footer
       className="w-full py-6 text-center"
@@ -13,7 +14,7 @@ export default function PoweredByFooter({ colors }: { colors: ThemeColors }) {
         className="inline-block text-xs tracking-wide opacity-40 transition-opacity duration-300 hover:opacity-70"
         style={{ color: colors.textSecondary }}
       >
-        Create your own invitation at{' '}
+        {t('footer.createYourOwn', lang)}{' '}
         <span className="font-medium" style={{ color: colors.accent }}>
           GetInvita.com
         </span>
