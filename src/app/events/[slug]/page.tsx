@@ -180,6 +180,7 @@ export default async function EventPage({
         colors={theme!.colors}
         eventId={event.id}
         lang={lang}
+        imageUrls={(photos || []).map((p) => `${supabaseUrl}/storage/v1/object/public/event-photos/${p.storage_path}`)}
       >
         {template}
         <PoweredByFooter colors={theme!.colors} lang={lang} />

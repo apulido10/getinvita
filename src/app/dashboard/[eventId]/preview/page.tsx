@@ -108,6 +108,7 @@ export default async function PreviewPage({
       colors={theme!.colors}
       eventId={event.id}
       lang={lang}
+      imageUrls={(photos || []).map((p: { storage_path: string }) => `${supabaseUrl}/storage/v1/object/public/event-photos/${p.storage_path}`)}
     >
       {template}
     </InvitationIntro>

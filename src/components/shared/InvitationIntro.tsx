@@ -17,6 +17,7 @@ interface InvitationIntroProps {
   colors: ThemeColors;
   eventId: string;
   lang?: Lang;
+  imageUrls?: string[];
   children: ReactNode;
 }
 
@@ -68,6 +69,7 @@ export default function InvitationIntro({
   colors,
   eventId,
   lang = 'en',
+  imageUrls,
   children,
 }: InvitationIntroProps) {
   const storageKey = `intro-seen-${eventId}`;
@@ -91,6 +93,15 @@ export default function InvitationIntro({
       // sessionStorage unavailable
     }
   }, [storageKey]);
+
+  // Preload images in background while envelope is showing
+  useEffect(() => {
+    if (!showIntro || !imageUrls?.length) return;
+    imageUrls.forEach((url) => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, [showIntro, imageUrls]);
 
   const handleOpen = () => {
     if (envelopeOpened) return;
