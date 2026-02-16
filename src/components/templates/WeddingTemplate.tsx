@@ -56,7 +56,8 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp, l
   const dinnerStart = getDetail(details, 'dinner_start');
   const dinnerEnd = getDetail(details, 'dinner_end');
   const ourStory = getDetail(details, 'our_story');
-  const registryUrl = getDetail(details, 'registry_url');
+  const rawRegistryUrl = getDetail(details, 'registry_url');
+  const registryUrl = rawRegistryUrl && !/^https?:\/\//i.test(rawRegistryUrl) ? `https://${rawRegistryUrl}` : rawRegistryUrl;
   const dressCode = getDetail(details, 'dress_code');
   const accommodations = getDetail(details, 'accommodations');
   const godparents = getDetail(details, 'godparents');
