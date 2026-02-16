@@ -53,6 +53,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
       { key: 'registry_url', label: 'Registry Link', type: 'url', placeholder: 'https://...' },
       { key: 'dress_code', label: 'Dress Code', type: 'text', placeholder: 'e.g. Black Tie' },
       { key: 'accommodations', label: 'Accommodations', type: 'textarea', placeholder: 'Hotel info for guests' },
+      { key: 'special_message', label: 'Special Message', type: 'textarea', placeholder: 'A message to your guests' },
     ],
   },
   {

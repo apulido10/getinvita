@@ -9,7 +9,7 @@ import MusicPlayer from '@/components/shared/MusicPlayer';
 import SpotifyEmbed from '@/components/shared/SpotifyEmbed';
 import RSVPForm from '@/components/shared/RSVPForm';
 import AddressLink from '@/components/shared/AddressLink';
-import { Heart, MapPin, Clock, ExternalLink } from 'lucide-react';
+import { Heart, MapPin, Clock, ExternalLink, Sparkles } from 'lucide-react';
 
 interface Props {
   data: FullEventData;
@@ -60,6 +60,7 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp, l
   const dressCode = getDetail(details, 'dress_code');
   const accommodations = getDetail(details, 'accommodations');
   const godparents = getDetail(details, 'godparents');
+  const specialMessage = getDetail(details, 'special_message');
 
   const hasChurch = churchName || churchAddress || churchTime;
   const hasTimes = ceremonyTime || receptionStart || dinnerStart;
@@ -459,6 +460,16 @@ export default function WeddingTemplate({ data, supabaseUrl, theme: themeProp, l
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-2xl sm:text-3xl font-serif italic mb-6" style={{ color: colors.text }}>{t('wedding.padrinos', lang)}</h2>
             <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
+          </div>
+        </section>
+      )}
+
+      {/* Special Message */}
+      {specialMessage && (
+        <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+            <Sparkles className="h-8 w-8 mx-auto mb-4" style={{ color: colors.accent }} />
+            <p className="text-lg leading-relaxed italic" style={{ color: colors.textSecondary }}>&ldquo;{specialMessage}&rdquo;</p>
           </div>
         </section>
       )}
