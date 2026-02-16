@@ -60,6 +60,8 @@ const translations: Record<string, Record<Lang, string>> = {
   'sweet15.courtOfHonor': { en: 'Court of Honor', es: 'Corte de Honor' },
   'sweet15.padrinos': { en: 'Padrinos', es: 'Padrinos' },
   'sweet15.gallery': { en: 'Gallery', es: 'Galería' },
+  'sweet15.giftRegistry': { en: 'Gift Registry', es: 'Mesa de Regalos' },
+  'sweet15.viewRegistry': { en: 'View Registry', es: 'Ver Mesa de Regalos' },
   'sweet15.rsvp': { en: 'RSVP', es: 'Confirmación' },
   'sweet15.rsvpMessage': { en: 'We would love to have you celebrate with us!', es: '¡Nos encantaría que celebres con nosotros!' },
 

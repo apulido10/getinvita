@@ -9,7 +9,7 @@ import MusicPlayer from '@/components/shared/MusicPlayer';
 import SpotifyEmbed from '@/components/shared/SpotifyEmbed';
 import RSVPForm from '@/components/shared/RSVPForm';
 import AddressLink from '@/components/shared/AddressLink';
-import { Crown, MapPin, Clock, Sparkles } from 'lucide-react';
+import { Crown, MapPin, Clock, Sparkles, ExternalLink } from 'lucide-react';
 
 interface Props {
   data: FullEventData;
@@ -60,6 +60,8 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp, l
   const dressCode = getDetail(details, 'dress_code');
   const parentNames = getDetail(details, 'parent_names');
   const godparents = getDetail(details, 'godparents');
+  const rawRegistryUrl = getDetail(details, 'registry_url');
+  const registryUrl = rawRegistryUrl && !/^https?:\/\//i.test(rawRegistryUrl) ? `https://${rawRegistryUrl}` : rawRegistryUrl;
 
   const hasChurch = churchName || churchAddress || churchTime;
   const hasTimes = ceremonyTime || receptionStart || dinnerStart;
@@ -171,6 +173,19 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp, l
             <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('sweet15.padrinos', lang)}</h2>
               <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
+            </div>
+          </section>
+        )}
+
+        {registryUrl && (
+          <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
+            <div className="max-w-md mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-2xl font-bold mb-4">{t('sweet15.giftRegistry', lang)}</h2>
+              <a href={registryUrl} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors hover:opacity-90"
+                style={{ backgroundColor: colors.accent, color: colors.accentText }}>
+                {t('sweet15.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
+              </a>
             </div>
           </section>
         )}
@@ -294,6 +309,19 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp, l
             <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl font-bold mb-6">{t('sweet15.padrinos', lang)}</h2>
               <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
+            </div>
+          </section>
+        )}
+
+        {registryUrl && (
+          <section className="py-12 sm:py-16" style={{ backgroundColor: colors.background }}>
+            <div className="max-w-md mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-2xl font-bold mb-4">{t('sweet15.giftRegistry', lang)}</h2>
+              <a href={registryUrl} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors hover:opacity-90"
+                style={{ backgroundColor: colors.accent, color: colors.accentText }}>
+                {t('sweet15.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
+              </a>
             </div>
           </section>
         )}
@@ -436,6 +464,20 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp, l
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('sweet15.padrinos', lang)}</h2>
             <p className="whitespace-pre-line leading-relaxed" style={{ color: colors.textSecondary }}>{godparents}</p>
+          </div>
+        </section>
+      )}
+
+      {/* Registry */}
+      {registryUrl && (
+        <section className="py-10 sm:py-16" style={{ backgroundColor: colors.background }}>
+          <div className="max-w-md mx-auto px-4 sm:px-6 text-center">
+            <h2 className="text-2xl font-bold mb-4">{t('sweet15.giftRegistry', lang)}</h2>
+            <a href={registryUrl} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors hover:opacity-90"
+              style={{ backgroundColor: colors.accent, color: colors.accentText }}>
+              {t('sweet15.viewRegistry', lang)} <ExternalLink className="h-4 w-4" />
+            </a>
           </div>
         </section>
       )}

@@ -26,6 +26,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
       { key: 'special_message', label: 'Special Message', type: 'textarea', placeholder: 'A message to your guests' },
       { key: 'dress_code', label: 'Dress Code', type: 'text', placeholder: 'e.g. Formal / Semi-formal' },
       { key: 'parent_names', label: 'Parent Names', type: 'text', placeholder: 'Proud parents' },
+      { key: 'registry_url', label: 'Registry Link', type: 'url', placeholder: 'https://...' },
     ],
   },
   {
