@@ -95,7 +95,8 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">9. Contact</h2>
             <p>
-              If you have questions about these terms, please contact us through our website.
+              If you have questions about these terms, please contact us at{' '}
+              <a href="mailto:support@getinvita.com" className="text-blue-600 hover:underline">support@getinvita.com</a>.
             </p>
           </section>
         </div>

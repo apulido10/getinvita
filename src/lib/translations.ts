@@ -191,6 +191,7 @@ const translations: Record<string, Record<Lang, string>> = {
   'landing.footer.eventTypes': { en: 'Event Types', es: 'Tipos de Eventos' },
   'landing.footer.eventOptions': { en: 'Event Options', es: 'Opciones de Eventos' },
   'landing.footer.termsAndPolicy': { en: 'Terms & Policy', es: 'Términos y Política' },
+  'landing.footer.contact': { en: 'Contact', es: 'Contacto' },
   'landing.footer.copyright': { en: 'All rights reserved.', es: 'Todos los derechos reservados.' },
 
   // ── Metadata ──

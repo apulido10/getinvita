@@ -43,6 +43,9 @@ export default async function HomePage({
             <Link href="/terms" className="hover:text-white transition-colors">
               {t('landing.footer.termsAndPolicy', lang)}
             </Link>
+            <a href="mailto:support@getinvita.com" className="hover:text-white transition-colors">
+              {t('landing.footer.contact', lang)}
+            </a>
           </div>
           <p className="mt-8 text-xs text-gray-600">
             &copy; {new Date().getFullYear()} GetInvita. {t('landing.footer.copyright', lang)}
