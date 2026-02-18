@@ -11,25 +11,37 @@ import ThemePicker from './ThemePicker';
 import { FileText, Image, Music, Users, Globe, Eye, ArrowLeft, LogOut, Link2, Check, ChevronRight, ChevronLeft, Trash2, X, Palette, Printer } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { t, type Lang } from '@/lib/translations';
 
 type Step = 'details' | 'photos' | 'music' | 'theme' | 'rsvps';
 
-const steps: { id: Step; label: string; icon: React.ElementType }[] = [
-  { id: 'details', label: 'Details', icon: FileText },
-  { id: 'photos', label: 'Photos', icon: Image },
-  { id: 'music', label: 'Music', icon: Music },
-  { id: 'theme', label: 'Theme', icon: Palette },
-  { id: 'rsvps', label: 'RSVPs', icon: Users },
-];
+const stepIds: Step[] = ['details', 'photos', 'music', 'theme', 'rsvps'];
+const stepIcons: Record<Step, React.ElementType> = {
+  details: FileText,
+  photos: Image,
+  music: Music,
+  theme: Palette,
+  rsvps: Users,
+};
+const stepLabelKeys: Record<Step, string> = {
+  details: 'dash.step.details',
+  photos: 'dash.step.photos',
+  music: 'dash.step.music',
+  theme: 'dash.step.theme',
+  rsvps: 'dash.step.rsvps',
+};
 
-export default function DashboardClient({ initialData }: { initialData: FullEventData }) {
+export default function DashboardClient({ initialData, lang }: { initialData: FullEventData; lang: Lang }) {
   const [data, setData] = useState(initialData);
   const [activeStep, setActiveStep] = useState<Step>('details');
+
+  const langParam = lang === 'es' ? '?lang=es' : '';
+  const langAmpParam = lang === 'es' ? '&lang=es' : '';
 
   // Read ?tab= param on mount to jump to a specific tab
   useEffect(() => {
     const tab = new URLSearchParams(window.location.search).get('tab') as Step | null;
-    if (tab && steps.some((s) => s.id === tab)) {
+    if (tab && stepIds.includes(tab)) {
       setActiveStep(tab);
     }
   }, []);
@@ -43,9 +55,13 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
 
   const config = getEventTypeConfig(data.event.event_type);
   const isCardEvent = CARD_EVENT_TYPES.includes(data.event.event_type);
-  const visibleSteps = isCardEvent ? steps.filter((s) => s.id !== 'rsvps') : steps;
+
+  const steps = stepIds
+    .filter((id) => !(isCardEvent && id === 'rsvps'))
+    .map((id) => ({ id, label: t(stepLabelKeys[id], lang), icon: stepIcons[id] }));
+
   const isPublished = data.event.status === 'published';
-  const currentIndex = visibleSteps.findIndex((s) => s.id === activeStep);
+  const currentIndex = steps.findIndex((s) => s.id === activeStep);
 
   const selectedTheme = data.event.theme_id ? getThemeById(data.event.theme_id) : null;
   const hasPremiumAddon = selectedTheme?.isPremium && !data.event.theme_premium_paid;
@@ -68,7 +84,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
     try {
       const res = await fetch(`/api/events/${data.event.id}`, { method: 'DELETE' });
       if (res.ok) {
-        window.location.href = '/dashboard';
+        window.location.href = `/dashboard${langParam}`;
       }
     } finally {
       setDeleting(false);
@@ -88,6 +104,16 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
     }
   }
 
+  const toggleLang = () => {
+    const url = new URL(window.location.href);
+    if (lang === 'en') {
+      url.searchParams.set('lang', 'es');
+    } else {
+      url.searchParams.delete('lang');
+    }
+    window.location.href = url.toString();
+  };
+
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -95,27 +121,39 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between mb-3">
             <Link
-              href="/dashboard"
+              href={`/dashboard${langParam}`}
               className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {t('dash.back', lang)}
             </Link>
             <div className="flex items-center gap-3">
+              {/* Language toggle */}
+              <button
+                onClick={toggleLang}
+                className="flex items-center rounded-full bg-gray-100 text-xs font-semibold text-gray-600 overflow-hidden"
+              >
+                <span className={`px-2.5 py-1.5 transition-colors ${lang === 'en' ? 'bg-purple-600 text-white' : ''}`}>
+                  EN
+                </span>
+                <span className={`px-2.5 py-1.5 transition-colors ${lang === 'es' ? 'bg-purple-600 text-white' : ''}`}>
+                  ES
+                </span>
+              </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
                 className="inline-flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700"
               >
                 <Trash2 className="h-4 w-4" />
-                <span className="hidden sm:inline">Delete</span>
+                <span className="hidden sm:inline">{t('dash.delete', lang)}</span>
               </button>
               <button
                 onClick={handleSignOut}
                 className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
-                title="Sign Out"
+                title={t('dash.signOut', lang)}
               >
                 <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign Out</span>
+                <span className="hidden sm:inline">{t('dash.signOut', lang)}</span>
               </button>
             </div>
           </div>
@@ -131,7 +169,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                 <>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-3 py-1.5 text-xs font-semibold text-green-700">
                     <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                    Live
+                    {t('dash.live', lang)}
                   </span>
                   <Link
                     href={`/events/${data.event.slug}`}
@@ -139,7 +177,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                     className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     <Eye className="h-4 w-4" />
-                    View
+                    {t('dash.view', lang)}
                   </Link>
                   <button
                     onClick={() => {
@@ -151,7 +189,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                     className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     {copiedEn ? <Check className="h-4 w-4 text-green-600" /> : <Link2 className="h-4 w-4" />}
-                    {copiedEn ? 'Copied!' : 'English Link'}
+                    {copiedEn ? t('dash.copied', lang) : t('dash.englishLink', lang)}
                   </button>
                   <button
                     onClick={() => {
@@ -163,7 +201,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                     className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     {copiedEs ? <Check className="h-4 w-4 text-green-600" /> : <Link2 className="h-4 w-4" />}
-                    {copiedEs ? 'Copied!' : 'Spanish Link'}
+                    {copiedEs ? t('dash.copied', lang) : t('dash.spanishLink', lang)}
                   </button>
                 </>
               ) : (
@@ -174,10 +212,10 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                 >
                   <Globe className="h-4 w-4" />
                   {publishing
-                    ? 'Redirecting...'
+                    ? t('dash.redirecting', lang)
                     : hasPremiumAddon
-                    ? 'Pay & Publish (+$50 theme)'
-                    : 'Pay & Publish'}
+                    ? t('dash.payPublishPremium', lang)
+                    : t('dash.payPublish', lang)}
                 </button>
               )}
             </div>
@@ -189,7 +227,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
       <div className="bg-white border-b">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
-            {visibleSteps.map((step, i) => (
+            {steps.map((step, i) => (
               <button
                 key={step.id}
                 onClick={() => changeStep(step.id)}
@@ -222,6 +260,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
             ref={detailsFormRef}
             event={data.event}
             details={data.details}
+            lang={lang}
             onUpdate={(details) => setData((prev) => ({ ...prev, details }))}
             onEventNameChange={(name) => setData((prev) => ({ ...prev, event: { ...prev.event, event_name: name } }))}
           />
@@ -230,6 +269,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
           <PhotoUploader
             event={data.event}
             photos={data.photos}
+            lang={lang}
             onUpdate={(photos) => setData((prev) => ({ ...prev, photos }))}
           />
         )}
@@ -237,6 +277,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
           <MusicUploader
             event={data.event}
             music={data.music}
+            lang={lang}
             onUpdate={(music) => setData((prev) => ({ ...prev, music }))}
           />
         )}
@@ -246,6 +287,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
               event={data.event}
               data={data}
               supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
+              lang={lang}
               onThemeChange={(themeId) =>
                 setData((prev) => ({
                   ...prev,
@@ -262,12 +304,12 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                 >
                   <Globe className="h-4 w-4" />
                   {publishing
-                    ? 'Redirecting...'
+                    ? t('dash.redirecting', lang)
                     : hasPremiumAddon
-                    ? 'Pay & Publish (+$50 theme)'
-                    : 'Pay & Publish'}
+                    ? t('dash.payPublishPremium', lang)
+                    : t('dash.payPublish', lang)}
                 </button>
-                <p className="text-xs text-gray-400 mt-2">Ready? Hit publish to take your event live.</p>
+                <p className="text-xs text-gray-400 mt-2">{t('dash.readyPublish', lang)}</p>
               </div>
             )}
           </>
@@ -275,29 +317,29 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
         {activeStep === 'rsvps' && (
           <div className="bg-white rounded-xl border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Guest RSVPs</h2>
+              <h2 className="text-lg font-bold text-gray-900">{t('dash.guestRSVPs', lang)}</h2>
               {data.rsvps.length > 0 && (
                 <button
                   onClick={() => window.print()}
                   className="print:hidden inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <Printer className="h-4 w-4" />
-                  Print
+                  {t('dash.print', lang)}
                 </button>
               )}
             </div>
             {data.rsvps.length === 0 ? (
-              <p className="text-gray-500 text-sm">No RSVPs yet.</p>
+              <p className="text-gray-500 text-sm">{t('dash.noRSVPsYet', lang)}</p>
             ) : (
               <div className="overflow-x-auto print-rsvp-area">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b text-left">
-                      <th className="pb-2 font-semibold text-gray-900">Guest</th>
-                      <th className="pb-2 font-semibold text-gray-900">Attending</th>
-                      <th className="pb-2 font-semibold text-gray-900">Guests</th>
-                      <th className="pb-2 font-semibold text-gray-900">Song Request</th>
-                      <th className="pb-2 font-semibold text-gray-900">Message</th>
+                      <th className="pb-2 font-semibold text-gray-900">{t('dash.guest', lang)}</th>
+                      <th className="pb-2 font-semibold text-gray-900">{t('dash.attending', lang)}</th>
+                      <th className="pb-2 font-semibold text-gray-900">{t('dash.guests', lang)}</th>
+                      <th className="pb-2 font-semibold text-gray-900">{t('dash.songRequest', lang)}</th>
+                      <th className="pb-2 font-semibold text-gray-900">{t('dash.message', lang)}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y">
@@ -312,7 +354,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                                 : 'bg-red-100 text-red-700'
                             }`}
                           >
-                            {rsvp.attending ? 'Yes' : 'No'}
+                            {rsvp.attending ? t('dash.yes', lang) : t('dash.no', lang)}
                           </span>
                         </td>
                         <td className="py-2 text-gray-600">{rsvp.guest_count}</td>
@@ -330,19 +372,19 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
         {/* Navigation arrows */}
         <div className="flex items-center justify-between mt-8">
           <button
-            onClick={() => changeStep(visibleSteps[currentIndex - 1].id)}
+            onClick={() => changeStep(steps[currentIndex - 1].id)}
             disabled={currentIndex === 0}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-0 disabled:pointer-events-none transition-all"
           >
             <ChevronLeft className="h-4 w-4" />
-            {currentIndex > 0 ? visibleSteps[currentIndex - 1].label : ''}
+            {currentIndex > 0 ? steps[currentIndex - 1].label : ''}
           </button>
           <button
-            onClick={() => changeStep(visibleSteps[currentIndex + 1].id)}
-            disabled={currentIndex === visibleSteps.length - 1}
+            onClick={() => changeStep(steps[currentIndex + 1].id)}
+            disabled={currentIndex === steps.length - 1}
             className="inline-flex items-center gap-2 rounded-lg bg-purple-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-purple-700 disabled:opacity-0 disabled:pointer-events-none transition-all"
           >
-            {currentIndex < visibleSteps.length - 1 ? visibleSteps[currentIndex + 1].label : ''}
+            {currentIndex < steps.length - 1 ? steps[currentIndex + 1].label : ''}
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
@@ -352,7 +394,7 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Delete Event</h2>
+              <h2 className="text-lg font-bold text-gray-900">{t('dash.deleteEvent', lang)}</h2>
               <button
                 onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }}
                 className="text-gray-400 hover:text-gray-600"
@@ -361,10 +403,10 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
               </button>
             </div>
             <p className="text-sm text-gray-600 mb-1">
-              This action is permanent and cannot be undone. All event data, photos, music, and RSVPs will be deleted.
+              {t('dash.deleteWarning', lang)}
             </p>
             <p className="text-sm text-gray-600 mb-4">
-              Type <span className="font-semibold text-gray-900">{data.event.event_name}</span> to confirm.
+              {lang === 'en' ? 'Type ' : 'Escribe '}<span className="font-semibold text-gray-900">{data.event.event_name}</span> {t('dash.typeToConfirm', lang)}
             </p>
             <input
               type="text"
@@ -378,14 +420,14 @@ export default function DashboardClient({ initialData }: { initialData: FullEven
                 onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }}
                 className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                {t('dash.cancel', lang)}
               </button>
               <button
                 onClick={handleDelete}
                 disabled={deleteConfirmText !== data.event.event_name || deleting}
                 className="rounded-lg bg-red-600 text-white px-4 py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {deleting ? 'Deleting...' : 'Delete Event'}
+                {deleting ? t('dash.deleting', lang) : t('dash.deleteEvent', lang)}
               </button>
             </div>
           </div>

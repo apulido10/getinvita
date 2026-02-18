@@ -4,14 +4,16 @@ import { useState, useRef, useCallback } from 'react';
 import { Event, EventPhoto } from '@/types';
 import { Upload, Star, Trash2, Loader2, ImageIcon } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { t, type Lang } from '@/lib/translations';
 
 interface Props {
   event: Event;
   photos: EventPhoto[];
+  lang: Lang;
   onUpdate: (photos: EventPhoto[]) => void;
 }
 
-export default function PhotoUploader({ event, photos, onUpdate }: Props) {
+export default function PhotoUploader({ event, photos, lang, onUpdate }: Props) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -23,7 +25,7 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
     try {
       for (const file of Array.from(files)) {
         if (!file.type.startsWith('image/')) {
-          setError(`"${file.name}" is not an image file`);
+          setError(`"${file.name}" ${t('dash.notImageFile', lang)}`);
           continue;
         }
 
@@ -71,12 +73,12 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
         }
       }
     } catch (err) {
-      setError('Network error — check your connection and try again');
+      setError(t('dash.networkError', lang));
       console.error('Photo upload error:', err);
     } finally {
       setUploading(false);
     }
-  }, [event.id, onUpdate]);
+  }, [event.id, lang, onUpdate]);
 
   async function handleDelete(photoId: string) {
     const res = await fetch(`/api/events/${event.id}/photos?photoId=${photoId}`, {
@@ -131,15 +133,15 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
         {uploading ? (
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
-            <p className="text-sm text-gray-600">Uploading...</p>
+            <p className="text-sm text-gray-600">{t('dash.uploading', lang)}</p>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-2">
             <Upload className="h-8 w-8 text-gray-400" />
             <p className="text-sm font-medium text-gray-700">
-              Drag & drop photos here, or click to browse
+              {t('dash.dragDropPhotos', lang)}
             </p>
-            <p className="text-xs text-gray-500">JPG, PNG, WebP up to 10MB each</p>
+            <p className="text-xs text-gray-500">{t('dash.photoFormats', lang)}</p>
           </div>
         )}
       </div>
@@ -162,7 +164,7 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
               />
               {photo.is_hero && (
                 <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 rounded-full px-2.5 py-1 text-xs font-bold flex items-center gap-1 shadow-md">
-                  <Star className="h-3.5 w-3.5 fill-current" /> Cover Photo
+                  <Star className="h-3.5 w-3.5 fill-current" /> {t('dash.coverPhoto', lang)}
                 </div>
               )}
               {!photo.is_hero && (
@@ -170,9 +172,9 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
                   <button
                     onClick={() => handleSetHero(photo.id)}
                     className="bg-white/90 backdrop-blur-sm text-yellow-600 hover:bg-yellow-50 rounded-full px-2.5 py-1 text-xs font-medium flex items-center gap-1 shadow-md"
-                    title="Set as cover photo"
+                    title={t('dash.setAsCover', lang)}
                   >
-                    <Star className="h-3.5 w-3.5" /> Set as Cover
+                    <Star className="h-3.5 w-3.5" /> {t('dash.setAsCover', lang)}
                   </button>
                 </div>
               )}
@@ -180,7 +182,7 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
                 <button
                   onClick={() => handleDelete(photo.id)}
                   className="rounded-full bg-white/90 backdrop-blur-sm p-2 text-red-600 hover:bg-red-50 shadow-md"
-                  title="Delete photo"
+                  title={t('dash.delete', lang)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -191,7 +193,7 @@ export default function PhotoUploader({ event, photos, onUpdate }: Props) {
       ) : (
         <div className="bg-white rounded-xl border p-8 text-center">
           <ImageIcon className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">No photos yet. Upload some to get started!</p>
+          <p className="text-sm text-gray-500">{t('dash.noPhotosYet', lang)}</p>
         </div>
       )}
     </div>

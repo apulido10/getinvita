@@ -38,13 +38,13 @@ export default function Navbar({ lang }: { lang: Lang }) {
             </span>
           </button>
           <Link
-            href="/login"
+            href={lang === 'es' ? '/login?lang=es' : '/login'}
             className="px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white/80 hover:text-white transition-colors whitespace-nowrap"
           >
             {t('landing.nav.signIn', lang)}
           </Link>
           <Link
-            href="/login?redirect=/order"
+            href={lang === 'es' ? '/login?redirect=/order&lang=es' : '/login?redirect=/order'}
             className="rounded-full bg-white px-3 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-purple-900 hover:bg-purple-50 transition-colors whitespace-nowrap"
           >
             {t('landing.nav.signUp', lang)}

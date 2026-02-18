@@ -5,6 +5,7 @@ import { Event, EventDetail } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
 import { Save, Loader2 } from 'lucide-react';
 import AddressAutocomplete from './AddressAutocomplete';
+import { t, type Lang } from '@/lib/translations';
 
 export interface EventDetailsFormRef {
   save: () => Promise<void>;
@@ -13,11 +14,12 @@ export interface EventDetailsFormRef {
 interface Props {
   event: Event;
   details: EventDetail[];
+  lang: Lang;
   onUpdate: (details: EventDetail[]) => void;
   onEventNameChange?: (name: string) => void;
 }
 
-const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDetailsForm({ event, details, onUpdate, onEventNameChange }, ref) {
+const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDetailsForm({ event, details, lang, onUpdate, onEventNameChange }, ref) {
   const config = getEventTypeConfig(event.event_type);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -63,7 +65,7 @@ const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDe
   return (
     <div className="bg-white rounded-xl border p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-gray-900">Event Details</h2>
+        <h2 className="text-lg font-bold text-gray-900">{t('dash.eventDetails', lang)}</h2>
         <button
           onClick={handleSave}
           disabled={saving}
@@ -74,14 +76,14 @@ const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDe
           ) : (
             <Save className="h-4 w-4" />
           )}
-          {saved ? 'Saved!' : 'Save Details'}
+          {saved ? t('dash.saved', lang) : t('dash.saveDetails', lang)}
         </button>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="sm:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Event Name <span className="text-red-500 ml-0.5">*</span>
+            {t('dash.eventName', lang)} <span className="text-red-500 ml-0.5">*</span>
           </label>
           <input
             type="text"
@@ -89,7 +91,7 @@ const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDe
             onChange={(e) => { setEventName(e.target.value); setSaved(false); }}
             className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none"
           />
-          <p className="text-xs text-gray-400 mt-1">This name appears on the invitation when guests open your event.</p>
+          <p className="text-xs text-gray-400 mt-1">{t('dash.eventNameHelper', lang)}</p>
         </div>
 
         {config.fields.map((field) => (

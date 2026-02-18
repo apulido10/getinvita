@@ -4,13 +4,18 @@ import { requireAuth } from '@/lib/supabase/auth';
 import { notFound } from 'next/navigation';
 import DashboardClient from '@/components/dashboard/DashboardClient';
 import { FullEventData } from '@/types';
+import { Lang } from '@/lib/translations';
 
 export default async function EventDashboardPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ eventId: string }>;
+  searchParams: Promise<{ lang?: string }>;
 }) {
   const { eventId } = await params;
+  const { lang: langParam } = await searchParams;
+  const lang: Lang = langParam === 'es' ? 'es' : 'en';
   const { user, supabase } = await requireAuth();
 
   const { data: event } = await supabase
@@ -44,5 +49,5 @@ export default async function EventDashboardPage({
     rsvps: rsvps || [],
   };
 
-  return <DashboardClient initialData={eventData} />;
+  return <DashboardClient initialData={eventData} lang={lang} />;
 }

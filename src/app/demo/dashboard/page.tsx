@@ -45,7 +45,7 @@ export default function DemoDashboardPage() {
       <div className="bg-yellow-50 border-b border-yellow-200 px-6 py-2 text-center text-sm text-yellow-800">
         Demo Mode — Uploads and saves won&apos;t persist. This is a UI preview only.
       </div>
-      <DashboardClient initialData={mockData} />
+      <DashboardClient initialData={mockData} lang="en" />
     </div>
   );
 }

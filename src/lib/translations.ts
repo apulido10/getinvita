@@ -41,7 +41,7 @@ const translations: Record<string, Record<Lang, string>> = {
   'wedding.details': { en: 'Venue', es: 'Lugar' },
   'wedding.giftRegistry': { en: 'Gift Registry', es: 'Mesa de Regalos' },
   'wedding.viewRegistry': { en: 'View Registry', es: 'Ver Mesa de Regalos' },
-  'wedding.padrinos': { en: 'Padrinos', es: 'Padrinos' },
+  'wedding.padrinos': { en: 'Godparents', es: 'Padrinos' },
   'wedding.ourMoments': { en: 'Our Moments', es: 'Nuestros Momentos' },
   'wedding.rsvp': { en: 'RSVP', es: 'Confirmación' },
   'wedding.kindlyRespond': { en: 'Kindly respond by your earliest convenience', es: 'Por favor confirma tu asistencia' },
@@ -58,7 +58,7 @@ const translations: Record<string, Record<Lang, string>> = {
   'sweet15.theme': { en: 'Theme', es: 'Temática' },
   'sweet15.dressCode': { en: 'Dress Code', es: 'Código de Vestimenta' },
   'sweet15.courtOfHonor': { en: 'Court of Honor', es: 'Corte de Honor' },
-  'sweet15.padrinos': { en: 'Padrinos', es: 'Padrinos' },
+  'sweet15.padrinos': { en: 'Godparents', es: 'Padrinos' },
   'sweet15.gallery': { en: 'Gallery', es: 'Galería' },
   'sweet15.giftRegistry': { en: 'Gift Registry', es: 'Mesa de Regalos' },
   'sweet15.viewRegistry': { en: 'View Registry', es: 'Ver Mesa de Regalos' },
@@ -193,6 +193,93 @@ const translations: Record<string, Record<Lang, string>> = {
   'landing.footer.termsAndPolicy': { en: 'Terms & Policy', es: 'Términos y Política' },
   'landing.footer.contact': { en: 'Contact', es: 'Contacto' },
   'landing.footer.copyright': { en: 'All rights reserved.', es: 'Todos los derechos reservados.' },
+
+  // ── Dashboard: Common ──
+  'dash.myEvents': { en: 'My Events', es: 'Mis Eventos' },
+  'dash.createFirstEvent': { en: 'Create your first event to get started.', es: 'Crea tu primer evento para comenzar.' },
+  'dash.eventCount': { en: 'event', es: 'evento' },
+  'dash.eventCountPlural': { en: 'events', es: 'eventos' },
+  'dash.createNewEvent': { en: 'Create New Event', es: 'Crear Nuevo Evento' },
+  'dash.noEventsYet': { en: 'No events yet. Create one to get started!', es: '¡Aún no tienes eventos. Crea uno para comenzar!' },
+  'dash.view': { en: 'View', es: 'Ver' },
+  'dash.edit': { en: 'Edit', es: 'Editar' },
+  'dash.back': { en: 'Back', es: 'Atrás' },
+  'dash.delete': { en: 'Delete', es: 'Eliminar' },
+  'dash.signOut': { en: 'Sign Out', es: 'Cerrar Sesión' },
+  'dash.live': { en: 'Live', es: 'En Vivo' },
+  'dash.englishLink': { en: 'English Link', es: 'Enlace en Inglés' },
+  'dash.spanishLink': { en: 'Spanish Link', es: 'Enlace en Español' },
+  'dash.copied': { en: 'Copied!', es: '¡Copiado!' },
+  'dash.redirecting': { en: 'Redirecting...', es: 'Redirigiendo...' },
+  'dash.payPublish': { en: 'Pay & Publish', es: 'Pagar y Publicar' },
+  'dash.payPublishPremium': { en: 'Pay & Publish (+$50 theme)', es: 'Pagar y Publicar (+$50 tema)' },
+  'dash.readyPublish': { en: 'Ready? Hit publish to take your event live.', es: '¿Listo? Publica para poner tu evento en vivo.' },
+  'dash.print': { en: 'Print', es: 'Imprimir' },
+
+  // ── Dashboard: Steps ──
+  'dash.step.details': { en: 'Details', es: 'Detalles' },
+  'dash.step.photos': { en: 'Photos', es: 'Fotos' },
+  'dash.step.music': { en: 'Music', es: 'Música' },
+  'dash.step.theme': { en: 'Theme', es: 'Tema' },
+  'dash.step.rsvps': { en: 'RSVPs', es: 'RSVPs' },
+
+  // ── Dashboard: Event Details Form ──
+  'dash.eventDetails': { en: 'Event Details', es: 'Detalles del Evento' },
+  'dash.saved': { en: 'Saved!', es: '¡Guardado!' },
+  'dash.saveDetails': { en: 'Save Details', es: 'Guardar Detalles' },
+  'dash.eventName': { en: 'Event Name', es: 'Nombre del Evento' },
+  'dash.eventNameHelper': { en: 'This name appears on the invitation when guests open your event.', es: 'Este nombre aparece en la invitación cuando los invitados abren tu evento.' },
+
+  // ── Dashboard: Photo Uploader ──
+  'dash.uploading': { en: 'Uploading...', es: 'Subiendo...' },
+  'dash.dragDropPhotos': { en: 'Drag & drop photos here, or click to browse', es: 'Arrastra y suelta fotos aquí, o haz clic para buscar' },
+  'dash.photoFormats': { en: 'JPG, PNG, WebP up to 10MB each', es: 'JPG, PNG, WebP hasta 10MB cada una' },
+  'dash.coverPhoto': { en: 'Cover Photo', es: 'Foto de Portada' },
+  'dash.setAsCover': { en: 'Set as Cover', es: 'Establecer como Portada' },
+  'dash.noPhotosYet': { en: 'No photos yet. Upload some to get started!', es: '¡Aún no hay fotos. Sube algunas para comenzar!' },
+  'dash.notImageFile': { en: 'is not an image file', es: 'no es un archivo de imagen' },
+  'dash.networkError': { en: 'Network error — check your connection and try again', es: 'Error de red — revisa tu conexión e inténtalo de nuevo' },
+
+  // ── Dashboard: Music Uploader ──
+  'dash.uploadMP3': { en: 'Upload MP3', es: 'Subir MP3' },
+  'dash.searchSpotify': { en: 'Search Spotify', es: 'Buscar en Spotify' },
+  'dash.clickToUploadMusic': { en: 'Click to upload music files', es: 'Haz clic para subir archivos de música' },
+  'dash.audioFormats': { en: 'MP3, WAV, AAC', es: 'MP3, WAV, AAC' },
+  'dash.spotifyNote': { en: 'Spotify tracks play a 30-second preview. Upload an MP3 for the full song.', es: 'Las canciones de Spotify reproducen una vista previa de 30 segundos. Sube un MP3 para la canción completa.' },
+  'dash.noMusicYet': { en: 'No music yet. Upload tracks or search Spotify for your event page!', es: '¡Aún no hay música. Sube canciones o busca en Spotify para tu página de evento!' },
+  'dash.notAudioFile': { en: 'is not an audio file', es: 'no es un archivo de audio' },
+  'dash.searchSongPlaceholder': { en: 'Search for a song on Spotify...', es: 'Busca una canción en Spotify...' },
+
+  // ── Dashboard: Theme Picker ──
+  'dash.chooseTheme': { en: 'Choose a Theme', es: 'Elige un Tema' },
+  'dash.themeSubtext': { en: 'Pick a color theme for your event site. All color themes are free.', es: 'Elige un tema de color para tu sitio de evento. Todos los temas de color son gratis.' },
+  'dash.premiumLayouts': { en: 'Premium Layouts', es: 'Diseños Premium' },
+  'dash.premiumUnlocked': { en: 'Premium unlocked! Choose any layout below.', es: '¡Premium desbloqueado! Elige cualquier diseño a continuación.' },
+  'dash.upgradePrompt': { en: 'Upgrade to a premium layout for $50.', es: 'Actualiza a un diseño premium por $50.' },
+  'dash.premiumDescription': { en: 'Unique layouts with split-screen and minimal designs. +$50 added to your publish cost.', es: 'Diseños únicos con pantalla dividida y diseños mínimos. +$50 se agrega a tu costo de publicación.' },
+  'dash.preview': { en: 'Preview', es: 'Vista Previa' },
+  'dash.previewTitle': { en: 'Preview', es: 'Vista Previa' },
+  'dash.upgrade50': { en: 'Upgrade $50', es: 'Actualizar $50' },
+  'dash.premiumAddonNote': { en: '+$50 will be added to your total when you publish. This unlocks the selected premium layout.', es: '+$50 se agregará a tu total al publicar. Esto desbloquea el diseño premium seleccionado.' },
+  'dash.layout': { en: 'layout', es: 'diseño' },
+
+  // ── Dashboard: RSVPs ──
+  'dash.guestRSVPs': { en: 'Guest RSVPs', es: 'RSVPs de Invitados' },
+  'dash.noRSVPsYet': { en: 'No RSVPs yet.', es: 'Aún no hay RSVPs.' },
+  'dash.guest': { en: 'Guest', es: 'Invitado' },
+  'dash.attending': { en: 'Attending', es: 'Asistencia' },
+  'dash.guests': { en: 'Guests', es: 'Invitados' },
+  'dash.songRequest': { en: 'Song Request', es: 'Canción Solicitada' },
+  'dash.message': { en: 'Message', es: 'Mensaje' },
+  'dash.yes': { en: 'Yes', es: 'Sí' },
+  'dash.no': { en: 'No', es: 'No' },
+
+  // ── Dashboard: Delete Modal ──
+  'dash.deleteEvent': { en: 'Delete Event', es: 'Eliminar Evento' },
+  'dash.deleteWarning': { en: 'This action is permanent and cannot be undone. All event data, photos, music, and RSVPs will be deleted.', es: 'Esta acción es permanente y no se puede deshacer. Todos los datos del evento, fotos, música y RSVPs serán eliminados.' },
+  'dash.typeToConfirm': { en: 'to confirm.', es: 'para confirmar.' },
+  'dash.cancel': { en: 'Cancel', es: 'Cancelar' },
+  'dash.deleting': { en: 'Deleting...', es: 'Eliminando...' },
 
   // ── Metadata ──
   'meta.description': {

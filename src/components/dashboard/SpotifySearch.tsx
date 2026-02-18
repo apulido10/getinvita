@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Search, Loader2 } from 'lucide-react';
+import { t, type Lang } from '@/lib/translations';
 
 interface SpotifyTrackResult {
   id: string;
@@ -13,9 +14,10 @@ interface SpotifyTrackResult {
 
 interface Props {
   onSelect: (track: SpotifyTrackResult) => void;
+  lang: Lang;
 }
 
-export default function SpotifySearch({ onSelect }: Props) {
+export default function SpotifySearch({ onSelect, lang }: Props) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SpotifyTrackResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -76,7 +78,7 @@ export default function SpotifySearch({ onSelect }: Props) {
           value={query}
           onChange={(e) => handleChange(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
-          placeholder="Search for a song on Spotify..."
+          placeholder={t('dash.searchSongPlaceholder', lang)}
           className="w-full rounded-lg border border-gray-300 pl-10 pr-10 py-3 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none"
         />
         {loading && (

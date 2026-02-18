@@ -5,16 +5,18 @@ import { Event, EventMusic } from '@/types';
 import { Upload, Trash2, Loader2, Music2, Play, Pause } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import SpotifySearch from './SpotifySearch';
+import { t, type Lang } from '@/lib/translations';
 
 interface Props {
   event: Event;
   music: EventMusic[];
+  lang: Lang;
   onUpdate: (music: EventMusic[]) => void;
 }
 
 type Tab = 'upload' | 'spotify';
 
-export default function MusicUploader({ event, music, onUpdate }: Props) {
+export default function MusicUploader({ event, music, lang, onUpdate }: Props) {
   const [tab, setTab] = useState<Tab>('upload');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
     try {
       for (const file of Array.from(files)) {
         if (!file.type.startsWith('audio/')) {
-          setError(`"${file.name}" is not an audio file`);
+          setError(`"${file.name}" ${t('dash.notAudioFile', lang)}`);
           continue;
         }
 
@@ -72,7 +74,7 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
         }
       }
     } catch (err) {
-      setError('Network error — check your connection and try again');
+      setError(t('dash.networkError', lang));
       console.error('Music upload error:', err);
     } finally {
       setUploading(false);
@@ -103,7 +105,7 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
       const data = await res.json();
       onUpdate(data.music);
     } catch {
-      setError('Network error — check your connection and try again');
+      setError(t('dash.networkError', lang));
     }
   }
 
@@ -150,7 +152,7 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Upload MP3
+          {t('dash.uploadMP3', lang)}
         </button>
         <button
           onClick={() => setTab('spotify')}
@@ -160,7 +162,7 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Search Spotify
+          {t('dash.searchSpotify', lang)}
         </button>
       </div>
 
@@ -181,15 +183,15 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
           {uploading ? (
             <div className="flex flex-col items-center gap-2">
               <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
-              <p className="text-sm text-gray-600">Uploading...</p>
+              <p className="text-sm text-gray-600">{t('dash.uploading', lang)}</p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2">
               <Upload className="h-8 w-8 text-gray-400" />
               <p className="text-sm font-medium text-gray-700">
-                Click to upload music files
+                {t('dash.clickToUploadMusic', lang)}
               </p>
-              <p className="text-xs text-gray-500">MP3, WAV, AAC</p>
+              <p className="text-xs text-gray-500">{t('dash.audioFormats', lang)}</p>
             </div>
           )}
         </div>
@@ -198,9 +200,9 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
       {/* Spotify Tab */}
       {tab === 'spotify' && (
         <>
-          <SpotifySearch onSelect={handleSpotifySelect} />
+          <SpotifySearch onSelect={handleSpotifySelect} lang={lang} />
           <p className="text-xs text-gray-400 text-center mt-2">
-            Spotify tracks play a 30-second preview. Upload an MP3 for the full song.
+            {t('dash.spotifyNote', lang)}
           </p>
         </>
       )}
@@ -254,7 +256,7 @@ export default function MusicUploader({ event, music, onUpdate }: Props) {
       ) : (
         <div className="bg-white rounded-xl border p-8 text-center">
           <Music2 className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">No music yet. Upload tracks or search Spotify for your event page!</p>
+          <p className="text-sm text-gray-500">{t('dash.noMusicYet', lang)}</p>
         </div>
       )}
     </div>

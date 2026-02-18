@@ -9,7 +9,9 @@ import Link from 'next/link';
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/dashboard';
+  const langParam = searchParams.get('lang');
+  const langSuffix = langParam === 'es' ? (searchParams.get('redirect') ? '&lang=es' : '?lang=es') : '';
+  const redirect = (searchParams.get('redirect') || '/dashboard') + (langParam === 'es' ? '?lang=es' : '');
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');

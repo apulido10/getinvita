@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { Event, FullEventData, ThemeVariant } from '@/types';
 import { getThemesForEventType, getThemeById } from '@/lib/themes';
 import { Crown, Check, Eye, X, Lock, ShoppingCart } from 'lucide-react';
+import { t, type Lang } from '@/lib/translations';
 
 interface Props {
   event: Event;
   data: FullEventData;
   supabaseUrl: string;
+  lang: Lang;
   onThemeChange: (themeId: string) => void;
 }
 
@@ -58,9 +60,10 @@ function MiniPreview({ theme }: { theme: ThemeVariant }) {
   );
 }
 
-function PreviewModal({ theme, eventId, onClose }: {
+function PreviewModal({ theme, eventId, lang, onClose }: {
   theme: ThemeVariant;
   eventId: string;
+  lang: Lang;
   onClose: () => void;
 }) {
   return (
@@ -71,7 +74,7 @@ function PreviewModal({ theme, eventId, onClose }: {
       >
         {/* Header bar */}
         <div className="flex items-center justify-between px-4 py-2 shrink-0">
-          <h3 className="font-semibold text-white text-sm">{theme.name} Preview</h3>
+          <h3 className="font-semibold text-white text-sm">{theme.name} {t('dash.previewTitle', lang)}</h3>
           <button onClick={onClose} className="h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
             <X className="h-4 w-4 text-white" />
           </button>
@@ -90,7 +93,7 @@ function PreviewModal({ theme, eventId, onClose }: {
   );
 }
 
-export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }: Props) {
+export default function ThemePicker({ event, data, supabaseUrl, lang, onThemeChange }: Props) {
   const themes = getThemesForEventType(event.event_type);
   const [selectedId, setSelectedId] = useState(event.theme_id || themes[0]?.id);
   const [saving, setSaving] = useState(false);
@@ -156,9 +159,9 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-xl border p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-1">Choose a Theme</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-1">{t('dash.chooseTheme', lang)}</h2>
         <p className="text-sm text-gray-500 mb-6">
-          Pick a color theme for your event site. All color themes are free.
+          {t('dash.themeSubtext', lang)}
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -187,10 +190,10 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
                 <button
                   onClick={() => setPreviewTheme(theme)}
                   className="absolute bottom-3 right-3 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center gap-1 px-2.5 py-1.5 transition-colors"
-                  title="Preview theme"
+                  title={t('dash.preview', lang)}
                 >
                   <Eye className="h-3.5 w-3.5 text-gray-600" />
-                  <span className="text-xs font-medium text-gray-600">Preview</span>
+                  <span className="text-xs font-medium text-gray-600">{t('dash.preview', lang)}</span>
                 </button>
               </div>
             );
@@ -202,14 +205,14 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
       <div className="bg-white rounded-xl border p-6">
         <div className="flex items-center gap-2 mb-1">
           <Crown className="h-5 w-5 text-amber-500" />
-          <h2 className="text-lg font-bold text-gray-900">Premium Layouts</h2>
+          <h2 className="text-lg font-bold text-gray-900">{t('dash.premiumLayouts', lang)}</h2>
         </div>
         <p className="text-sm text-gray-500 mb-6">
           {event.theme_premium_paid
-            ? 'Premium unlocked! Choose any layout below.'
+            ? t('dash.premiumUnlocked', lang)
             : canUpgrade
-            ? 'Upgrade to a premium layout for $50.'
-            : 'Unique layouts with split-screen and minimal designs. +$50 added to your publish cost.'}
+            ? t('dash.upgradePrompt', lang)
+            : t('dash.premiumDescription', lang)}
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -249,7 +252,7 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
                   <h3 className="text-sm font-semibold text-gray-900 mt-2">{theme.name}</h3>
                   <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{theme.description}</p>
                   <span className="inline-block mt-1.5 text-[10px] uppercase tracking-wider font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
-                    {theme.layout} layout
+                    {theme.layout} {t('dash.layout', lang)}
                   </span>
                 </button>
 
@@ -261,17 +264,17 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
                     className="absolute bottom-3 left-3 right-10 flex items-center justify-center gap-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold py-1.5 transition-colors disabled:opacity-50 z-10"
                   >
                     <ShoppingCart className="h-3 w-3" />
-                    {upgrading ? 'Redirecting...' : 'Upgrade $50'}
+                    {upgrading ? t('dash.redirecting', lang) : t('dash.upgrade50', lang)}
                   </button>
                 )}
 
                 <button
                   onClick={() => setPreviewTheme(theme)}
                   className="absolute bottom-3 right-3 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center gap-1 px-2.5 py-1.5 transition-colors z-10"
-                  title="Preview theme"
+                  title={t('dash.preview', lang)}
                 >
                   <Eye className="h-3.5 w-3.5 text-gray-600" />
-                  <span className="text-xs font-medium text-gray-600">Preview</span>
+                  <span className="text-xs font-medium text-gray-600">{t('dash.preview', lang)}</span>
                 </button>
               </div>
             );
@@ -281,7 +284,7 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
         {hasPremiumSelected && (
           <div className="mt-4 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
             <p className="text-sm text-amber-800">
-              <strong>+$50</strong> will be added to your total when you publish. This unlocks the selected premium layout.
+              {t('dash.premiumAddonNote', lang)}
             </p>
           </div>
         )}
@@ -292,6 +295,7 @@ export default function ThemePicker({ event, data, supabaseUrl, onThemeChange }:
         <PreviewModal
           theme={previewTheme}
           eventId={event.id}
+          lang={lang}
           onClose={() => setPreviewTheme(null)}
         />
       )}

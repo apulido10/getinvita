@@ -4,33 +4,59 @@ import Link from 'next/link';
 import { Event } from '@/types';
 import { getEventTypeConfig, CARD_EVENT_TYPES } from '@/lib/constants';
 import { Plus, Eye, Pencil, Calendar, Users } from 'lucide-react';
+import { t, formatDateLocalized, type Lang } from '@/lib/translations';
 
-export default function DashboardEventList({ events }: { events: Event[] }) {
+export default function DashboardEventList({ events, lang }: { events: Event[]; lang: Lang }) {
+  const langParam = lang === 'es' ? '?lang=es' : '';
+
+  const toggleLang = () => {
+    const url = new URL(window.location.href);
+    if (lang === 'en') {
+      url.searchParams.set('lang', 'es');
+    } else {
+      url.searchParams.delete('lang');
+    }
+    window.location.href = url.toString();
+  };
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Events</h1>
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">{t('dash.myEvents', lang)}</h1>
             <p className="text-sm text-gray-500 mt-1">
               {events.length === 0
-                ? 'Create your first event to get started.'
-                : `${events.length} event${events.length === 1 ? '' : 's'}`}
+                ? t('dash.createFirstEvent', lang)
+                : `${events.length} ${events.length === 1 ? t('dash.eventCount', lang) : t('dash.eventCountPlural', lang)}`}
             </p>
+            </div>
+            <button
+              onClick={toggleLang}
+              className="flex items-center rounded-full bg-gray-100 text-xs font-semibold text-gray-600 overflow-hidden"
+            >
+              <span className={`px-2.5 py-1.5 transition-colors ${lang === 'en' ? 'bg-purple-600 text-white' : ''}`}>
+                EN
+              </span>
+              <span className={`px-2.5 py-1.5 transition-colors ${lang === 'es' ? 'bg-purple-600 text-white' : ''}`}>
+                ES
+              </span>
+            </button>
           </div>
           <Link
-            href="/order"
+            href={`/order${langParam}`}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-purple-700 transition-colors"
           >
             <Plus className="h-4 w-4" />
-            Create New Event
+            {t('dash.createNewEvent', lang)}
           </Link>
         </div>
 
         {events.length === 0 ? (
           <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center">
             <Calendar className="h-10 w-10 mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500 text-sm">No events yet. Create one to get started!</p>
+            <p className="text-gray-500 text-sm">{t('dash.noEventsYet', lang)}</p>
           </div>
         ) : (
           <div className="grid gap-4">
@@ -61,7 +87,7 @@ export default function DashboardEventList({ events }: { events: Event[] }) {
                         </span>
                         {event.event_date && (
                           <span>
-                            {new Date(`${event.event_date.substring(0, 10)}T12:00:00`).toLocaleDateString('en-US', {
+                            {new Date(`${event.event_date.substring(0, 10)}T12:00:00`).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', {
                               month: 'short',
                               day: 'numeric',
                               year: 'numeric',
@@ -79,11 +105,11 @@ export default function DashboardEventList({ events }: { events: Event[] }) {
                             className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             <Eye className="h-4 w-4" />
-                            View
+                            {t('dash.view', lang)}
                           </Link>
                           {!CARD_EVENT_TYPES.includes(event.event_type) && (
                             <Link
-                              href={`/dashboard/${event.id}?tab=rsvps`}
+                              href={`/dashboard/${event.id}?tab=rsvps${lang === 'es' ? '&lang=es' : ''}`}
                               className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                             >
                               <Users className="h-4 w-4" />
@@ -93,11 +119,11 @@ export default function DashboardEventList({ events }: { events: Event[] }) {
                         </>
                       )}
                       <Link
-                        href={`/dashboard/${event.id}`}
+                        href={`/dashboard/${event.id}${langParam}`}
                         className="inline-flex items-center gap-1.5 rounded-lg bg-purple-600 text-white px-3 py-2 text-sm font-medium hover:bg-purple-700"
                       >
                         <Pencil className="h-4 w-4" />
-                        Edit
+                        {t('dash.edit', lang)}
                       </Link>
                     </div>
                   </div>
