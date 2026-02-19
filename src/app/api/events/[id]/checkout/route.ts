@@ -27,6 +27,7 @@ export async function POST(
     .from('events')
     .select('*')
     .eq('id', id)
+    .eq('user_id', user.id)
     .single();
 
   if (error || !event) {

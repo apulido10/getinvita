@@ -20,6 +20,16 @@ export async function PUT(
   const serviceClient = createServiceClient();
   const body = await request.json();
   const { details, theme_id, event_name } = body;
+  const { data: ownedEvent, error: ownershipError } = await serviceClient
+    .from('events')
+    .select('id, status, theme_premium_paid')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (ownershipError || !ownedEvent) {
+    return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+  }
 
   // If updating theme_id directly
   if (theme_id !== undefined) {
@@ -27,14 +37,8 @@ export async function PUT(
 
     // If the new theme is premium, validate payment
     if (newTheme?.isPremium) {
-      const { data: event } = await serviceClient
-        .from('events')
-        .select('theme_id, theme_premium_paid, status')
-        .eq('id', id)
-        .single();
-
       // If already published without premium paid, block all premium themes
-      if (event?.status === 'published' && !event.theme_premium_paid) {
+      if (ownedEvent.status === 'published' && !ownedEvent.theme_premium_paid) {
         return NextResponse.json(
           { error: 'Premium layouts require payment. Use the upgrade option.' },
           { status: 403 }
@@ -45,7 +49,8 @@ export async function PUT(
     await serviceClient
       .from('events')
       .update({ theme_id })
-      .eq('id', id);
+      .eq('id', id)
+      .eq('user_id', user.id);
 
     return NextResponse.json({ theme_id });
   }
@@ -55,11 +60,12 @@ export async function PUT(
     await serviceClient
       .from('events')
       .update({ event_name })
-      .eq('id', id);
+      .eq('id', id)
+      .eq('user_id', user.id);
   }
 
   // Upsert each detail key-value pair
-  for (const [key, value] of Object.entries(details)) {
+  for (const [key, value] of Object.entries(details ?? {})) {
     await serviceClient
       .from('event_details')
       .upsert(
@@ -73,6 +79,7 @@ export async function PUT(
     .from('events')
     .update({ status: 'active' })
     .eq('id', id)
+    .eq('user_id', user.id)
     .eq('status', 'paid');
 
   const { data: updatedDetails } = await serviceClient
@@ -99,12 +106,26 @@ export async function DELETE(
   }
 
   const serviceClient = createServiceClient();
+  const { data: ownedEvent, error: ownershipError } = await serviceClient
+    .from('events')
+    .select('id')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (ownershipError || !ownedEvent) {
+    return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+  }
 
   await serviceClient.from('rsvps').delete().eq('event_id', id);
   await serviceClient.from('event_music').delete().eq('event_id', id);
   await serviceClient.from('event_photos').delete().eq('event_id', id);
   await serviceClient.from('event_details').delete().eq('event_id', id);
-  const { error } = await serviceClient.from('events').delete().eq('id', id);
+  const { error } = await serviceClient
+    .from('events')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id);
 
   if (error) {
     return NextResponse.json({ error: 'Failed to delete event' }, { status: 500 });

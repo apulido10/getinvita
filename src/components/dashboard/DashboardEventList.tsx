@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Event } from '@/types';
 import { getEventTypeConfig, CARD_EVENT_TYPES } from '@/lib/constants';
 import { Plus, Eye, Pencil, Calendar, Users } from 'lucide-react';
-import { t, formatDateLocalized, type Lang } from '@/lib/translations';
+import { t, type Lang } from '@/lib/translations';
 
 export default function DashboardEventList({ events, lang }: { events: Event[]; lang: Lang }) {
   const langParam = lang === 'es' ? '?lang=es' : '';
@@ -100,7 +100,7 @@ export default function DashboardEventList({ events, lang }: { events: Event[]; 
                       {event.status === 'published' && (
                         <>
                           <Link
-                            href={`/events/${event.slug}`}
+                            href={lang === 'es' ? `/es/events/${event.slug}` : `/events/${event.slug}`}
                             target="_blank"
                             className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >

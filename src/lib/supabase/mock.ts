@@ -120,7 +120,7 @@ class MockQueryBuilder {
 
     switch (this.operation) {
       case 'select': {
-        let results = rows.filter((r) => this.matchesFilters(r));
+        const results = rows.filter((r) => this.matchesFilters(r));
         if (this.orderCol) {
           const col = this.orderCol;
           const asc = this.orderAsc;

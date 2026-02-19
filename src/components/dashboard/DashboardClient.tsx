@@ -36,7 +36,6 @@ export default function DashboardClient({ initialData, lang }: { initialData: Fu
   const [activeStep, setActiveStep] = useState<Step>('details');
 
   const langParam = lang === 'es' ? '?lang=es' : '';
-  const langAmpParam = lang === 'es' ? '&lang=es' : '';
 
   // Read ?tab= param on mount to jump to a specific tab
   useEffect(() => {
@@ -172,7 +171,7 @@ export default function DashboardClient({ initialData, lang }: { initialData: Fu
                     {t('dash.live', lang)}
                   </span>
                   <Link
-                    href={`/events/${data.event.slug}`}
+                    href={lang === 'es' ? `/es/events/${data.event.slug}` : `/events/${data.event.slug}`}
                     target="_blank"
                     className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   >
@@ -193,7 +192,7 @@ export default function DashboardClient({ initialData, lang }: { initialData: Fu
                   </button>
                   <button
                     onClick={() => {
-                      const url = `${window.location.origin}/events/${data.event.slug}?lang=es`;
+                      const url = `${window.location.origin}/es/events/${data.event.slug}`;
                       navigator.clipboard.writeText(url);
                       setCopiedEs(true);
                       setTimeout(() => setCopiedEs(false), 2000);

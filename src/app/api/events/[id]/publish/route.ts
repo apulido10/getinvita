@@ -17,11 +17,30 @@ export async function POST(
   }
 
   const serviceClient = createServiceClient();
+  const { data: ownedEvent, error: ownershipError } = await serviceClient
+    .from('events')
+    .select('id, status')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (ownershipError || !ownedEvent) {
+    return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+  }
+
+  if (ownedEvent.status === 'published') {
+    return NextResponse.json({ error: 'Event is already published' }, { status: 400 });
+  }
+
+  if (!['paid', 'active'].includes(ownedEvent.status)) {
+    return NextResponse.json({ error: 'Event is not ready to publish' }, { status: 400 });
+  }
 
   const { error } = await serviceClient
     .from('events')
     .update({ status: 'published' })
     .eq('id', id)
+    .eq('user_id', user.id)
     .in('status', ['paid', 'active']);
 
   if (error) {

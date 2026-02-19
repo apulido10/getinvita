@@ -22,6 +22,15 @@ export async function GET(
   }
 
   const serviceClient = createServiceClient();
+  const { data: event } = await serviceClient
+    .from('events')
+    .select('id, stripe_checkout_session_id')
+    .eq('id', id)
+    .single();
+
+  if (!event || event.stripe_checkout_session_id !== session.id) {
+    return NextResponse.redirect(new URL(`/dashboard/${id}`, request.url));
+  }
 
   const updateData: Record<string, unknown> = {
     status: 'published',
@@ -36,7 +45,8 @@ export async function GET(
   await serviceClient
     .from('events')
     .update(updateData)
-    .eq('id', id);
+    .eq('id', id)
+    .eq('stripe_checkout_session_id', session.id);
 
   return NextResponse.redirect(new URL(`/dashboard/${id}`, request.url));
 }

@@ -79,19 +79,27 @@ export default function InvitationIntro({
   const [fadingOut, setFadingOut] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timers: number[] = [];
+    timers.push(window.setTimeout(() => setMounted(true), 0));
+    let shouldShowIntro = false;
     const isDemo = new URLSearchParams(window.location.search).get('demo') === 'true';
     if (isDemo) {
-      setShowIntro(true);
-      return;
-    }
-    try {
-      if (!sessionStorage.getItem(storageKey)) {
-        setShowIntro(true);
+      shouldShowIntro = true;
+    } else {
+      try {
+        shouldShowIntro = !sessionStorage.getItem(storageKey);
+      } catch {
+        // sessionStorage unavailable
       }
-    } catch {
-      // sessionStorage unavailable
     }
+
+    if (shouldShowIntro) {
+      timers.push(window.setTimeout(() => setShowIntro(true), 0));
+    }
+
+    return () => {
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
   }, [storageKey]);
 
   // Preload images in background while envelope is showing

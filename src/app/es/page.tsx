@@ -10,28 +10,28 @@ import Link from 'next/link';
 import { t } from '@/lib/translations';
 
 export const metadata: Metadata = {
-  title: 'GetInvita - Beautiful Event Websites',
+  title: 'GetInvita - Sitios Web Hermosos para Eventos',
   description:
-    'Custom event websites for Quinceaneras, Weddings, Birthdays, and Baby Showers. Build your page with photos, music, and RSVP in minutes.',
+    'Sitios web personalizados para Quinceaneras, Bodas, Cumpleanos y Baby Showers. Crea tu pagina con fotos, musica y RSVP en minutos.',
   alternates: {
-    canonical: '/',
+    canonical: '/es',
     languages: {
       'en-US': '/',
       'es-US': '/es',
     },
   },
   openGraph: {
-    title: 'GetInvita - Beautiful Event Websites',
+    title: 'GetInvita - Sitios Web Hermosos para Eventos',
     description:
-      'Custom event websites for Quinceaneras, Weddings, Birthdays, and Baby Showers. Build your page with photos, music, and RSVP in minutes.',
-    url: 'https://getinvita.com',
-    locale: 'en_US',
-    alternateLocale: ['es_US'],
+      'Sitios web personalizados para Quinceaneras, Bodas, Cumpleanos y Baby Showers. Crea tu pagina con fotos, musica y RSVP en minutos.',
+    url: 'https://getinvita.com/es',
+    locale: 'es_US',
+    alternateLocale: ['en_US'],
   },
 };
 
-export default function HomePage() {
-  const lang = 'en' as const;
+export default function HomePageEs() {
+  const lang = 'es' as const;
 
   return (
     <main>
@@ -48,7 +48,7 @@ export default function HomePage() {
           <p className="text-lg font-semibold text-white mb-2">GetInvita</p>
           <p className="text-sm">{t('landing.footer.tagline', lang)}</p>
           <div className="mt-6 flex justify-center gap-6 text-sm">
-            <Link href="/login?redirect=/order" className="hover:text-white transition-colors">
+            <Link href="/login?redirect=/order&lang=es" className="hover:text-white transition-colors">
               {t('landing.footer.getStarted', lang)}
             </Link>
             <a href="#event-types" className="hover:text-white transition-colors">

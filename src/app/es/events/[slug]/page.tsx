@@ -11,7 +11,7 @@ import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
 import InvitationIntro from '@/components/shared/InvitationIntro';
 import PoweredByFooter from '@/components/shared/PoweredByFooter';
 
-const lang = 'en' as const;
+const lang = 'es' as const;
 
 export async function generateMetadata({
   params,
@@ -29,7 +29,7 @@ export async function generateMetadata({
     .single();
 
   if (!event) {
-    return { title: 'Event Not Found' };
+    return { title: 'Evento no encontrado' };
   }
 
   const { data: photos } = await supabase
@@ -45,7 +45,7 @@ export async function generateMetadata({
     ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
     : undefined;
 
-  const typeLabel = t(`eventType.${event.event_type}`, lang) || 'Event';
+  const typeLabel = t(`eventType.${event.event_type}`, lang) || 'Evento';
   const title = event.event_name;
   const description = t('meta.description', lang, { name: event.event_name, type: typeLabel });
 
@@ -53,7 +53,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: {
-      canonical: `/events/${slug}`,
+      canonical: `/es/events/${slug}`,
       languages: {
         'en-US': `/events/${slug}`,
         'es-US': `/es/events/${slug}`,
@@ -63,9 +63,9 @@ export async function generateMetadata({
       title,
       description,
       type: 'website',
-      locale: 'en_US',
-      alternateLocale: ['es_US'],
-      url: `https://getinvita.com/events/${slug}`,
+      locale: 'es_US',
+      alternateLocale: ['en_US'],
+      url: `https://getinvita.com/es/events/${slug}`,
       ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: event.event_name }] }),
     },
     twitter: {
@@ -77,7 +77,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function EventPage({
+export default async function EventPageEs({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -147,7 +147,7 @@ export default async function EventPage({
       notFound();
   }
 
-  const typeLabel = t(`eventType.${event.event_type}`, lang) || 'Event';
+  const typeLabel = t(`eventType.${event.event_type}`, lang) || 'Evento';
   const heroPhoto = (photos || []).find((p) => p.is_hero);
   const ogImage = heroPhoto
     ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`

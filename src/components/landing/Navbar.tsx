@@ -5,18 +5,13 @@ import Image from 'next/image';
 import { t, type Lang } from '@/lib/translations';
 
 export default function Navbar({ lang }: { lang: Lang }) {
-  const toggleLang = () => {
-    if (lang === 'en') {
-      window.location.href = '/?lang=es';
-    } else {
-      window.location.href = '/';
-    }
-  };
+  const homeHref = lang === 'es' ? '/es' : '/';
+  const toggleHref = lang === 'en' ? '/es' : '/';
 
   return (
     <nav className="absolute top-0 left-0 right-0 z-50">
       <div className="mx-auto max-w-6xl px-3 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-        <Link href="/" className="relative h-8 w-[110px] sm:h-10 sm:w-[160px] rounded-lg overflow-hidden bg-white/90 backdrop-blur-sm px-1.5 sm:px-2 shrink-0">
+        <Link href={homeHref} className="relative h-8 w-[110px] sm:h-10 sm:w-[160px] rounded-lg overflow-hidden bg-white/90 backdrop-blur-sm px-1.5 sm:px-2 shrink-0">
           <Image
             src="/getinvitalogo.png"
             alt="GetInvita"
@@ -26,8 +21,8 @@ export default function Navbar({ lang }: { lang: Lang }) {
           />
         </Link>
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <button
-            onClick={toggleLang}
+          <Link
+            href={toggleHref}
             className="flex items-center rounded-full bg-white/10 backdrop-blur-sm text-[10px] sm:text-xs font-semibold text-white overflow-hidden shrink-0"
           >
             <span className={`px-2 py-1 sm:px-2.5 sm:py-1.5 transition-colors ${lang === 'en' ? 'bg-white text-purple-900' : ''}`}>
@@ -36,7 +31,7 @@ export default function Navbar({ lang }: { lang: Lang }) {
             <span className={`px-2 py-1 sm:px-2.5 sm:py-1.5 transition-colors ${lang === 'es' ? 'bg-white text-purple-900' : ''}`}>
               ES
             </span>
-          </button>
+          </Link>
           <Link
             href={lang === 'es' ? '/login?lang=es' : '/login'}
             className="px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white/80 hover:text-white transition-colors whitespace-nowrap"
