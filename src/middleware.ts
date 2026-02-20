@@ -54,6 +54,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // Help crawlers and clients detect language by route prefix.
+  const contentLanguage = pathname.startsWith('/es') ? 'es-US' : 'en-US';
+  supabaseResponse.headers.set('Content-Language', contentLanguage);
+
   return supabaseResponse;
 }
 

@@ -1,5 +1,10 @@
+import type { Metadata } from 'next';
 import DashboardClient from '@/components/dashboard/DashboardClient';
 import { FullEventData } from '@/types';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 const mockData: FullEventData = {
   event: {

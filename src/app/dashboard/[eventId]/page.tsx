@@ -1,10 +1,15 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { requireAuth } from '@/lib/supabase/auth';
 import { notFound } from 'next/navigation';
 import DashboardClient from '@/components/dashboard/DashboardClient';
 import { FullEventData } from '@/types';
 import { Lang } from '@/lib/translations';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function EventDashboardPage({
   params,

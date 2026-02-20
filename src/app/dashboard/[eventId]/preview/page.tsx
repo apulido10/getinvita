@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { FullEventData } from '@/types';
@@ -10,6 +11,10 @@ import WeddingTemplate from '@/components/templates/WeddingTemplate';
 import BirthdayTemplate from '@/components/templates/BirthdayTemplate';
 import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
 import InvitationIntro from '@/components/shared/InvitationIntro';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 function parseLang(raw?: string): Lang {
   return raw === 'es' ? 'es' : 'en';

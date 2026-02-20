@@ -1,9 +1,14 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { requireAuth } from '@/lib/supabase/auth';
 import DashboardEventList from '@/components/dashboard/DashboardEventList';
 import { Event } from '@/types';
 import { Lang } from '@/lib/translations';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardPage({
   searchParams,

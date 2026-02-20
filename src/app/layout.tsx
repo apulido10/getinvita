@@ -40,12 +40,21 @@ export const metadata: Metadata = {
     description:
       "Custom event websites for Quinceañeras, Weddings, Birthdays & Baby Showers. Upload photos, music, and details — get a stunning event page.",
     url: siteUrl,
+    images: [
+      {
+        url: `${siteUrl}/getinvitalogo.png`,
+        width: 1200,
+        height: 630,
+        alt: "GetInvita",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "GetInvita - Beautiful Event Websites",
     description:
       "Custom event websites for Quinceañeras, Weddings, Birthdays & Baby Showers.",
+    images: [`${siteUrl}/getinvitalogo.png`],
   },
   robots: {
     index: true,

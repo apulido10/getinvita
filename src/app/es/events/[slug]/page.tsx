@@ -55,8 +55,11 @@ export async function generateMetadata({
     alternates: {
       canonical: `/es/events/${slug}`,
       languages: {
+        en: `/events/${slug}`,
+        es: `/es/events/${slug}`,
         'en-US': `/events/${slug}`,
         'es-US': `/es/events/${slug}`,
+        'x-default': `/events/${slug}`,
       },
     },
     openGraph: {

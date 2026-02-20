@@ -2,11 +2,10 @@ import { MetadataRoute } from 'next';
 import { createServiceClient } from '@/lib/supabase/server';
 
 const siteUrl = 'https://getinvita.com';
+const staticLastModified = new Date('2026-02-14T00:00:00.000Z');
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createServiceClient();
-  const lastModified = new Date();
-
   const { data: events } = await supabase
     .from('events')
     .select('slug, updated_at')
@@ -20,8 +19,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
       alternates: {
         languages: {
+          en: `${siteUrl}/events/${event.slug}`,
+          es: `${siteUrl}/es/events/${event.slug}`,
           'en-US': `${siteUrl}/events/${event.slug}`,
           'es-US': `${siteUrl}/es/events/${event.slug}`,
+          'x-default': `${siteUrl}/events/${event.slug}`,
         },
       },
     },
@@ -32,8 +34,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
       alternates: {
         languages: {
+          en: `${siteUrl}/events/${event.slug}`,
+          es: `${siteUrl}/es/events/${event.slug}`,
           'en-US': `${siteUrl}/events/${event.slug}`,
           'es-US': `${siteUrl}/es/events/${event.slug}`,
+          'x-default': `${siteUrl}/events/${event.slug}`,
         },
       },
     },
@@ -42,31 +47,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: siteUrl,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'weekly',
       priority: 1,
       alternates: {
         languages: {
+          en: siteUrl,
+          es: `${siteUrl}/es`,
           'en-US': siteUrl,
           'es-US': `${siteUrl}/es`,
+          'x-default': siteUrl,
         },
       },
     },
     {
       url: `${siteUrl}/es`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'weekly',
       priority: 0.95,
       alternates: {
         languages: {
+          en: siteUrl,
+          es: `${siteUrl}/es`,
           'en-US': siteUrl,
           'es-US': `${siteUrl}/es`,
+          'x-default': siteUrl,
         },
       },
     },
     {
       url: `${siteUrl}/terms`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
