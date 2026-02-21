@@ -14,6 +14,7 @@ export default function LoginForm() {
   const redirect = (searchParams.get('redirect') || '/dashboard') + (langParam === 'es' ? '?lang=es' : '');
 
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -56,6 +57,22 @@ export default function LoginForm() {
     setLoading(false);
   }
 
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setMessage('');
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?redirect=/auth/reset-password`,
+    });
+    if (error) {
+      setError(error.message);
+    } else {
+      setMessage('Check your email for a password reset link.');
+    }
+    setLoading(false);
+  }
+
   async function handleGoogleAuth() {
     setError('');
     const { error } = await supabase.auth.signInWithOAuth({
@@ -83,16 +100,53 @@ export default function LoginForm() {
             />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">
-            {isSignUp ? 'Create your account' : 'Welcome back'}
+            {isForgotPassword ? 'Reset your password' : isSignUp ? 'Create your account' : 'Welcome back'}
           </h1>
           <p className="mt-2 text-sm text-gray-500">
-            {isSignUp
+            {isForgotPassword
+              ? "Enter your email and we'll send you a reset link."
+              : isSignUp
               ? 'Sign up to create and manage your event sites.'
               : 'Sign in to manage your event sites.'}
           </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg shadow-purple-900/5 border border-gray-100 p-7 space-y-5">
+          {isForgotPassword ? (
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
+                  placeholder="you@example.com"
+                />
+              </div>
+              {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5">{error}</p>}
+              {message && <p className="text-sm text-green-700 bg-green-50 rounded-xl px-4 py-2.5">{message}</p>}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-purple-600 text-white py-3 text-sm font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send reset link'}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setIsForgotPassword(false); setError(''); setMessage(''); }}
+                className="w-full text-center text-sm text-purple-600 hover:text-purple-500 font-semibold"
+              >
+                Back to sign in
+              </button>
+            </form>
+          ) : (
+          <>
           {/* Google OAuth */}
           <button
             type="button"
@@ -197,6 +251,19 @@ export default function LoginForm() {
               {isSignUp ? 'Sign In' : 'Sign Up'}
             </button>
           </p>
+          {!isSignUp && (
+            <p className="text-center text-sm text-gray-500">
+              <button
+                type="button"
+                onClick={() => { setIsForgotPassword(true); setError(''); setMessage(''); }}
+                className="text-purple-600 hover:text-purple-500 font-semibold"
+              >
+                Forgot password?
+              </button>
+            </p>
+          )}
+          </>
+          )}
         </div>
 
         <p className="mt-6 text-center text-xs text-gray-400">

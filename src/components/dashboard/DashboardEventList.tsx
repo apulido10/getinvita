@@ -7,8 +7,9 @@ import { getEventTypeConfig, CARD_EVENT_TYPES } from '@/lib/constants';
 import { Plus, Eye, Pencil, Calendar, Users, X } from 'lucide-react';
 import { t, type Lang } from '@/lib/translations';
 
-export default function DashboardEventList({ events, lang, confirmed }: { events: Event[]; lang: Lang; confirmed?: boolean }) {
+export default function DashboardEventList({ events, lang, confirmed, reset }: { events: Event[]; lang: Lang; confirmed?: boolean; reset?: boolean }) {
   const [showBanner, setShowBanner] = useState(confirmed ?? false);
+  const [showResetBanner, setShowResetBanner] = useState(reset ?? false);
   const langParam = lang === 'es' ? '?lang=es' : '';
 
   const toggleLang = () => {
@@ -27,6 +28,14 @@ export default function DashboardEventList({ events, lang, confirmed }: { events
         <div className="bg-green-600 text-white px-4 py-3 flex items-center justify-between">
           <p className="text-sm font-medium">Your email has been confirmed. Welcome to GetInvita!</p>
           <button onClick={() => setShowBanner(false)} className="ml-4 shrink-0 hover:opacity-75 transition-opacity">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+      {showResetBanner && (
+        <div className="bg-green-600 text-white px-4 py-3 flex items-center justify-between">
+          <p className="text-sm font-medium">Your password has been updated successfully.</p>
+          <button onClick={() => setShowResetBanner(false)} className="ml-4 shrink-0 hover:opacity-75 transition-opacity">
             <X className="h-4 w-4" />
           </button>
         </div>

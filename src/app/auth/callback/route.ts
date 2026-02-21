@@ -8,7 +8,8 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const redirectUrl = new URL(redirect, origin);
-    redirectUrl.searchParams.set('confirmed', 'true');
+    const isRecovery = redirect.startsWith('/auth/reset-password');
+    if (!isRecovery) redirectUrl.searchParams.set('confirmed', 'true');
     const supabaseResponse = NextResponse.redirect(redirectUrl);
 
     const supabase = createServerClient(
