@@ -43,19 +43,25 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         }}
       >
-        {/* Background photo — covers full card */}
+        {/* Background photo — anchored to top */}
         {imageUrl && (
-          <img
-            src={imageUrl}
+          <div
             style={{
               position: 'absolute',
               inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'top',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'flex-start',
             }}
-          />
+          >
+            <img
+              src={imageUrl}
+              style={{
+                width: '100%',
+                height: 'auto',
+              }}
+            />
+          </div>
         )}
 
         {/* Gradient overlay */}
