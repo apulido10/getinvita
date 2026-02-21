@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { createServiceClient } from '@/lib/supabase/server';
+import sharp from 'sharp';
 
 export const runtime = 'nodejs';
 export const size = { width: 1200, height: 630 };
@@ -31,6 +32,22 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
 
   const eventName = event?.event_name ?? "You're Invited";
 
+  // Crop image server-side to 1200x630 anchored to top
+  let croppedDataUrl: string | null = null;
+  if (imageUrl) {
+    try {
+      const res = await fetch(imageUrl);
+      const buffer = Buffer.from(await res.arrayBuffer());
+      const cropped = await sharp(buffer)
+        .resize(1200, 630, { fit: 'cover', position: 'top' })
+        .jpeg({ quality: 90 })
+        .toBuffer();
+      croppedDataUrl = `data:image/jpeg;base64,${cropped.toString('base64')}`;
+    } catch {
+      // fall through to no image
+    }
+  }
+
   return new ImageResponse(
     (
       <div
@@ -39,20 +56,20 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
           height: 630,
           display: 'flex',
           position: 'relative',
-          overflow: 'hidden',
           backgroundColor: '#1e0a3c',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         }}
       >
-        {/* Background photo — anchored to top */}
-        {imageUrl && (
+        {/* Background photo — cropped to top via sharp */}
+        {croppedDataUrl && (
           <img
-            src={imageUrl}
+            src={croppedDataUrl}
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
               width: 1200,
+              height: 630,
             }}
           />
         )}
