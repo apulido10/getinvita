@@ -3,7 +3,7 @@
 import { useState, useImperativeHandle, forwardRef } from 'react';
 import { Event, EventDetail } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
-import { Save, Loader2, Plus, X, UtensilsCrossed } from 'lucide-react';
+import { Save, Loader2, Plus, X, UtensilsCrossed, Church } from 'lucide-react';
 import AddressAutocomplete from './AddressAutocomplete';
 import DatePicker from './DatePicker';
 import { t, type Lang } from '@/lib/translations';
@@ -37,7 +37,7 @@ const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDe
     setSaved(false);
   }
 
-  function toggleSection(id: 'reception' | 'dinner') {
+  function toggleSection(id: 'church' | 'reception' | 'dinner') {
     const key = `has_${id}`;
     const current = values[key] === 'true';
     handleChange(key, current ? 'false' : 'true');
@@ -179,8 +179,11 @@ const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDe
                 >
                   <span className="flex items-center gap-2">
                     {isDinner && <UtensilsCrossed className="h-4 w-4" />}
+                    {section.id === 'church' && <Church className="h-4 w-4" />}
                     {isEnabled ? sectionLabel : `+ Add ${sectionLabel}`}
-                    <span className="text-xs font-normal text-gray-400">+$10</span>
+                    {section.addOnPrice > 0 && (
+                      <span className="text-xs font-normal text-gray-400">+$10</span>
+                    )}
                   </span>
                   {isEnabled && <X className="h-4 w-4 text-purple-400" />}
                   {!isEnabled && <Plus className="h-4 w-4 text-gray-400" />}

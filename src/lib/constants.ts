@@ -109,9 +109,6 @@ export const EVENT_TYPES: EventTypeConfig[] = [
       { key: 'parent_names', label: 'Parent Name(s)', type: 'text', required: true },
       { key: 'baby_name', label: 'Baby Name (if chosen)', type: 'text', placeholder: 'Optional' },
       { key: 'due_date', label: 'Due Date', type: 'date' },
-      { key: 'church_name', label: 'Church Name', type: 'text', placeholder: 'e.g. St. Mary\'s Cathedral' },
-      { key: 'church_address', label: 'Church Address', type: 'address', placeholder: 'Full church address' },
-      { key: 'church_time', label: 'Church Time', type: 'time' },
       { key: 'venue_name', label: 'Venue Name', type: 'text' },
       { key: 'venue_address', label: 'Venue Address', type: 'address' },
       { key: 'shower_time', label: 'Shower Time', type: 'time' },
@@ -121,10 +118,22 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     ],
     optionalSections: [
       {
+        id: 'church',
+        label: 'Church',
+        addOnPrice: 0,
+        fields: [
+          { key: 'church_name', label: 'Church Name', type: 'text', placeholder: 'e.g. St. Mary\'s Cathedral' },
+          { key: 'church_address', label: 'Church Address', type: 'address', placeholder: 'Full church address' },
+          { key: 'church_time', label: 'Church Time', type: 'time' },
+        ],
+      },
+      {
         id: 'reception',
         label: 'Reception',
         addOnPrice: 1000,
         fields: [
+          { key: 'reception_venue', label: 'Venue Name', type: 'text', placeholder: 'e.g. Grand Ballroom' },
+          { key: 'reception_address', label: 'Venue Address', type: 'address' },
           { key: 'reception_start', label: 'Reception Start Time', type: 'time' },
           { key: 'reception_end', label: 'Reception End Time', type: 'time' },
         ],
@@ -134,6 +143,8 @@ export const EVENT_TYPES: EventTypeConfig[] = [
         label: 'Dinner / Lunch',
         addOnPrice: 1000,
         fields: [
+          { key: 'dinner_venue', label: 'Venue Name', type: 'text', placeholder: 'e.g. Grand Ballroom' },
+          { key: 'dinner_address', label: 'Venue Address', type: 'address' },
           { key: 'dinner_start', label: 'Start Time', type: 'time' },
           { key: 'dinner_end', label: 'End Time', type: 'time' },
         ],
