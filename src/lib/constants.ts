@@ -108,9 +108,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     fields: [
       { key: 'parent_names', label: 'Parent Name(s)', type: 'text', required: true },
       { key: 'baby_name', label: 'Baby Name (if chosen)', type: 'text', placeholder: 'Optional' },
-      { key: 'due_date', label: 'Due Date', type: 'date' },
-      { key: 'venue_name', label: 'Venue Name', type: 'text' },
-      { key: 'venue_address', label: 'Venue Address', type: 'address' },
+      { key: 'due_date', label: 'Baby Shower Date', type: 'date' },
       { key: 'shower_time', label: 'Shower Time', type: 'time' },
       { key: 'theme', label: 'Theme', type: 'text', placeholder: 'e.g. Woodland Animals' },
       { key: 'registry_url', label: 'Registry Link', type: 'url', placeholder: 'https://...' },
