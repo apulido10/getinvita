@@ -91,7 +91,7 @@ const translations: Record<string, Record<Lang, string>> = {
   'babyShower.times': { en: 'Times', es: 'Horarios' },
   'babyShower.shower': { en: 'Shower', es: 'Shower' },
   'babyShower.theme': { en: 'Theme', es: 'Temática' },
-  'babyShower.dueDate': { en: 'Due Date', es: 'Fecha de Nacimiento' },
+  'babyShower.dueDate': { en: 'Shower Date', es: 'Fecha del Shower' },
   'babyShower.giftRegistry': { en: 'Gift Registry', es: 'Mesa de Regalos' },
   'babyShower.registryMessage': { en: 'Help welcome the little one with something special!', es: '¡Ayúdanos a darle la bienvenida con algo especial!' },
   'babyShower.viewRegistry': { en: 'View Registry', es: 'Ver Mesa de Regalos' },
