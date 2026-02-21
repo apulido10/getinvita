@@ -92,7 +92,7 @@ export interface EventFieldConfig {
 }
 
 export interface OptionalSection {
-  id: 'church' | 'reception' | 'dinner';
+  id: 'reception' | 'dinner';
   label: string;
   addOnPrice: number;
   fields: EventFieldConfig[];

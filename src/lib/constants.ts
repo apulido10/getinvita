@@ -118,16 +118,6 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     ],
     optionalSections: [
       {
-        id: 'church',
-        label: 'Church',
-        addOnPrice: 0,
-        fields: [
-          { key: 'church_name', label: 'Church Name', type: 'text', placeholder: 'e.g. St. Mary\'s Cathedral' },
-          { key: 'church_address', label: 'Church Address', type: 'address', placeholder: 'Full church address' },
-          { key: 'church_time', label: 'Church Time', type: 'time' },
-        ],
-      },
-      {
         id: 'reception',
         label: 'Reception',
         addOnPrice: 1000,
