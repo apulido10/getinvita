@@ -5,6 +5,7 @@ import { Event, EventDetail } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
 import { Save, Loader2 } from 'lucide-react';
 import AddressAutocomplete from './AddressAutocomplete';
+import DatePicker from './DatePicker';
 import { t, type Lang } from '@/lib/translations';
 
 export interface EventDetailsFormRef {
@@ -110,6 +111,12 @@ const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDe
               />
             ) : field.type === 'address' ? (
               <AddressAutocomplete
+                value={values[field.key] || ''}
+                onChange={(val) => handleChange(field.key, val)}
+                placeholder={field.placeholder}
+              />
+            ) : field.type === 'date' ? (
+              <DatePicker
                 value={values[field.key] || ''}
                 onChange={(val) => handleChange(field.key, val)}
                 placeholder={field.placeholder}
