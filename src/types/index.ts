@@ -83,6 +83,21 @@ export interface RSVP {
   created_at: string;
 }
 
+export interface EventFieldConfig {
+  key: string;
+  label: string;
+  type: 'text' | 'textarea' | 'date' | 'time' | 'url' | 'address';
+  placeholder?: string;
+  required?: boolean;
+}
+
+export interface OptionalSection {
+  id: 'reception' | 'dinner';
+  label: string;
+  addOnPrice: number;
+  fields: EventFieldConfig[];
+}
+
 export interface EventTypeConfig {
   type: EventType;
   label: string;
@@ -91,14 +106,7 @@ export interface EventTypeConfig {
   icon: string;
   color: string;
   fields: EventFieldConfig[];
-}
-
-export interface EventFieldConfig {
-  key: string;
-  label: string;
-  type: 'text' | 'textarea' | 'date' | 'time' | 'url' | 'address';
-  placeholder?: string;
-  required?: boolean;
+  optionalSections?: OptionalSection[];
 }
 
 export interface FullEventData {

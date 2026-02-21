@@ -51,6 +51,19 @@ export async function POST(
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
+  // Read optional add-ons from event details
+  const { data: eventDetails } = await serviceClient
+    .from('event_details')
+    .select('detail_key, detail_value')
+    .eq('event_id', id);
+
+  const detailMap: Record<string, string> = {};
+  (eventDetails || []).forEach((d) => { if (d.detail_value) detailMap[d.detail_key] = d.detail_value; });
+
+  const hasReception = detailMap['has_reception'] === 'true';
+  const hasDinner = detailMap['has_dinner'] === 'true';
+  const mealType = detailMap['meal_type'] || 'dinner';
+
   try {
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
       {
@@ -64,6 +77,29 @@ export async function POST(
         quantity: 1,
       },
     ];
+
+    if (config.optionalSections) {
+      if (hasReception) {
+        lineItems.push({
+          price_data: {
+            currency: 'usd',
+            product_data: { name: 'Reception Add-on' },
+            unit_amount: 1000,
+          },
+          quantity: 1,
+        });
+      }
+      if (hasDinner) {
+        lineItems.push({
+          price_data: {
+            currency: 'usd',
+            product_data: { name: `${mealType === 'lunch' ? 'Lunch' : 'Dinner'} Add-on` },
+            unit_amount: 1000,
+          },
+          quantity: 1,
+        });
+      }
+    }
 
     if (needsPremiumTheme) {
       lineItems.push({
