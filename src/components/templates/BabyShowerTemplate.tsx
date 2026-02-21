@@ -96,7 +96,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
           <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
               <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>
-                {dueDate ? t('babyShower.babyArrivesIn', lang) : t('babyShower.showerDayIn', lang)}
+                {t('babyShower.showerDayIn', lang)}
               </p>
               <Countdown targetDate={dueDate || event.event_date} lang={lang} />
             </div>
@@ -242,7 +242,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
           <section className="py-12 sm:py-16" style={{ backgroundColor: colors.surface }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
               <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>
-                {dueDate ? t('babyShower.babyArrivesIn', lang) : t('babyShower.showerDayIn', lang)}
+                {t('babyShower.showerDayIn', lang)}
               </p>
               <Countdown targetDate={dueDate || event.event_date} lang={lang} />
             </div>
@@ -367,7 +367,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
         <section className="py-10 sm:py-16" style={{ backgroundColor: colors.surface }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <p className="uppercase tracking-widest text-sm mb-6" style={{ color: colors.textSecondary }}>
-              {dueDate ? t('babyShower.babyArrivesIn', lang) : t('babyShower.showerDayIn', lang)}
+              {t('babyShower.showerDayIn', lang)}
             </p>
             <Countdown targetDate={dueDate || event.event_date} lang={lang} />
           </div>

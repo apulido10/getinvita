@@ -84,7 +84,7 @@ const translations: Record<string, Record<Lang, string>> = {
   'babyShower.welcomeBaby': { en: 'Welcome Baby', es: 'Bienvenido(a) Bebé' },
   'babyShower.celebrating': { en: 'Celebrating', es: 'Celebrando a' },
   'babyShower.babyArrivesIn': { en: 'Baby Arrives In', es: 'El Bebé Llega En' },
-  'babyShower.showerDayIn': { en: 'Shower Day In', es: 'Día del Shower En' },
+  'babyShower.showerDayIn': { en: 'Baby Shower In', es: 'Baby Shower En' },
   'babyShower.churchCeremony': { en: 'Church Ceremony', es: 'Ceremonia Religiosa' },
   'babyShower.showerDetails': { en: 'Shower Details', es: 'Detalles del Baby Shower' },
   'babyShower.details': { en: 'Venue', es: 'Lugar' },
