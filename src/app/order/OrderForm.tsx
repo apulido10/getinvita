@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { EVENT_TYPES } from '@/lib/constants';
 import { EventType } from '@/types';
 import { Crown, Heart, Cake, Baby, Gift, Loader2 } from 'lucide-react';
+import DatePicker from '@/components/dashboard/DatePicker';
 
 const iconMap: Record<string, React.ElementType> = {
   Crown,
@@ -123,16 +124,13 @@ export default function OrderForm() {
 
           {/* Event Date */}
           <div>
-            <label htmlFor="eventDate" className="block text-sm font-semibold text-gray-900 mb-1">
+            <label className="block text-sm font-semibold text-gray-900 mb-1">
               Event Date *
             </label>
-            <input
-              id="eventDate"
-              type="date"
-              required
+            <DatePicker
               value={eventDate}
-              onChange={(e) => setEventDate(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none"
+              onChange={setEventDate}
+              placeholder="Select your event date"
             />
           </div>
 
