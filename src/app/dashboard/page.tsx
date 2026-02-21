@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<{ lang?: string; confirmed?: string }>;
 }) {
-  const { lang: langParam } = await searchParams;
+  const { lang: langParam, confirmed } = await searchParams;
   const lang: Lang = langParam === 'es' ? 'es' : 'en';
   const { user, supabase } = await requireAuth();
 
@@ -25,5 +25,5 @@ export default async function DashboardPage({
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  return <DashboardEventList events={(events as Event[]) || []} lang={lang} />;
+  return <DashboardEventList events={(events as Event[]) || []} lang={lang} confirmed={confirmed === 'true'} />;
 }

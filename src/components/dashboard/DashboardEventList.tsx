@@ -1,12 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { Event } from '@/types';
 import { getEventTypeConfig, CARD_EVENT_TYPES } from '@/lib/constants';
-import { Plus, Eye, Pencil, Calendar, Users } from 'lucide-react';
+import { Plus, Eye, Pencil, Calendar, Users, X } from 'lucide-react';
 import { t, type Lang } from '@/lib/translations';
 
-export default function DashboardEventList({ events, lang }: { events: Event[]; lang: Lang }) {
+export default function DashboardEventList({ events, lang, confirmed }: { events: Event[]; lang: Lang; confirmed?: boolean }) {
+  const [showBanner, setShowBanner] = useState(confirmed ?? false);
   const langParam = lang === 'es' ? '?lang=es' : '';
 
   const toggleLang = () => {
@@ -21,6 +23,14 @@ export default function DashboardEventList({ events, lang }: { events: Event[]; 
 
   return (
     <main className="min-h-screen bg-gray-50">
+      {showBanner && (
+        <div className="bg-green-600 text-white px-4 py-3 flex items-center justify-between">
+          <p className="text-sm font-medium">Your email has been confirmed. Welcome to GetInvita!</p>
+          <button onClick={() => setShowBanner(false)} className="ml-4 shrink-0 hover:opacity-75 transition-opacity">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
       <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-3">
