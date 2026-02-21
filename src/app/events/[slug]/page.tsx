@@ -69,13 +69,11 @@ export async function generateMetadata({
       locale: 'en_US',
       alternateLocale: ['es_US'],
       url: `https://getinvita.com/events/${slug}`,
-      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: event.event_name }] }),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      ...(ogImage && { images: [ogImage] }),
     },
   };
 }
