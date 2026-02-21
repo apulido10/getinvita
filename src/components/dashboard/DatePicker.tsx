@@ -56,7 +56,7 @@ export default function DatePicker({ value, onChange, placeholder = 'Select a da
 
       {/* Calendar popover */}
       {open && (
-        <div className="absolute z-50 mt-2 rounded-xl border border-gray-200 bg-white shadow-xl shadow-purple-900/10 p-4">
+        <div className="absolute z-50 bottom-full mb-2 rounded-xl border border-gray-200 bg-white shadow-xl shadow-purple-900/10 p-4">
           <DayPicker
             mode="single"
             selected={selected}
