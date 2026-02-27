@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { FullEventData, EventType } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
 import { getDefaultTheme } from '@/lib/themes';
-import { ArrowLeft, Loader2, Sparkles, Pencil } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import WeddingTemplate from '@/components/templates/WeddingTemplate';
 import Sweet15Template from '@/components/templates/Sweet15Template';
@@ -180,7 +180,6 @@ function PreviewContent() {
       : BirthdayTemplate;
 
   const editUrl = `/order?type=${type}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}`;
-  const customizeUrl = `/order/customize?type=${type}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}`;
   const loginUrl = `/login?redirect=${encodeURIComponent(
     `/order/preview?type=${type}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}`
   )}`;
@@ -226,20 +225,11 @@ function PreviewContent() {
           </Link>
 
           {/* Center label */}
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex items-center gap-2 min-w-0">
-              <Sparkles className="h-4 w-4 text-purple-500 shrink-0" />
-              <span className="text-sm text-gray-500 truncate hidden sm:inline">
-                Preview — customize before saving
-              </span>
-            </div>
-            <Link
-              href={customizeUrl}
-              className="flex items-center gap-1.5 rounded-lg border border-purple-200 bg-purple-50 text-purple-700 px-3 py-1.5 text-sm font-medium hover:bg-purple-100 transition-colors shrink-0"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-              Customize
-            </Link>
+          <div className="flex items-center gap-2 min-w-0">
+            <Sparkles className="h-4 w-4 text-purple-500 shrink-0" />
+            <span className="text-sm text-gray-500 truncate">
+              <span className="hidden sm:inline">Preview — </span>add photos, music &amp; more after saving
+            </span>
           </div>
 
           {/* CTA */}

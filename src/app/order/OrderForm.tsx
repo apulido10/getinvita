@@ -39,7 +39,7 @@ export default function OrderForm() {
       name: eventName,
       date: eventDate,
     });
-    router.push(`/order/customize?${params.toString()}`);
+    router.push(`/order/preview?${params.toString()}`);
   }
 
   return (
@@ -137,7 +137,7 @@ export default function OrderForm() {
             disabled={!selectedType}
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-purple-600 text-white py-3 text-sm font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {selectedConfig ? 'Start Customizing →' : 'Select an event type'}
+            {selectedConfig ? 'Preview My Site →' : 'Select an event type'}
           </button>
         </form>
       </div>
