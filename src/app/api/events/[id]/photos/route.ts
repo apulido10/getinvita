@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
+import { authorizeEventAccess } from '@/lib/event-access';
 
 async function getPhotos(supabase: ReturnType<typeof createServiceClient>, eventId: string) {
   const { data } = await supabase
@@ -17,13 +18,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const access = await authorizeEventAccess(id, request);
+  if (!access) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -38,7 +35,6 @@ export async function POST(
   const ext = fileName.split('.').pop();
   const storagePath = `${id}/${nanoid()}.${ext}`;
 
-  // Create a signed upload URL so the client can upload directly to Supabase storage
   const { data: signedData, error: signedError } = await serviceClient.storage
     .from('event-photos')
     .createSignedUploadUrl(storagePath);
@@ -75,13 +71,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const access = await authorizeEventAccess(id, request);
+  if (!access) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -110,13 +102,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const access = await authorizeEventAccess(id, request);
+  if (!access) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
