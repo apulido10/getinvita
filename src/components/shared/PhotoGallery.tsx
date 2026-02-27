@@ -15,10 +15,12 @@ export default function PhotoGallery({ photos, supabaseUrl }: Props) {
   if (photos.length === 0) return null;
 
   function getUrl(path: string) {
+    if (path.startsWith('blob:') || path.startsWith('data:') || path.startsWith('http')) return path;
     return `${supabaseUrl}/storage/v1/object/public/event-photos/${path}`;
   }
 
   function getThumbUrl(path: string) {
+    if (path.startsWith('blob:') || path.startsWith('data:') || path.startsWith('http')) return path;
     return `${supabaseUrl}/storage/v1/object/public/event-photos/${path}`;
   }
 

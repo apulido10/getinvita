@@ -40,7 +40,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
 
   const heroPhoto = photos.find((p) => p.is_hero);
   const heroUrl = heroPhoto
-    ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
+    ? (heroPhoto.storage_path.startsWith('blob:') || heroPhoto.storage_path.startsWith('http') ? heroPhoto.storage_path : `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`)
     : null;
 
   const parentNames = getDetail(details, 'parent_names') || event.event_name;

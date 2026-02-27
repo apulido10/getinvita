@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { EventType } from '@/types';
+import { EventType, FullEventData } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
-import { getThemesForEventType, getThemeById } from '@/lib/themes';
+import { getThemesForEventType, getThemeById, getDefaultTheme } from '@/lib/themes';
 import {
   FileText, Image, Music, Palette, ChevronRight, ChevronLeft,
   Upload, Trash2, Star, Loader2, Play, Pause, Music2, ImageIcon,
@@ -18,6 +18,10 @@ import { saveGuestSession, loadGuestSession, clearGuestSession } from '@/lib/gue
 import { t, type Lang } from '@/lib/translations';
 import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
+import WeddingTemplate from '@/components/templates/WeddingTemplate';
+import Sweet15Template from '@/components/templates/Sweet15Template';
+import BirthdayTemplate from '@/components/templates/BirthdayTemplate';
+import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
 
 type Step = 'details' | 'photos' | 'music' | 'theme';
 const stepIds: Step[] = ['details', 'photos', 'music', 'theme'];
@@ -696,10 +700,9 @@ export default function GuestDashboardClient({ eventType, eventName, eventDate, 
         {activeStep === 'theme' && (
           <GuestThemePanel
             eventType={eventType}
-            eventName={name}
-            eventDate={eventDate}
             selectedId={themeId}
             onSelect={(id) => setThemeId(id)}
+            buildPreviewData={() => buildPreviewData(eventType, name, eventDate, detailValues, photos, tracks)}
           />
         )}
 
@@ -737,6 +740,68 @@ export default function GuestDashboardClient({ eventType, eventName, eventDate, 
       </div>
     </main>
   );
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function buildPreviewData(
+  eventType: EventType,
+  name: string,
+  eventDate: string,
+  detailValues: Record<string, string>,
+  photos: GuestPhoto[],
+  tracks: GuestTrack[],
+): FullEventData {
+  const defaultDate = new Date();
+  defaultDate.setMonth(defaultDate.getMonth() + 3);
+
+  return {
+    event: {
+      id: 'preview-id',
+      slug: 'preview',
+      event_type: eventType,
+      event_name: name,
+      event_date: eventDate || defaultDate.toISOString(),
+      status: 'active',
+      client_name: '',
+      client_email: '',
+      access_token: '',
+      user_id: null,
+      stripe_checkout_session_id: null,
+      stripe_payment_intent_id: null,
+      theme_id: null,
+      theme_premium_paid: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    details: Object.entries(detailValues).map(([key, value], idx) => ({
+      id: String(idx),
+      event_id: 'preview-id',
+      detail_key: key,
+      detail_value: value,
+      created_at: new Date().toISOString(),
+    })),
+    photos: photos.map((p, idx) => ({
+      id: p.id,
+      event_id: 'preview-id',
+      storage_path: p.blobUrl,   // blob URL passed directly — PhotoGallery handles it
+      caption: null,
+      display_order: idx,
+      is_hero: p.isHero,
+      created_at: new Date().toISOString(),
+    })),
+    music: tracks.map((t) => ({
+      id: t.id,
+      event_id: 'preview-id',
+      storage_path: t.type === 'upload' ? URL.createObjectURL(t.file) : (t.previewUrl ?? null),
+      song_title: t.title,
+      artist: t.type === 'spotify' ? t.artist : null,
+      source: t.type === 'upload' ? ('upload' as const) : ('spotify' as const),
+      spotify_track_id: t.type === 'spotify' ? t.spotifyTrackId : null,
+      created_at: new Date().toISOString(),
+    })),
+    rsvps: [],
+  };
 }
 
 // ── Guest Theme Panel (no API calls) ──────────────────────────────────────────
@@ -786,20 +851,17 @@ function MiniThemePreview({ theme }: { theme: { colors: { hero: string; heroText
 }
 
 function GuestThemePanel({
-  eventType, eventName, eventDate, selectedId, onSelect,
+  eventType, selectedId, onSelect, buildPreviewData,
 }: {
   eventType: EventType;
-  eventName: string;
-  eventDate: string;
   selectedId: string | null;
   onSelect: (id: string) => void;
+  buildPreviewData: () => FullEventData;
 }) {
   const themes = getThemesForEventType(eventType);
   const freeThemes = themes.filter((t) => !t.isPremium);
   const premiumThemes = themes.filter((t) => t.isPremium);
   const [previewThemeId, setPreviewThemeId] = useState<string | null>(null);
-
-  const basePreviewUrl = `/order/preview?type=${eventType}&name=${encodeURIComponent(eventName)}&date=${encodeURIComponent(eventDate)}`;
 
   function ThemeCard({ theme }: { theme: typeof themes[0] }) {
     const isSelected = selectedId === theme.id;
@@ -807,7 +869,7 @@ function GuestThemePanel({
       <div className="relative">
         <button
           onClick={() => onSelect(theme.id)}
-          className={`relative w-full text-left rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+          className={`relative w-full text-left rounded-xl border-2 p-3 pb-10 transition-all hover:shadow-md ${
             isSelected ? 'border-purple-600 ring-2 ring-purple-200' : 'border-gray-200 hover:border-gray-300'
           }`}
         >
@@ -836,6 +898,15 @@ function GuestThemePanel({
     );
   }
 
+  // Render the actual template with real guest data
+  const previewTheme = previewThemeId ? getThemeById(previewThemeId) ?? getDefaultTheme(eventType) : null;
+  const TemplateComponent = previewThemeId
+    ? eventType === 'wedding' ? WeddingTemplate
+    : eventType === 'sweet15' ? Sweet15Template
+    : eventType === 'baby_shower' ? BabyShowerTemplate
+    : BirthdayTemplate
+    : null;
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-xl border p-6">
@@ -857,8 +928,8 @@ function GuestThemePanel({
         </div>
       </div>
 
-      {/* Preview modal */}
-      {previewThemeId && (
+      {/* Live preview modal — renders the real template with guest data */}
+      {previewThemeId && TemplateComponent && previewTheme && (
         <div className="fixed inset-0 z-50 bg-black/60" onClick={() => setPreviewThemeId(null)}>
           <div
             className="absolute inset-x-0 top-0 bottom-0 mx-auto max-w-[390px] flex flex-col"
@@ -875,11 +946,12 @@ function GuestThemePanel({
                 <X className="h-4 w-4 text-white" />
               </button>
             </div>
-            <div className="flex-1 rounded-t-xl overflow-hidden">
-              <iframe
-                src={`${basePreviewUrl}&theme_id=${encodeURIComponent(previewThemeId)}`}
-                className="w-full h-full border-0"
-                title="Theme preview"
+            <div className="flex-1 rounded-t-xl overflow-y-auto">
+              <TemplateComponent
+                data={buildPreviewData()}
+                supabaseUrl=""
+                theme={previewTheme}
+                lang="en"
               />
             </div>
           </div>
