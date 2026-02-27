@@ -11,10 +11,10 @@ interface Props {
 
 function getTrackUrl(track: EventMusic, supabaseUrl: string): string | null {
   if (track.source === 'spotify') {
+    // storage_path holds the Spotify preview URL for spotify tracks
     return track.storage_path;
   }
   if (track.storage_path) {
-    if (track.storage_path.startsWith('blob:') || track.storage_path.startsWith('http')) return track.storage_path;
     return `${supabaseUrl}/storage/v1/object/public/event-music/${track.storage_path}`;
   }
   return null;
