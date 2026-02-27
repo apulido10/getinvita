@@ -22,6 +22,7 @@ import WeddingTemplate from '@/components/templates/WeddingTemplate';
 import Sweet15Template from '@/components/templates/Sweet15Template';
 import BirthdayTemplate from '@/components/templates/BirthdayTemplate';
 import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
+import InvitationIntro from '@/components/shared/InvitationIntro';
 
 type Step = 'details' | 'photos' | 'music' | 'theme';
 const stepIds: Step[] = ['details', 'photos', 'music', 'theme'];
@@ -888,7 +889,11 @@ function GuestThemePanel({
           )}
         </button>
         <button
-          onClick={() => setPreviewThemeId(theme.id)}
+          onClick={() => {
+            // Clear session so envelope always shows fresh
+            try { sessionStorage.removeItem(`intro-seen-guest-preview-${theme.id}`); } catch {}
+            setPreviewThemeId(theme.id);
+          }}
           className="absolute bottom-3 right-3 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center gap-1 px-2.5 py-1.5 transition-colors"
         >
           <Eye className="h-3.5 w-3.5 text-gray-600" />
@@ -928,35 +933,50 @@ function GuestThemePanel({
         </div>
       </div>
 
-      {/* Live preview modal — renders the real template with guest data */}
-      {previewThemeId && TemplateComponent && previewTheme && (
-        <div className="fixed inset-0 z-50 bg-black/60" onClick={() => setPreviewThemeId(null)}>
-          <div
-            className="absolute inset-x-0 top-0 bottom-0 mx-auto max-w-[390px] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-4 py-2 shrink-0">
-              <h3 className="font-semibold text-white text-sm">
-                {themes.find((t) => t.id === previewThemeId)?.name} Preview
-              </h3>
-              <button
-                onClick={() => setPreviewThemeId(null)}
-                className="h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
-              >
-                <X className="h-4 w-4 text-white" />
-              </button>
-            </div>
-            <div className="flex-1 rounded-t-xl overflow-y-auto">
-              <TemplateComponent
-                data={buildPreviewData()}
-                supabaseUrl=""
-                theme={previewTheme}
-                lang="en"
-              />
+      {/* Live preview modal — renders the real template with envelope intro + music */}
+      {previewThemeId && TemplateComponent && previewTheme && (() => {
+        const previewData = buildPreviewData();
+        const photoUrls = previewData.photos.map((p) => p.storage_path).filter(Boolean) as string[];
+        // Use a unique ID each open so the envelope always shows
+        const previewId = `guest-preview-${previewThemeId}`;
+        return (
+          <div className="fixed inset-0 z-50 bg-black/60" onClick={() => setPreviewThemeId(null)}>
+            <div
+              className="absolute inset-x-0 top-0 bottom-0 mx-auto max-w-[390px] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-4 py-2 shrink-0">
+                <h3 className="font-semibold text-white text-sm">
+                  {themes.find((t) => t.id === previewThemeId)?.name} Preview
+                </h3>
+                <button
+                  onClick={() => setPreviewThemeId(null)}
+                  className="h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                >
+                  <X className="h-4 w-4 text-white" />
+                </button>
+              </div>
+              <div className="flex-1 rounded-t-xl overflow-y-auto">
+                <InvitationIntro
+                  eventName={previewData.event.event_name}
+                  eventType={previewData.event.event_type}
+                  colors={previewTheme.colors}
+                  eventId={previewId}
+                  lang="en"
+                  imageUrls={photoUrls}
+                >
+                  <TemplateComponent
+                    data={previewData}
+                    supabaseUrl=""
+                    theme={previewTheme}
+                    lang="en"
+                  />
+                </InvitationIntro>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
