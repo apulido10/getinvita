@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 
 let cachedToken: string | null = null;
 let tokenExpiresAt = 0;
@@ -37,15 +36,6 @@ async function getSpotifyToken(): Promise<string> {
 }
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   const query = request.nextUrl.searchParams.get('q');
   if (!query || query.trim().length === 0) {
     return NextResponse.json({ tracks: [] });
