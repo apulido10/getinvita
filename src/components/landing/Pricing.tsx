@@ -66,6 +66,10 @@ export default function Pricing({ lang }: { lang: Lang }) {
                 className={`rounded-2xl border-2 ${colorBorder[eventType.color]} p-6 transition-colors`}
               >
                 <h3 className="text-lg font-bold text-gray-900">{label}</h3>
+                <p className="mt-2 text-3xl font-bold text-gray-900">
+                  ${(eventType.price / 100).toFixed(0)}
+                  <span className="text-base font-normal text-gray-500 ml-1">one-time</span>
+                </p>
                 <ul className="mt-6 space-y-3">
                   {featureKeys.map((key) => (
                     <li key={key} className="flex items-start gap-2 text-sm text-gray-700">

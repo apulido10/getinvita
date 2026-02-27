@@ -1,9 +1,5 @@
-export const dynamic = 'force-dynamic';
-
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import { redirect } from 'next/navigation';
-import { getAuthUser } from '@/lib/supabase/auth';
 import OrderForm from './OrderForm';
 
 export const metadata: Metadata = {
@@ -12,12 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function OrderPage() {
-  const { user } = await getAuthUser();
-  if (!user) {
-    redirect('/login?redirect=/order');
-  }
-
+export default function OrderPage() {
   return (
     <Suspense
       fallback={

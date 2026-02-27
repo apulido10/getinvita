@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { EVENT_TYPES } from '@/lib/constants';
 import { EventType } from '@/types';
-import { Crown, Heart, Cake, Baby, Gift, Loader2 } from 'lucide-react';
+import { Crown, Heart, Cake, Baby, Gift } from 'lucide-react';
 import DatePicker from '@/components/dashboard/DatePicker';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -17,47 +17,29 @@ const iconMap: Record<string, React.ElementType> = {
 
 export default function OrderForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const preselected = searchParams.get('type') as EventType | null;
 
   const [selectedType, setSelectedType] = useState<EventType | ''>(preselected || '');
-  const [eventName, setEventName] = useState('');
-  const [eventDate, setEventDate] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [eventName, setEventName] = useState(searchParams.get('name') || '');
+  const [eventDate, setEventDate] = useState(searchParams.get('date') || '');
   const [error, setError] = useState('');
 
   const selectedConfig = EVENT_TYPES.find((et) => et.type === selectedType);
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedType || !eventName || !eventDate) {
       setError('Please fill in all required fields.');
       return;
     }
     setError('');
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event_type: selectedType,
-          event_name: eventName,
-          event_date: eventDate || null,
-        }),
-      });
-
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setError(data.error || 'Something went wrong.');
-        setLoading(false);
-      }
-    } catch {
-      setError('Failed to create event.');
-      setLoading(false);
-    }
+    const params = new URLSearchParams({
+      type: selectedType,
+      name: eventName,
+      date: eventDate,
+    });
+    router.push(`/order/preview?${params.toString()}`);
   }
 
   return (
@@ -134,6 +116,17 @@ export default function OrderForm() {
             />
           </div>
 
+          {selectedConfig && (
+            <div className="rounded-lg bg-purple-50 border border-purple-100 px-4 py-3 flex items-center justify-between">
+              <span className="text-sm text-purple-800 font-medium">
+                {selectedConfig.label} — one-time payment
+              </span>
+              <span className="text-lg font-bold text-purple-900">
+                ${(selectedConfig.price / 100).toFixed(0)}
+              </span>
+            </div>
+          )}
+
           {error && (
             <p className="text-sm text-red-600 bg-red-50 rounded-lg px-4 py-2">{error}</p>
           )}
@@ -141,19 +134,10 @@ export default function OrderForm() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading || !selectedType}
+            disabled={!selectedType}
             className="w-full flex items-center justify-center gap-2 rounded-lg bg-purple-600 text-white py-3 text-sm font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Creating your site...
-              </>
-            ) : selectedConfig ? (
-              'Create My Site'
-            ) : (
-              'Select an event type'
-            )}
+            {selectedConfig ? 'Preview My Site →' : 'Select an event type'}
           </button>
         </form>
       </div>
