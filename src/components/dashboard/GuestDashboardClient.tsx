@@ -7,7 +7,7 @@ import { getThemesForEventType, getThemeById } from '@/lib/themes';
 import {
   FileText, Image, Music, Palette, ChevronRight, ChevronLeft,
   Upload, Trash2, Star, Loader2, Play, Pause, Music2, ImageIcon,
-  Check, X, Plus, UtensilsCrossed, Crown, Globe, ArrowLeft, Eye,
+  Check, X, Plus, UtensilsCrossed, Crown, Lock, Globe, ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
 import AddressAutocomplete from './AddressAutocomplete';
@@ -696,8 +696,6 @@ export default function GuestDashboardClient({ eventType, eventName, eventDate, 
         {activeStep === 'theme' && (
           <GuestThemePanel
             eventType={eventType}
-            eventName={name}
-            eventDate={eventDate}
             selectedId={themeId}
             onSelect={(id) => setThemeId(id)}
           />
@@ -785,56 +783,10 @@ function MiniThemePreview({ theme }: { theme: { colors: { hero: string; heroText
   );
 }
 
-function GuestThemePanel({
-  eventType, eventName, eventDate, selectedId, onSelect,
-}: {
-  eventType: EventType;
-  eventName: string;
-  eventDate: string;
-  selectedId: string | null;
-  onSelect: (id: string) => void;
-}) {
+function GuestThemePanel({ eventType, selectedId, onSelect }: { eventType: EventType; selectedId: string | null; onSelect: (id: string) => void }) {
   const themes = getThemesForEventType(eventType);
   const freeThemes = themes.filter((t) => !t.isPremium);
   const premiumThemes = themes.filter((t) => t.isPremium);
-  const [previewThemeId, setPreviewThemeId] = useState<string | null>(null);
-
-  const basePreviewUrl = `/order/preview?type=${eventType}&name=${encodeURIComponent(eventName)}&date=${encodeURIComponent(eventDate)}`;
-
-  function ThemeCard({ theme }: { theme: typeof themes[0] }) {
-    const isSelected = selectedId === theme.id;
-    return (
-      <div className="relative">
-        <button
-          onClick={() => onSelect(theme.id)}
-          className={`relative w-full text-left rounded-xl border-2 p-3 transition-all hover:shadow-md ${
-            isSelected ? 'border-purple-600 ring-2 ring-purple-200' : 'border-gray-200 hover:border-gray-300'
-          }`}
-        >
-          {isSelected && (
-            <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-purple-600 flex items-center justify-center">
-              <Check className="h-3 w-3 text-white" />
-            </div>
-          )}
-          <MiniThemePreview theme={theme} />
-          <h3 className="text-sm font-semibold text-gray-900 mt-2">{theme.name}</h3>
-          <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{theme.description}</p>
-          {theme.isPremium && (
-            <span className="inline-block mt-1.5 text-[10px] uppercase tracking-wider font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
-              {theme.layout} layout
-            </span>
-          )}
-        </button>
-        <button
-          onClick={() => setPreviewThemeId(theme.id)}
-          className="absolute bottom-3 right-3 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center gap-1 px-2.5 py-1.5 transition-colors"
-        >
-          <Eye className="h-3.5 w-3.5 text-gray-600" />
-          <span className="text-xs font-medium text-gray-600">Preview</span>
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -842,7 +794,27 @@ function GuestThemePanel({
         <h2 className="text-lg font-bold text-gray-900 mb-1">Choose Your Theme</h2>
         <p className="text-sm text-gray-500 mb-6">Pick a look for your site. You can change it anytime.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {freeThemes.map((theme) => <ThemeCard key={theme.id} theme={theme} />)}
+          {freeThemes.map((theme) => {
+            const isSelected = selectedId === theme.id;
+            return (
+              <button
+                key={theme.id}
+                onClick={() => onSelect(theme.id)}
+                className={`relative w-full text-left rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+                  isSelected ? 'border-purple-600 ring-2 ring-purple-200' : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                {isSelected && (
+                  <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-purple-600 flex items-center justify-center">
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
+                )}
+                <MiniThemePreview theme={theme} />
+                <h3 className="text-sm font-semibold text-gray-900 mt-2">{theme.name}</h3>
+                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{theme.description}</p>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -853,38 +825,32 @@ function GuestThemePanel({
         </div>
         <p className="text-sm text-gray-500 mb-6">Unique layouts included with your site — select one before saving.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {premiumThemes.map((theme) => <ThemeCard key={theme.id} theme={theme} />)}
+          {premiumThemes.map((theme) => {
+            const isSelected = selectedId === theme.id;
+            return (
+              <button
+                key={theme.id}
+                onClick={() => onSelect(theme.id)}
+                className={`relative w-full text-left rounded-xl border-2 p-3 transition-all hover:shadow-md ${
+                  isSelected ? 'border-purple-600 ring-2 ring-purple-200' : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                {isSelected && (
+                  <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-purple-600 flex items-center justify-center">
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
+                )}
+                <MiniThemePreview theme={theme} />
+                <h3 className="text-sm font-semibold text-gray-900 mt-2">{theme.name}</h3>
+                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{theme.description}</p>
+                <span className="inline-block mt-1.5 text-[10px] uppercase tracking-wider font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
+                  {theme.layout} layout
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
-
-      {/* Preview modal */}
-      {previewThemeId && (
-        <div className="fixed inset-0 z-50 bg-black/60" onClick={() => setPreviewThemeId(null)}>
-          <div
-            className="absolute inset-x-0 top-0 bottom-0 mx-auto max-w-[390px] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-4 py-2 shrink-0">
-              <h3 className="font-semibold text-white text-sm">
-                {themes.find((t) => t.id === previewThemeId)?.name} Preview
-              </h3>
-              <button
-                onClick={() => setPreviewThemeId(null)}
-                className="h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
-              >
-                <X className="h-4 w-4 text-white" />
-              </button>
-            </div>
-            <div className="flex-1 rounded-t-xl overflow-hidden">
-              <iframe
-                src={`${basePreviewUrl}&theme_id=${encodeURIComponent(previewThemeId)}`}
-                className="w-full h-full border-0"
-                title="Theme preview"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

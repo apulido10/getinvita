@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { FullEventData, EventType } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
-import { getDefaultTheme, getThemeById } from '@/lib/themes';
+import { getDefaultTheme } from '@/lib/themes';
 import { ArrowLeft, Loader2, Sparkles, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import WeddingTemplate from '@/components/templates/WeddingTemplate';
@@ -139,7 +139,6 @@ function PreviewContent() {
   const type = searchParams.get('type') as EventType | null;
   const name = decodeURIComponent(searchParams.get('name') || '');
   const date = decodeURIComponent(searchParams.get('date') || '');
-  const themeIdParam = searchParams.get('theme_id') || null;
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [saving, setSaving] = useState(false);
@@ -169,7 +168,7 @@ function PreviewContent() {
   }
 
   const mockData = buildMockData(type, name, date);
-  const theme = (themeIdParam ? getThemeById(themeIdParam) : null) ?? getDefaultTheme(type);
+  const theme = getDefaultTheme(type);
 
   const TemplateComponent =
     type === 'wedding'
