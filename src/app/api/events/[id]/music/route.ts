@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
-import { authorizeEventAccess } from '@/lib/event-access';
 
 async function getMusic(supabase: ReturnType<typeof createServiceClient>, eventId: string) {
   const { data } = await supabase
@@ -19,9 +18,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const supabase = await createClient();
 
-  const access = await authorizeEventAccess(id, request);
-  if (!access) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -54,7 +57,7 @@ export async function POST(
     return NextResponse.json({ music });
   }
 
-  // File upload flow
+  // File upload flow (existing)
   const { fileName, songTitle, contentType } = body;
 
   if (!fileName) {
@@ -64,6 +67,7 @@ export async function POST(
   const ext = fileName.split('.').pop();
   const storagePath = `${id}/${nanoid()}.${ext}`;
 
+  // Create a signed upload URL so the client can upload directly to Supabase storage
   const { data: signedData, error: signedError } = await serviceClient.storage
     .from('event-music')
     .createSignedUploadUrl(storagePath);
@@ -73,6 +77,7 @@ export async function POST(
     return NextResponse.json({ error: `Failed to create upload URL: ${signedError?.message}` }, { status: 500 });
   }
 
+  // Save the DB record now (the file will be uploaded by the client)
   const { error: insertError } = await serviceClient.from('event_music').insert({
     event_id: id,
     storage_path: storagePath,
@@ -99,9 +104,13 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const supabase = await createClient();
 
-  const access = await authorizeEventAccess(id, request);
-  if (!access) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -115,9 +124,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const supabase = await createClient();
 
-  const access = await authorizeEventAccess(id, request);
-  if (!access) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -135,6 +148,7 @@ export async function DELETE(
     .single();
 
   if (track) {
+    // Only remove from storage for uploaded files (not Spotify preview URLs)
     if (track.storage_path && track.source !== 'spotify') {
       await serviceClient.storage.from('event-music').remove([track.storage_path]);
     }

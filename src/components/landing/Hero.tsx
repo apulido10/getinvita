@@ -27,7 +27,7 @@ export default function Hero({ lang }: { lang: Lang }) {
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/order"
+            href="/login?redirect=/order"
             className="inline-flex items-center justify-center rounded-full bg-white text-purple-900 px-8 py-3.5 text-base font-semibold hover:bg-purple-50 transition-colors shadow-xl shadow-purple-900/30"
           >
             {t('landing.hero.cta1', lang)}

@@ -7,7 +7,7 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -17,29 +17,11 @@ export async function POST(
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Payment always requires a logged-in user
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const serviceClient = createServiceClient();
-
-  // Check if this is an anonymous event we can claim
-  const cookieVal = request.cookies.get('gi_event_access')?.value;
-  if (cookieVal) {
-    const colonIdx = cookieVal.indexOf(':');
-    const cookieId = cookieVal.slice(0, colonIdx);
-    const cookieToken = cookieVal.slice(colonIdx + 1);
-    if (cookieId === id && cookieToken) {
-      // Claim anonymous event before proceeding to payment
-      await serviceClient
-        .from('events')
-        .update({ user_id: user.id })
-        .eq('id', id)
-        .eq('access_token', cookieToken)
-        .is('user_id', null);
-    }
-  }
 
   const { data: event, error } = await serviceClient
     .from('events')

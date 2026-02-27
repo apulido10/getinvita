@@ -10,6 +10,10 @@ export async function POST(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const serviceClient = createServiceClient();
 
     const body = await request.json();
@@ -24,8 +28,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const client_name = user?.user_metadata?.full_name || user?.email || '';
-    const client_email = user?.email || '';
+    const client_name = user.user_metadata?.full_name || user.email || '';
+    const client_email = user.email || '';
 
     const slug = `${event_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${nanoid(6)}`;
     const access_token = nanoid(32);
@@ -41,7 +45,7 @@ export async function POST(request: NextRequest) {
         client_name,
         client_email,
         access_token,
-        user_id: user?.id ?? null,
+        user_id: user.id,
       })
       .select()
       .single();
@@ -51,17 +55,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create event' }, { status: 500 });
     }
 
-    const response = NextResponse.json({ url: `/dashboard/${event.id}` });
-
-    // Always set the access cookie so guest sessions can use the dashboard
-    response.cookies.set('gi_event_access', `${event.id}:${access_token}`, {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      sameSite: 'lax',
-      httpOnly: false, // readable by client JS for future use
-    });
-
-    return response;
+    return NextResponse.json({ url: `/dashboard/${event.id}` });
   } catch (error) {
     console.error('Create event error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
