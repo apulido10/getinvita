@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import { FullEventData, EventType } from '@/types';
 import { getEventTypeConfig } from '@/lib/constants';
 import { getDefaultTheme } from '@/lib/themes';
@@ -139,11 +140,19 @@ function PreviewContent() {
   const name = decodeURIComponent(searchParams.get('name') || '');
   const date = decodeURIComponent(searchParams.get('date') || '');
 
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   const config = type ? getEventTypeConfig(type) : null;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user);
+    });
+  }, []);
 
   if (!type || !config) {
     return (
@@ -171,6 +180,9 @@ function PreviewContent() {
       : BirthdayTemplate;
 
   const editUrl = `/order?type=${type}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}`;
+  const loginUrl = `/login?redirect=${encodeURIComponent(
+    `/order/preview?type=${type}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}`
+  )}`;
 
   async function handleSave() {
     setSaving(true);
@@ -223,14 +235,25 @@ function PreviewContent() {
           {/* CTA */}
           <div className="shrink-0 flex items-center gap-3">
             {error && <p className="text-xs text-red-600 hidden sm:block">{error}</p>}
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 rounded-lg bg-purple-600 text-white px-5 py-2 text-sm font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 shadow-sm"
-            >
-              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {saving ? 'Building…' : 'Build My Full Site →'}
-            </button>
+            {isLoggedIn === null ? (
+              <div className="h-9 w-44 rounded-lg bg-gray-100 animate-pulse" />
+            ) : isLoggedIn ? (
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 rounded-lg bg-purple-600 text-white px-5 py-2 text-sm font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 shadow-sm"
+              >
+                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                {saving ? 'Creating…' : `Build My Site — $${(config.price / 100).toFixed(0)}`}
+              </button>
+            ) : (
+              <Link
+                href={loginUrl}
+                className="flex items-center gap-2 rounded-lg bg-purple-600 text-white px-5 py-2 text-sm font-semibold hover:bg-purple-700 transition-colors shadow-sm"
+              >
+                Sign Up to Build — ${(config.price / 100).toFixed(0)}
+              </Link>
+            )}
           </div>
         </div>
       </div>

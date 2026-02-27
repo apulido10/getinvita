@@ -31,7 +31,7 @@ const stepLabelKeys: Record<Step, string> = {
   rsvps: 'dash.step.rsvps',
 };
 
-export default function DashboardClient({ initialData, lang, isGuest = false }: { initialData: FullEventData; lang: Lang; isGuest?: boolean }) {
+export default function DashboardClient({ initialData, lang }: { initialData: FullEventData; lang: Lang }) {
   const [data, setData] = useState(initialData);
   const [activeStep, setActiveStep] = useState<Step>('details');
 
@@ -83,7 +83,7 @@ export default function DashboardClient({ initialData, lang, isGuest = false }: 
     try {
       const res = await fetch(`/api/events/${data.event.id}`, { method: 'DELETE' });
       if (res.ok) {
-        window.location.href = isGuest ? '/order' : `/dashboard${langParam}`;
+        window.location.href = `/dashboard${langParam}`;
       }
     } finally {
       setDeleting(false);
@@ -94,11 +94,6 @@ export default function DashboardClient({ initialData, lang, isGuest = false }: 
     setPublishing(true);
     try {
       const res = await fetch(`/api/events/${data.event.id}/checkout`, { method: 'POST' });
-      if (res.status === 401) {
-        // Not logged in — send to sign up, then come back to this dashboard to pay
-        window.location.href = `/login?redirect=/dashboard/${data.event.id}`;
-        return;
-      }
       const json = await res.json();
       if (res.ok && json.url) {
         window.location.href = json.url;
@@ -123,26 +118,13 @@ export default function DashboardClient({ initialData, lang, isGuest = false }: 
       {/* Header */}
       <div className="bg-white border-b">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-4">
-          {isGuest && (
-            <div className="mb-3 rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 flex items-center justify-between gap-4">
-              <p className="text-sm text-amber-800">
-                You&apos;re building as a guest — your progress is saved. Sign up when you&apos;re ready to publish &amp; share.
-              </p>
-              <Link
-                href={`/login?redirect=/dashboard/${data.event.id}`}
-                className="shrink-0 rounded-lg bg-purple-600 text-white px-4 py-1.5 text-xs font-semibold hover:bg-purple-700 transition-colors"
-              >
-                Sign Up / Log In
-              </Link>
-            </div>
-          )}
           <div className="flex items-center justify-between mb-3">
             <Link
-              href={isGuest ? '/order' : `/dashboard${langParam}`}
+              href={`/dashboard${langParam}`}
               className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
             >
               <ArrowLeft className="h-4 w-4" />
-              {isGuest ? 'Start Over' : t('dash.back', lang)}
+              {t('dash.back', lang)}
             </Link>
             <div className="flex items-center gap-3">
               {/* Language toggle */}
@@ -164,16 +146,14 @@ export default function DashboardClient({ initialData, lang, isGuest = false }: 
                 <Trash2 className="h-4 w-4" />
                 <span className="hidden sm:inline">{t('dash.delete', lang)}</span>
               </button>
-              {!isGuest && (
-                <button
-                  onClick={handleSignOut}
-                  className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
-                  title={t('dash.signOut', lang)}
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span className="hidden sm:inline">{t('dash.signOut', lang)}</span>
-                </button>
-              )}
+              <button
+                onClick={handleSignOut}
+                className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
+                title={t('dash.signOut', lang)}
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('dash.signOut', lang)}</span>
+              </button>
             </div>
           </div>
 
