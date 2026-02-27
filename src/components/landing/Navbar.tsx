@@ -39,7 +39,7 @@ export default function Navbar({ lang }: { lang: Lang }) {
             {t('landing.nav.signIn', lang)}
           </Link>
           <Link
-            href={lang === 'es' ? '/login?redirect=/order&lang=es' : '/login?redirect=/order'}
+            href={lang === 'es' ? '/order?lang=es' : '/order'}
             className="rounded-full bg-white px-3 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-purple-900 hover:bg-purple-50 transition-colors whitespace-nowrap"
           >
             {t('landing.nav.signUp', lang)}

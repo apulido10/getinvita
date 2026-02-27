@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
+import { authorizeEventAccess } from '@/lib/event-access';
 
 async function getPhotos(supabase: ReturnType<typeof createServiceClient>, eventId: string) {
   const { data } = await supabase
@@ -17,13 +18,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const access = await authorizeEventAccess(id, request);
+  if (!access) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -38,7 +35,6 @@ export async function POST(
   const ext = fileName.split('.').pop();
   const storagePath = `${id}/${nanoid()}.${ext}`;
 
-  // Create a signed upload URL so the client can upload directly to Supabase storage
   const { data: signedData, error: signedError } = await serviceClient.storage
     .from('event-photos')
     .createSignedUploadUrl(storagePath);
@@ -75,13 +71,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const access = await authorizeEventAccess(id, request);
+  if (!access) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -110,13 +102,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const access = await authorizeEventAccess(id, request);
+  if (!access) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -137,11 +125,9 @@ export async function DELETE(
     await serviceClient.storage.from('event-photos').remove([photo.storage_path]);
     await serviceClient.from('event_photos').delete().eq('id', photoId);
 
-    // If the deleted photo was the hero, assign a new hero
     if (photo.is_hero) {
       const remaining = await getPhotos(serviceClient, id);
       if (remaining.length > 0) {
-        // Pick the photo before it (by display_order), or the first one
         const beforePhotos = remaining.filter((p) => p.display_order < photo.display_order);
         const newHero = beforePhotos.length > 0
           ? beforePhotos[beforePhotos.length - 1]
