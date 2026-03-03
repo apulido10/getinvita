@@ -8,11 +8,13 @@ import Pricing from '@/components/landing/Pricing';
 import Navbar from '@/components/landing/Navbar';
 import Link from 'next/link';
 import { t } from '@/lib/translations';
+import { LANDING_KEYWORDS_SPANISH } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: 'GetInvita - Sitios Web Hermosos para Eventos',
   description:
     'Sitios web personalizados para Quinceaneras, Bodas, Cumpleanos y Baby Showers. Crea tu pagina con fotos, musica y RSVP en minutos.',
+  keywords: LANDING_KEYWORDS_SPANISH,
   alternates: {
     canonical: '/es',
     languages: {

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { GLOBAL_KEYWORDS } from "@/lib/seo";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,17 +23,7 @@ export const metadata: Metadata = {
   },
   description:
     "Custom event websites for Quinceañeras, Weddings, Birthdays & Baby Showers. Upload photos, music, and details — get a stunning event page.",
-  keywords: [
-    "event website",
-    "quinceañera website",
-    "wedding website",
-    "birthday website",
-    "baby shower website",
-    "digital invitations",
-    "RSVP",
-    "event page",
-    "GetInvita",
-  ],
+  keywords: GLOBAL_KEYWORDS,
   openGraph: {
     type: "website",
     siteName: "GetInvita",

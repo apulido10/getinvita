@@ -8,11 +8,13 @@ import Pricing from '@/components/landing/Pricing';
 import Navbar from '@/components/landing/Navbar';
 import Link from 'next/link';
 import { t } from '@/lib/translations';
+import { LANDING_KEYWORDS_ENGLISH } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: 'GetInvita - Beautiful Event Websites',
   description:
     'Custom event websites for Quinceaneras, Weddings, Birthdays, and Baby Showers. Build your page with photos, music, and RSVP in minutes.',
+  keywords: LANDING_KEYWORDS_ENGLISH,
   alternates: {
     canonical: '/',
     languages: {

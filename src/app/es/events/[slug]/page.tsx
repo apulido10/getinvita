@@ -10,6 +10,7 @@ import BirthdayTemplate from '@/components/templates/BirthdayTemplate';
 import BabyShowerTemplate from '@/components/templates/BabyShowerTemplate';
 import InvitationIntro from '@/components/shared/InvitationIntro';
 import PoweredByFooter from '@/components/shared/PoweredByFooter';
+import { getEventKeywords } from '@/lib/seo';
 
 const lang = 'es' as const;
 
@@ -52,6 +53,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    keywords: getEventKeywords(event.event_type, event.event_name, 'es'),
     alternates: {
       canonical: `/es/events/${slug}`,
       languages: {
@@ -69,11 +71,13 @@ export async function generateMetadata({
       locale: 'es_US',
       alternateLocale: ['en_US'],
       url: `https://getinvita.com/es/events/${slug}`,
+      ...(ogImage && { images: [{ url: ogImage }] }),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
+      ...(ogImage && { images: [ogImage] }),
     },
   };
 }
