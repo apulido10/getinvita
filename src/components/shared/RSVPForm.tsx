@@ -129,7 +129,7 @@ export default function RSVPForm({ eventId, accentColor = 'purple', lang = 'en' 
             onChange={(e) => setGuestCount(Number(e.target.value))}
             className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm focus:border-white/40 outline-none backdrop-blur-sm"
           >
-            {[1, 2, 3, 4, 5].map((n) => (
+            {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
               <option key={n} value={n} className="text-gray-900">{n}</option>
             ))}
           </select>
