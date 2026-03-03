@@ -3,6 +3,7 @@ import Link from 'next/link';
 export const metadata = {
   title: 'Terms of Service & Policy',
   description: 'GetInvita terms of service, privacy policy, refund policy, and user responsibilities.',
+  alternates: { canonical: '/terms' },
 };
 
 export default function TermsPage() {

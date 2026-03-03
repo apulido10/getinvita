@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/login', '/order', '/dashboard', '/demo', '/api/'],
+      disallow: ['/dashboard', '/demo', '/api/', '/auth/', '/order'],
     },
     sitemap: 'https://getinvita.com/sitemap.xml',
     host: 'https://getinvita.com',
