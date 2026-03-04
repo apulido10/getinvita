@@ -52,7 +52,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-6 text-center">
           <p className="text-lg font-semibold text-white mb-2">GetInvita</p>
           <p className="text-sm">{t('landing.footer.tagline', lang)}</p>
-          <div className="mt-6 flex justify-center gap-6 text-sm">
+          <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm">
             <Link href="/login?redirect=/order" className="hover:text-white transition-colors">
               {t('landing.footer.getStarted', lang)}
             </Link>
