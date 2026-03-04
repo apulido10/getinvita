@@ -69,7 +69,7 @@ export default function EventTypes({ lang }: { lang: Lang }) {
                 <p className="mt-3 text-base text-gray-600 leading-relaxed">{description}</p>
                 <p className="mt-2 text-sm font-semibold text-gray-500">{t('landing.eventTypes.startingAt', lang)}{(eventType.price / 100).toFixed(0)}</p>
                 <Link
-                  href={`/order?type=${eventType.type}`}
+                  href={`/login?redirect=${encodeURIComponent(`/order?type=${eventType.type}`)}`}
                   className={`mt-6 block w-full text-center rounded-xl bg-gradient-to-r ${colorMap[eventType.color]} text-white py-3.5 text-base font-semibold hover:opacity-90 transition-opacity`}
                 >
                   {t('landing.eventTypes.getStarted', lang)}
@@ -103,7 +103,7 @@ export default function EventTypes({ lang }: { lang: Lang }) {
                 </div>
                 <p className="mt-3 text-sm text-gray-600 leading-relaxed">{description}</p>
                 <Link
-                  href={`/order?type=${eventType.type}`}
+                  href={`/login?redirect=${encodeURIComponent(`/order?type=${eventType.type}`)}`}
                   className={`mt-4 block w-full text-center rounded-lg bg-gradient-to-r ${colorMap[eventType.color]} text-white py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity`}
                 >
                   {t('landing.eventTypes.getStarted', lang)}

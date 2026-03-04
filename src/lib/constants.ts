@@ -5,7 +5,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'sweet15',
     label: 'Sweet 15 / Quinceañera',
     description: 'Celebrate this milestone with a stunning rose & gold themed website featuring your court of honor.',
-    price: 14900,
+    price: 12000,
     icon: 'Crown',
     color: 'rose',
     fields: [
@@ -33,7 +33,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'wedding',
     label: 'Wedding',
     description: 'Share your love story with an elegant ivory & sage wedding website with RSVP and registry.',
-    price: 14900,
+    price: 12000,
     icon: 'Heart',
     color: 'emerald',
     fields: [
