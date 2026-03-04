@@ -63,7 +63,10 @@ export default function HomePage() {
               {t('landing.footer.eventOptions', lang)}
             </a>
             <Link href="/terms" className="hover:text-white transition-colors">
-              {t('landing.footer.termsAndPolicy', lang)}
+              Terms of Service
+            </Link>
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">
+              Privacy Policy
             </Link>
             <a href="mailto:support@getinvita.com" className="hover:text-white transition-colors">
               {t('landing.footer.contact', lang)}
