@@ -34,7 +34,7 @@ export default function LoginForm() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirect)}`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent('/order')}`,
         },
       });
       if (error) {
