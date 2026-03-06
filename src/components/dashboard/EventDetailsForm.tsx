@@ -18,9 +18,10 @@ interface Props {
   lang: Lang;
   onUpdate: (details: EventDetail[]) => void;
   onEventNameChange?: (name: string) => void;
+  onSave?: (values: Record<string, string>, eventName: string) => Promise<void>;
 }
 
-const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDetailsForm({ event, details, lang, onUpdate, onEventNameChange }, ref) {
+const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDetailsForm({ event, details, lang, onUpdate, onEventNameChange, onSave }, ref) {
   const config = getEventTypeConfig(event.event_type);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -51,16 +52,31 @@ const EventDetailsForm = forwardRef<EventDetailsFormRef, Props>(function EventDe
   async function handleSave() {
     setSaving(true);
     try {
-      const res = await fetch(`/api/events/${event.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ details: values, event_name: eventName }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        onUpdate(data.details);
+      if (onSave) {
+        await onSave(values, eventName);
         onEventNameChange?.(eventName);
+        // Build local detail objects so onUpdate can refresh parent state
+        const updatedDetails = Object.entries(values).map(([key, value], i) => ({
+          id: String(i),
+          event_id: 'guest',
+          detail_key: key,
+          detail_value: value,
+          created_at: new Date().toISOString(),
+        }));
+        onUpdate(updatedDetails);
         setSaved(true);
+      } else {
+        const res = await fetch(`/api/events/${event.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ details: values, event_name: eventName }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          onUpdate(data.details);
+          onEventNameChange?.(eventName);
+          setSaved(true);
+        }
       }
     } finally {
       setSaving(false);

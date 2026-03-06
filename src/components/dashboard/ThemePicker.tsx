@@ -12,6 +12,7 @@ interface Props {
   supabaseUrl: string;
   lang: Lang;
   onThemeChange: (themeId: string) => void;
+  isGuest?: boolean;
 }
 
 function MiniPreview({ theme }: { theme: ThemeVariant }) {
@@ -93,7 +94,7 @@ function PreviewModal({ theme, eventId, lang, onClose }: {
   );
 }
 
-export default function ThemePicker({ event, data, supabaseUrl, lang, onThemeChange }: Props) {
+export default function ThemePicker({ event, data, supabaseUrl, lang, onThemeChange, isGuest }: Props) {
   const themes = getThemesForEventType(event.event_type);
   const [selectedId, setSelectedId] = useState(event.theme_id || themes[0]?.id);
   const [saving, setSaving] = useState(false);
@@ -119,6 +120,12 @@ export default function ThemePicker({ event, data, supabaseUrl, lang, onThemeCha
 
   async function handleSelect(theme: ThemeVariant) {
     if (isPremiumLocked(theme)) return;
+
+    if (isGuest) {
+      setSelectedId(theme.id);
+      onThemeChange(theme.id);
+      return;
+    }
 
     setSaving(true);
     try {
@@ -187,14 +194,16 @@ export default function ThemePicker({ event, data, supabaseUrl, lang, onThemeCha
                   <h3 className="text-sm font-semibold text-gray-900 mt-2">{theme.name}</h3>
                   <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{theme.description}</p>
                 </button>
-                <button
-                  onClick={() => setPreviewTheme(theme)}
-                  className="absolute bottom-3 right-3 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center gap-1 px-2.5 py-1.5 transition-colors"
-                  title={t('dash.preview', lang)}
-                >
-                  <Eye className="h-3.5 w-3.5 text-gray-600" />
-                  <span className="text-xs font-medium text-gray-600">{t('dash.preview', lang)}</span>
-                </button>
+                {!isGuest && (
+                  <button
+                    onClick={() => setPreviewTheme(theme)}
+                    className="absolute bottom-3 right-3 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center gap-1 px-2.5 py-1.5 transition-colors"
+                    title={t('dash.preview', lang)}
+                  >
+                    <Eye className="h-3.5 w-3.5 text-gray-600" />
+                    <span className="text-xs font-medium text-gray-600">{t('dash.preview', lang)}</span>
+                  </button>
+                )}
               </div>
             );
           })}

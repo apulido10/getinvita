@@ -10,6 +10,7 @@ import SpotifyEmbed from '@/components/shared/SpotifyEmbed';
 import RSVPForm from '@/components/shared/RSVPForm';
 import AddressLink from '@/components/shared/AddressLink';
 import { Crown, MapPin, Clock, Sparkles, ExternalLink } from 'lucide-react';
+import { photoUrl } from '@/lib/mediaUrl';
 
 interface Props {
   data: FullEventData;
@@ -40,7 +41,7 @@ export default function Sweet15Template({ data, supabaseUrl, theme: themeProp, l
 
   const heroPhoto = photos.find((p) => p.is_hero);
   const heroUrl = heroPhoto
-    ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
+    ? photoUrl(heroPhoto.storage_path, supabaseUrl)
     : null;
 
   const honoreeName = getDetail(details, 'honoree_name') || event.event_name;

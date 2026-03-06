@@ -9,6 +9,7 @@ import SpotifyEmbed from '@/components/shared/SpotifyEmbed';
 import RSVPForm from '@/components/shared/RSVPForm';
 import AddressLink from '@/components/shared/AddressLink';
 import { Baby, MapPin, Clock, Gift, ExternalLink, Heart } from 'lucide-react';
+import { photoUrl } from '@/lib/mediaUrl';
 import { Lang, t, formatDateLocalized } from '@/lib/translations';
 
 interface Props {
@@ -40,7 +41,7 @@ export default function BabyShowerTemplate({ data, supabaseUrl, theme: themeProp
 
   const heroPhoto = photos.find((p) => p.is_hero);
   const heroUrl = heroPhoto
-    ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
+    ? photoUrl(heroPhoto.storage_path, supabaseUrl)
     : null;
 
   const parentNames = getDetail(details, 'parent_names') || event.event_name;

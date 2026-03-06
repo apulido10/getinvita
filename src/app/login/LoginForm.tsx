@@ -13,7 +13,7 @@ export default function LoginForm() {
   const langSuffix = langParam === 'es' ? (searchParams.get('redirect') ? '&lang=es' : '?lang=es') : '';
   const redirect = (searchParams.get('redirect') || '/dashboard') + (langParam === 'es' ? '?lang=es' : '');
 
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(searchParams.get('signup') === '1');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +34,7 @@ export default function LoginForm() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent('/order')}`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirect)}`,
         },
       });
       if (error) {

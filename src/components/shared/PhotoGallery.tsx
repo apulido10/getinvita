@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { EventPhoto } from '@/types';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { photoUrl } from '@/lib/mediaUrl';
 
 interface Props {
   photos: EventPhoto[];
@@ -15,11 +16,11 @@ export default function PhotoGallery({ photos, supabaseUrl }: Props) {
   if (photos.length === 0) return null;
 
   function getUrl(path: string) {
-    return `${supabaseUrl}/storage/v1/object/public/event-photos/${path}`;
+    return photoUrl(path, supabaseUrl);
   }
 
   function getThumbUrl(path: string) {
-    return `${supabaseUrl}/storage/v1/object/public/event-photos/${path}`;
+    return photoUrl(path, supabaseUrl);
   }
 
   function prev() {

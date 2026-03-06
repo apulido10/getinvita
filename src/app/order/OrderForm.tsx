@@ -42,6 +42,20 @@ export default function OrderForm() {
     router.push(`/order/preview?${params.toString()}`);
   }
 
+  function handleTryFirst() {
+    if (!selectedType || !eventName || !eventDate) {
+      setError('Please fill in all required fields first.');
+      return;
+    }
+    setError('');
+    const params = new URLSearchParams({
+      type: selectedType,
+      name: eventName,
+      date: eventDate,
+    });
+    router.push(`/guest/dashboard?${params.toString()}`);
+  }
+
   return (
     <main className="min-h-screen bg-gray-50 py-12">
       <div className="mx-auto max-w-2xl px-6">
@@ -139,6 +153,18 @@ export default function OrderForm() {
           >
             {selectedConfig ? 'Preview My Site →' : 'Select an event type'}
           </button>
+
+          <button
+            type="button"
+            onClick={handleTryFirst}
+            disabled={!selectedType}
+            className="w-full flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white text-gray-700 py-3 text-sm font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Try the Dashboard First →
+          </button>
+          <p className="text-center text-xs text-gray-400">
+            Fill in details, upload photos & pick a theme before you pay — nothing saves until you sign up.
+          </p>
         </form>
       </div>
     </main>

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { EventMusic } from '@/types';
 import { Play, Pause, SkipForward, Volume2, VolumeX, Music } from 'lucide-react';
+import { musicUrl } from '@/lib/mediaUrl';
 
 interface Props {
   tracks: EventMusic[];
@@ -15,7 +16,7 @@ function getTrackUrl(track: EventMusic, supabaseUrl: string): string | null {
     return track.storage_path;
   }
   if (track.storage_path) {
-    return `${supabaseUrl}/storage/v1/object/public/event-music/${track.storage_path}`;
+    return musicUrl(track.storage_path, supabaseUrl);
   }
   return null;
 }

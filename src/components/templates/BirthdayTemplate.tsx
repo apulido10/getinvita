@@ -12,6 +12,7 @@ import { CARD_EVENT_TYPES } from '@/lib/constants';
 import { EventType } from '@/types';
 import { Lang, t, formatDateLocalized } from '@/lib/translations';
 import { Cake, Heart, Gift, MapPin, Clock, PartyPopper } from 'lucide-react';
+import { photoUrl } from '@/lib/mediaUrl';
 
 const cardEventLabels: Partial<Record<EventType, string>> = {
   valentines: 'Happy Valentine\'s Day',
@@ -54,7 +55,7 @@ export default function BirthdayTemplate({ data, supabaseUrl, theme: themeProp, 
 
   const heroPhoto = photos.find((p) => p.is_hero);
   const heroUrl = heroPhoto
-    ? `${supabaseUrl}/storage/v1/object/public/event-photos/${heroPhoto.storage_path}`
+    ? photoUrl(heroPhoto.storage_path, supabaseUrl)
     : null;
 
   const birthdayPerson = getDetail(details, 'birthday_person') || event.event_name;
