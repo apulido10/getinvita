@@ -17,21 +17,13 @@ function buildEmailHtml(recipientName: string | null, subject: string, content: 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light only">
-  <meta name="supported-color-schemes" content="light only">
-  <style>
-    :root { color-scheme: light only; }
-    @media (prefers-color-scheme: dark) {
-      body, .email-wrapper, .email-card, .logo-area { background-color: #ffffff !important; }
-    }
-  </style>
 </head>
-<body class="email-wrapper" style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <div style="max-width:600px;margin:0 auto;padding:32px 16px;">
-    <div class="email-card" style="background-color:#ffffff;border-radius:12px;overflow:hidden;">
-      <!-- Logo -->
-      <div class="logo-area" style="padding:28px 32px 0;text-align:center;background-color:#ffffff;">
-        <img src="https://getinvita.com/getinvitalogo.png" alt="GetInvita" style="height:36px;width:auto;" />
+    <div style="border-radius:12px;overflow:hidden;">
+      <!-- Logo Header -->
+      <div style="background-color:#1e1b2e;padding:24px 32px;text-align:center;">
+        <img src="https://getinvita.com/getinvitalogo-white.png" alt="GetInvita" style="height:36px;width:auto;" />
       </div>
       <!-- Content -->
       <div style="padding:28px 32px 36px;">
