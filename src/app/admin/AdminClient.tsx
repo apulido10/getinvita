@@ -112,21 +112,30 @@ export default function AdminClient() {
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
       </head>
-      <body style="margin:0;padding:0;background-color:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+      <body style="margin:0;padding:0;background-color:#f3f0ff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
         <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
-          <div style="background:white;border-radius:12px;padding:40px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-            <div style="text-align:center;margin-bottom:32px;">
-              <h1 style="font-size:24px;font-weight:700;color:#111;margin:0;">GetInvita</h1>
-            </div>
-            <h2 style="font-size:20px;color:#111;margin:0 0 16px;">${emailSubject}</h2>
-            <div style="font-size:16px;line-height:1.6;color:#374151;">
+          <!-- Logo -->
+          <div style="text-align:center;margin-bottom:24px;">
+            <a href="https://getinvita.com">
+              <img src="https://getinvita.com/getinvitalogo.png" alt="GetInvita" style="height:48px;width:auto;" />
+            </a>
+          </div>
+          <!-- Content Card -->
+          <div style="background:white;border-radius:16px;padding:40px 36px;box-shadow:0 2px 8px rgba(124,58,237,0.08);">
+            <h2 style="font-size:22px;font-weight:700;color:#1f2937;margin:0 0 20px;text-align:center;">${emailSubject}</h2>
+            <div style="font-size:16px;line-height:1.7;color:#4b5563;">
               ${content.replace(/\n/g, '<br>')}
             </div>
+            <!-- CTA Button -->
+            <div style="text-align:center;margin-top:32px;">
+              <a href="https://getinvita.com" style="display:inline-block;background-color:#7c3aed;color:white;text-decoration:none;padding:12px 32px;border-radius:10px;font-size:15px;font-weight:600;">Visit GetInvita</a>
+            </div>
           </div>
-          <div style="text-align:center;margin-top:24px;font-size:13px;color:#9ca3af;">
-            <p style="margin:0;">GetInvita - Beautiful Event Websites</p>
-            <p style="margin:4px 0 0;">
-              <a href="https://getinvita.com" style="color:#6366f1;text-decoration:none;">getinvita.com</a>
+          <!-- Footer -->
+          <div style="text-align:center;margin-top:28px;font-size:13px;color:#9ca3af;">
+            <p style="margin:0;">Beautiful Event Websites for Every Occasion</p>
+            <p style="margin:8px 0 0;">
+              <a href="https://getinvita.com" style="color:#7c3aed;text-decoration:none;font-weight:500;">getinvita.com</a>
             </p>
           </div>
         </div>
