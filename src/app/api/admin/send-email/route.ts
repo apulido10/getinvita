@@ -18,32 +18,18 @@ function buildEmailHtml(recipientName: string | null, subject: string, content: 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;padding:32px 16px;">
-    <div style="border-radius:12px;overflow:hidden;">
-      <!-- Logo Header -->
-      <div style="padding:28px 32px;text-align:center;background-color:#ffffff;">
-        <img src="https://getinvita.com/getinvitalogo.png" alt="GetInvita" style="height:40px;width:auto;" />
-      </div>
-      <div style="height:3px;background-color:#7c3aed;"></div>
-      <!-- Content -->
-      <div style="padding:28px 32px 36px;">
-        <h2 style="font-size:20px;font-weight:700;color:#111827;margin:0 0 20px;text-align:center;">${subject}</h2>
-        <p style="font-size:15px;color:#374151;margin:0 0 14px;line-height:1.6;">${greeting}</p>
-        <div style="font-size:15px;line-height:1.75;color:#374151;">
-          ${content.replace(/\n/g, '<br>')}
-        </div>
-        <p style="margin-top:28px;font-size:15px;color:#374151;line-height:1.6;">Best,<br><span style="font-weight:600;">The GetInvita Team</span></p>
-      </div>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;padding:32px 20px;">
+    <img src="https://getinvita.com/getinvitalogo.png" alt="GetInvita" style="height:36px;width:auto;margin-bottom:24px;" />
+    <h2 style="font-size:20px;font-weight:700;margin:0 0 18px;">${subject}</h2>
+    <p style="font-size:15px;margin:0 0 14px;line-height:1.6;">${greeting}</p>
+    <div style="font-size:15px;line-height:1.75;">
+      ${content.replace(/\n/g, '<br>')}
     </div>
-    <!-- Footer -->
-    <div style="text-align:center;padding:20px 0 0;">
-      <p style="font-size:12px;color:#a1a1aa;margin:0;">
-        <a href="https://getinvita.com" style="color:#7c3aed;text-decoration:none;font-weight:500;">getinvita.com</a>
-        <span style="margin:0 6px;color:#d4d4d8;">&middot;</span>
-        Beautiful Event Websites
-      </p>
-    </div>
+    <p style="margin-top:28px;font-size:15px;line-height:1.6;">Best,<br><strong>The GetInvita Team</strong></p>
+    <p style="margin-top:32px;font-size:12px;color:#a1a1aa;">
+      <a href="https://getinvita.com" style="color:#7c3aed;text-decoration:none;">getinvita.com</a>
+    </p>
   </div>
 </body>
 </html>`;
