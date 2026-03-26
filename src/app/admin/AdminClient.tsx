@@ -82,8 +82,10 @@ export default function AdminClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subject,
-          body: formatEmailHtml(subject, body),
-          recipients: Array.from(selectedUsers),
+          body,
+          recipients: users
+            .filter((u) => selectedUsers.has(u.email))
+            .map((u) => ({ email: u.email, name: u.name })),
         }),
       });
 
@@ -102,26 +104,6 @@ export default function AdminClient() {
     } finally {
       setSending(false);
     }
-  }
-
-  function formatEmailHtml(_emailSubject: string, content: string) {
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      </head>
-      <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-        <div style="max-width:600px;margin:0 auto;padding:20px;">
-          <div style="font-size:16px;line-height:1.7;color:#1f2937;">
-            ${content.replace(/\n/g, '<br>')}
-          </div>
-          <p style="margin-top:24px;font-size:14px;color:#6b7280;">— GetInvita Team</p>
-        </div>
-      </body>
-      </html>
-    `;
   }
 
   if (loading) {
