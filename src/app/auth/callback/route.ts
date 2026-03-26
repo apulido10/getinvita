@@ -11,7 +11,8 @@ export async function GET(request: NextRequest) {
   if (code) {
     const redirectUrl = new URL(redirect, origin);
     const isRecovery = redirect.startsWith('/auth/reset-password');
-    if (!isRecovery) redirectUrl.searchParams.set('confirmed', 'true');
+    const type = searchParams.get('type');
+    if (!isRecovery && type === 'signup') redirectUrl.searchParams.set('confirmed', 'true');
     const supabaseResponse = NextResponse.redirect(redirectUrl);
 
     const supabase = createServerClient(
