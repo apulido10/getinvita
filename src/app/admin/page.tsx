@@ -19,6 +19,6 @@ export default async function AdminPage() {
     }
     return <AdminClient />;
   } catch {
-    redirect('/login');
+    redirect('/login?redirect=/admin');
   }
 }
