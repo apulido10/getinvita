@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Users, Send, CheckCircle, AlertCircle, ArrowLeft, Mail, LogOut } from 'lucide-react';
-import Link from 'next/link';
+import { Users, Send, CheckCircle, AlertCircle, Mail, LogOut } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 interface User {
@@ -119,12 +118,7 @@ export default function AdminClient() {
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <h1 className="text-2xl font-bold">Admin</h1>
-          </div>
+          <h1 className="text-2xl font-bold">Admin</h1>
           <div className="flex gap-2 items-center">
             <button
               onClick={() => setView('users')}
