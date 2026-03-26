@@ -20,7 +20,7 @@ function buildEmailHtml(recipientName: string | null, subject: string, content: 
 </head>
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <div style="max-width:560px;margin:0 auto;padding:32px 20px;">
-    <img src="https://getinvita.com/getinvitalogo.png" alt="GetInvita" style="height:36px;width:auto;margin-bottom:24px;" />
+    <img src="https://getinvita.com/getinvitalogo-email.png" alt="GetInvita" style="height:60px;width:auto;margin-bottom:24px;border-radius:8px;" />
     <h2 style="font-size:20px;font-weight:700;margin:0 0 18px;">${subject}</h2>
     <p style="font-size:15px;margin:0 0 14px;line-height:1.6;">${greeting}</p>
     <div style="font-size:15px;line-height:1.75;">
