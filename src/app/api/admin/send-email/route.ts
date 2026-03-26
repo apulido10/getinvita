@@ -22,9 +22,10 @@ function buildEmailHtml(recipientName: string | null, subject: string, content: 
   <div style="max-width:600px;margin:0 auto;padding:32px 16px;">
     <div style="border-radius:12px;overflow:hidden;">
       <!-- Logo Header -->
-      <div style="background-color:#1e1b2e;padding:24px 32px;text-align:center;">
-        <img src="https://getinvita.com/getinvitalogo-white.png" alt="GetInvita" style="height:36px;width:auto;" />
+      <div style="padding:28px 32px;text-align:center;background-color:#ffffff;">
+        <img src="https://getinvita.com/getinvitalogo.png" alt="GetInvita" style="height:40px;width:auto;" />
       </div>
+      <div style="height:3px;background-color:#7c3aed;"></div>
       <!-- Content -->
       <div style="padding:28px 32px 36px;">
         <h2 style="font-size:20px;font-weight:700;color:#111827;margin:0 0 20px;text-align:center;">${subject}</h2>
