@@ -4,7 +4,9 @@ import { createServerClient } from '@supabase/ssr';
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get('code');
-  const redirect = searchParams.get('redirect') || '/dashboard';
+  // Check query param first, then cookie fallback
+  const cookieRedirect = request.cookies.get('auth_redirect')?.value;
+  const redirect = searchParams.get('redirect') || (cookieRedirect ? decodeURIComponent(cookieRedirect) : null) || '/dashboard';
 
   if (code) {
     const redirectUrl = new URL(redirect, origin);
@@ -31,6 +33,8 @@ export async function GET(request: NextRequest) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Clear the redirect cookie
+      supabaseResponse.cookies.set('auth_redirect', '', { path: '/', maxAge: 0 });
       return supabaseResponse;
     }
   }

@@ -75,6 +75,8 @@ export default function LoginForm() {
 
   async function handleGoogleAuth() {
     setError('');
+    // Store redirect in cookie so it survives the OAuth round-trip
+    document.cookie = `auth_redirect=${encodeURIComponent(redirect)};path=/;max-age=600;SameSite=Lax`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
