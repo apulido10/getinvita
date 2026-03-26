@@ -17,20 +17,32 @@ function buildEmailHtml(recipientName: string | null, subject: string, content: 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
 </head>
-<body style="margin:0;padding:0;background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:560px;margin:0 auto;padding:32px 20px;">
-    <img src="https://getinvita.com/getinvitalogo.png" alt="GetInvita" style="height:36px;width:auto;margin-bottom:28px;" />
-    <h2 style="font-size:20px;font-weight:600;color:#111827;margin:0 0 16px;">${subject}</h2>
-    <p style="font-size:15px;color:#374151;margin:0 0 16px;line-height:1.6;">${greeting}</p>
-    <div style="font-size:15px;line-height:1.7;color:#374151;">
-      ${content.replace(/\n/g, '<br>')}
+<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;">
+  <div style="max-width:600px;margin:0 auto;">
+    <!-- Header -->
+    <div style="background-color:#18181b;padding:24px 32px;text-align:center;">
+      <img src="https://getinvita.com/getinvitalogo.png" alt="GetInvita" style="height:32px;width:auto;filter:brightness(0) invert(1);" />
     </div>
-    <p style="margin-top:28px;font-size:15px;color:#374151;line-height:1.6;">Best,<br>The GetInvita Team</p>
-    <hr style="border:none;border-top:1px solid #e5e7eb;margin:28px 0 16px;" />
-    <p style="font-size:12px;color:#9ca3af;margin:0;">
-      <a href="https://getinvita.com" style="color:#7c3aed;text-decoration:none;">getinvita.com</a> — Beautiful Event Websites
-    </p>
+    <!-- Content -->
+    <div style="background-color:#ffffff;padding:36px 32px;">
+      <h2 style="font-size:21px;font-weight:700;color:#18181b;margin:0 0 20px;letter-spacing:-0.3px;">${subject}</h2>
+      <p style="font-size:15px;color:#3f3f46;margin:0 0 16px;line-height:1.6;">${greeting}</p>
+      <div style="font-size:15px;line-height:1.75;color:#3f3f46;">
+        ${content.replace(/\n/g, '<br>')}
+      </div>
+      <p style="margin-top:32px;font-size:15px;color:#3f3f46;line-height:1.6;">Best,<br><span style="font-weight:600;">The GetInvita Team</span></p>
+    </div>
+    <!-- Footer -->
+    <div style="background-color:#fafafa;padding:20px 32px;border-top:1px solid #e4e4e7;text-align:center;">
+      <p style="font-size:13px;color:#a1a1aa;margin:0;">
+        <a href="https://getinvita.com" style="color:#7c3aed;text-decoration:none;font-weight:500;">getinvita.com</a>
+        <span style="margin:0 6px;color:#d4d4d8;">·</span>
+        Beautiful Event Websites
+      </p>
+    </div>
   </div>
 </body>
 </html>`;
