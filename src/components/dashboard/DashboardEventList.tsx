@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Event } from '@/types';
 import { getEventTypeConfig, CARD_EVENT_TYPES } from '@/lib/constants';
-import { Plus, Eye, Pencil, Calendar, Users, X } from 'lucide-react';
+import { Plus, Eye, Pencil, Calendar, Users, X, LogOut } from 'lucide-react';
 import { t, type Lang } from '@/lib/translations';
+import { createClient } from '@/lib/supabase/client';
 
 export default function DashboardEventList({ events, lang, confirmed, reset }: { events: Event[]; lang: Lang; confirmed?: boolean; reset?: boolean }) {
   const [showBanner, setShowBanner] = useState(confirmed ?? false);
@@ -63,13 +64,26 @@ export default function DashboardEventList({ events, lang, confirmed, reset }: {
               </span>
             </button>
           </div>
-          <Link
-            href={`/order${langParam}`}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-purple-700 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            {t('dash.createNewEvent', lang)}
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/order${langParam}`}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-purple-700 transition-colors"
+            >
+              <Plus className="h-4 w-4" />
+              {t('dash.createNewEvent', lang)}
+            </Link>
+            <button
+              onClick={async () => {
+                const supabase = createClient();
+                await supabase.auth.signOut();
+                window.location.href = '/';
+              }}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 text-gray-600 px-4 py-2.5 text-sm font-medium hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              {lang === 'es' ? 'Salir' : 'Sign Out'}
+            </button>
+          </div>
         </div>
 
         {events.length === 0 ? (
