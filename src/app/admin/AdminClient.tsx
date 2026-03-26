@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Users, Send, CheckCircle, AlertCircle, ArrowLeft, Mail } from 'lucide-react';
+import { Users, Send, CheckCircle, AlertCircle, ArrowLeft, Mail, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
 
 interface User {
   id: string;
@@ -153,7 +154,7 @@ export default function AdminClient() {
             </Link>
             <h1 className="text-2xl font-bold">Admin</h1>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <button
               onClick={() => setView('users')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
@@ -171,6 +172,17 @@ export default function AdminClient() {
             >
               <Mail className="w-4 h-4" />
               Compose
+            </button>
+            <button
+              onClick={async () => {
+                const supabase = createClient();
+                await supabase.auth.signOut();
+                window.location.href = '/login';
+              }}
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-gray-300 hover:bg-red-600 hover:text-white transition-colors flex items-center gap-2 ml-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign Out
             </button>
           </div>
         </div>
