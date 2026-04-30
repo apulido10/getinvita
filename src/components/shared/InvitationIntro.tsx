@@ -136,7 +136,10 @@ export default function InvitationIntro({
     if (!showIntro || envelopeOpened) return;
     const isAutoplay = new URLSearchParams(window.location.search).get('autoplay') === '1';
     if (!isAutoplay) return;
-    const id = window.setTimeout(() => handleOpen(), 1800);
+    // Longer delay gives the visitor time to click/scroll first — that user
+    // gesture flows through the parent->iframe activation bridge so handleOpen
+    // runs in an activated context and music can actually start playing.
+    const id = window.setTimeout(() => handleOpen(), 4000);
     return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showIntro, envelopeOpened]);

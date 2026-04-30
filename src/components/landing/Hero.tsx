@@ -19,6 +19,7 @@ export default function Hero({ lang }: { lang: Lang }) {
   // audio can autoplay (browsers block audio without an activation chain).
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const userActivatedRef = useRef(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
 
   const propagateActivation = () => {
     if (!userActivatedRef.current) return;
@@ -27,6 +28,11 @@ export default function Hero({ lang }: { lang: Lang }) {
       window.location.origin
     );
   };
+
+  // Reset the loading skeleton when the user switches tabs (iframe remounts)
+  useEffect(() => {
+    setIframeLoaded(false);
+  }, [currentDemo.slug]);
 
   useEffect(() => {
     const onActivate = () => {
@@ -117,13 +123,26 @@ export default function Hero({ lang }: { lang: Lang }) {
             <div className="relative w-[280px] sm:w-[320px] lg:w-[360px]">
               <div className="rounded-[2.75rem] border-[10px] border-gray-900 bg-gray-900 shadow-[0_30px_80px_-20px_rgba(58,15,80,0.35)] overflow-hidden">
                 <div className="relative z-10 mx-auto h-6 w-32 rounded-b-2xl bg-gray-900" />
-                <div className="relative bg-white" style={{ height: '600px' }}>
+                <div className="relative bg-gradient-to-br from-rose-50 via-white to-amber-50" style={{ height: '600px' }}>
+                  {/* Loading skeleton behind the iframe — fades out once content paints */}
+                  <div
+                    className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
+                      iframeLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-full border-2 border-stone-200 border-t-plum animate-spin" />
+                  </div>
                   <iframe
                     key={currentDemo.slug}
                     ref={iframeRef}
                     src={demoSrc}
-                    onLoad={propagateActivation}
-                    className="absolute inset-0 w-full h-full border-0"
+                    onLoad={() => {
+                      setIframeLoaded(true);
+                      propagateActivation();
+                    }}
+                    className={`absolute inset-0 w-full h-full border-0 transition-opacity duration-500 ${
+                      iframeLoaded ? 'opacity-100' : 'opacity-0'
+                    }`}
                     allow="autoplay"
                     title="GetInvita Live Demo"
                   />
