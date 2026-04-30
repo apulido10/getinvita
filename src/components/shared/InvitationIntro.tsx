@@ -134,13 +134,16 @@ export default function InvitationIntro({
   };
 
   // Parent-page activation bridge: when the host page (landing hero) signals
-  // that the user has interacted, use that user-activation window to either
-  // open the envelope (if still showing) or re-trigger the music player.
+  // that the user has interacted, use that user-activation window to re-trigger
+  // the music player. In demo mode we deliberately do NOT auto-open the
+  // envelope from this signal — on mobile, scroll fires touchstart on the
+  // parent and would flip the envelope open before the visitor sees the CTA.
   useEffect(() => {
     const onMsg = (e: MessageEvent) => {
       if (e.origin !== window.location.origin) return;
       if (!e.data || e.data.type !== 'getinvita-activate') return;
       if (showIntro && !envelopeOpened) {
+        if (isDemoMode) return;
         handleOpen();
       } else {
         document.dispatchEvent(new CustomEvent('invitation-opened'));
@@ -149,7 +152,7 @@ export default function InvitationIntro({
     window.addEventListener('message', onMsg);
     return () => window.removeEventListener('message', onMsg);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showIntro, envelopeOpened]);
+  }, [showIntro, envelopeOpened, isDemoMode]);
 
   // Autoplay: slowly auto-scroll the page after the intro dismisses, looping at the bottom.
   // Pauses when the user interacts; resumes after a few seconds of idle.
