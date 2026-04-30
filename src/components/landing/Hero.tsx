@@ -6,8 +6,8 @@ import { ArrowRight } from 'lucide-react';
 import { t, type Lang } from '@/lib/translations';
 
 const DEMOS = [
-  { slug: 'sarah-mike-s-wedding-na2hWl', label: 'Wedding', labelEs: 'Boda' },
   { slug: 'stephanie-quincenera-tjH8cN', label: 'Quinceañera', labelEs: 'Quinceañera' },
+  { slug: 'sarah-mike-s-wedding-na2hWl', label: 'Wedding', labelEs: 'Boda' },
 ];
 
 export default function Hero({ lang }: { lang: Lang }) {
