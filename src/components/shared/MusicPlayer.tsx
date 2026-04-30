@@ -46,13 +46,16 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
     }
   }, [currentIndex, currentTrack, supabaseUrl]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Autoplay: listen for envelope open event + fallback to first user interaction
+  // Autoplay: keep retrying on every plausible user-activation signal until a
+  // play() call actually succeeds. Browsers block audio without activation, so
+  // a single failed attempt isn't fatal — we just wait for the next gesture.
   useEffect(() => {
     if (!audioRef.current || !currentTrack) return;
     const audio = audioRef.current;
+    let played = false;
 
     function tryPlay() {
-      // Ensure src is set
+      if (played) return;
       if (!audio.src || audio.src === window.location.href) {
         const url = getTrackUrl(currentTrack, supabaseUrl);
         if (url) {
@@ -60,41 +63,37 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
           audio.load();
         }
       }
-      // Wait for audio to be ready, then play
+      const attempt = () => {
+        if (played) return;
+        audio
+          .play()
+          .then(() => {
+            played = true;
+            setIsPlaying(true);
+          })
+          .catch(() => {});
+      };
       if (audio.readyState >= 2) {
-        audio.play().then(() => setIsPlaying(true)).catch(() => {});
+        attempt();
       } else {
         audio.addEventListener('canplay', function onCanPlay() {
           audio.removeEventListener('canplay', onCanPlay);
-          audio.play().then(() => setIsPlaying(true)).catch(() => {});
+          attempt();
         });
       }
     }
 
-    // Listen for envelope open event (dispatched during user gesture)
-    function onInvitationOpened() {
-      tryPlay();
-      cleanup();
-    }
+    document.addEventListener('invitation-opened', tryPlay);
+    document.addEventListener('click', tryPlay);
+    document.addEventListener('touchstart', tryPlay);
+    document.addEventListener('keydown', tryPlay);
 
-    // Fallback: play on first user interaction (for pages without envelope intro)
-    function onInteraction() {
-      tryPlay();
-      cleanup();
-    }
-
-    function cleanup() {
-      document.removeEventListener('invitation-opened', onInvitationOpened);
-      document.removeEventListener('click', onInteraction);
-      document.removeEventListener('touchstart', onInteraction);
-    }
-
-    // Wait for envelope open or user interaction — don't autoplay immediately
-    document.addEventListener('invitation-opened', onInvitationOpened);
-    document.addEventListener('click', onInteraction, { once: true });
-    document.addEventListener('touchstart', onInteraction, { once: true });
-
-    return cleanup;
+    return () => {
+      document.removeEventListener('invitation-opened', tryPlay);
+      document.removeEventListener('click', tryPlay);
+      document.removeEventListener('touchstart', tryPlay);
+      document.removeEventListener('keydown', tryPlay);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (playableTracks.length === 0) return null;

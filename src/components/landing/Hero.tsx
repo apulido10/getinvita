@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { t, type Lang } from '@/lib/translations';
 
@@ -14,6 +14,34 @@ export default function Hero({ lang }: { lang: Lang }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const currentDemo = DEMOS[selectedIndex];
   const demoSrc = `/events/${currentDemo.slug}?demo=true&autoplay=1${lang === 'es' ? '&lang=es' : ''}`;
+
+  // Bridge parent user-activation into the same-origin iframe so the demo's
+  // audio can autoplay (browsers block audio without an activation chain).
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const userActivatedRef = useRef(false);
+
+  const propagateActivation = () => {
+    if (!userActivatedRef.current) return;
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: 'getinvita-activate' },
+      window.location.origin
+    );
+  };
+
+  useEffect(() => {
+    const onActivate = () => {
+      userActivatedRef.current = true;
+      propagateActivation();
+    };
+    window.addEventListener('pointerdown', onActivate);
+    window.addEventListener('keydown', onActivate);
+    window.addEventListener('touchstart', onActivate, { passive: true });
+    return () => {
+      window.removeEventListener('pointerdown', onActivate);
+      window.removeEventListener('keydown', onActivate);
+      window.removeEventListener('touchstart', onActivate);
+    };
+  }, []);
 
   return (
     <section className="relative overflow-hidden bg-cream">
@@ -92,7 +120,9 @@ export default function Hero({ lang }: { lang: Lang }) {
                 <div className="relative bg-white" style={{ height: '600px' }}>
                   <iframe
                     key={currentDemo.slug}
+                    ref={iframeRef}
                     src={demoSrc}
+                    onLoad={propagateActivation}
                     className="absolute inset-0 w-full h-full border-0"
                     allow="autoplay"
                     title="GetInvita Live Demo"

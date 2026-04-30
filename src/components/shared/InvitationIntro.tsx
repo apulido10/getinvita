@@ -141,6 +141,24 @@ export default function InvitationIntro({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showIntro, envelopeOpened]);
 
+  // Parent-page activation bridge: when the host page (landing hero) signals
+  // that the user has interacted, use that user-activation window to either
+  // open the envelope (if still showing) or re-trigger the music player.
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (e.origin !== window.location.origin) return;
+      if (!e.data || e.data.type !== 'getinvita-activate') return;
+      if (showIntro && !envelopeOpened) {
+        handleOpen();
+      } else {
+        document.dispatchEvent(new CustomEvent('invitation-opened'));
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showIntro, envelopeOpened]);
+
   // Autoplay: slowly auto-scroll the page after the intro dismisses, looping at the bottom.
   // Pauses when the user interacts; resumes after a few seconds of idle.
   useEffect(() => {
