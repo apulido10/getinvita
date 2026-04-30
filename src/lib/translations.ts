@@ -4,6 +4,7 @@ const translations: Record<string, Record<Lang, string>> = {
   // ── Invitation Intro ──
   'intro.youAreInvitedTo': { en: 'You are invited to', es: 'Estás invitado(a) a' },
   'intro.tapToOpen': { en: 'Tap to open', es: 'Toca para abrir' },
+  'intro.demoTapToOpen': { en: 'Click me to view invitation', es: 'Haz clic para ver la invitación' },
   'intro.happyValentines': { en: "Happy Valentine's Day", es: 'Feliz Día de San Valentín' },
   'intro.happyMothersDay': { en: "Happy Mother's Day", es: 'Feliz Día de las Madres' },
   'intro.happyFathersDay': { en: "Happy Father's Day", es: 'Feliz Día del Padre' },

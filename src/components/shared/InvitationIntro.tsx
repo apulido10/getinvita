@@ -77,12 +77,14 @@ export default function InvitationIntro({
   const [showIntro, setShowIntro] = useState(false);
   const [envelopeOpened, setEnvelopeOpened] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   useEffect(() => {
     const timers: number[] = [];
     timers.push(window.setTimeout(() => setMounted(true), 0));
     let shouldShowIntro = false;
     const isDemo = new URLSearchParams(window.location.search).get('demo') === 'true';
+    setIsDemoMode(isDemo);
     if (isDemo) {
       shouldShowIntro = true;
     } else {
@@ -130,16 +132,6 @@ export default function InvitationIntro({
       setShowIntro(false);
     }, 1100);
   };
-
-  // Autoplay: open the envelope automatically when ?autoplay=1
-  useEffect(() => {
-    if (!showIntro || envelopeOpened) return;
-    const isAutoplay = new URLSearchParams(window.location.search).get('autoplay') === '1';
-    if (!isAutoplay) return;
-    const id = window.setTimeout(() => handleOpen(), 1500);
-    return () => window.clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showIntro, envelopeOpened]);
 
   // Parent-page activation bridge: when the host page (landing hero) signals
   // that the user has interacted, use that user-activation window to either
@@ -316,6 +308,21 @@ export default function InvitationIntro({
               opacity: 0.6;
               letter-spacing: 0.1em;
             }
+            .intro-cta {
+              margin-top: 2rem;
+              font-size: 1.05rem;
+              font-weight: 600;
+              letter-spacing: 0.01em;
+              padding: 0.875rem 1.6rem;
+              border: 2px solid currentColor;
+              border-radius: 999px;
+              text-align: center;
+              animation: intro-cta-pulse 1.8s ease-in-out infinite;
+            }
+            @keyframes intro-cta-pulse {
+              0%, 100% { transform: scale(1); }
+              50% { transform: scale(1.06); }
+            }
             .intro-accent-icon {
               margin-bottom: 1rem;
               opacity: 0.8;
@@ -364,7 +371,9 @@ export default function InvitationIntro({
               </div>
             </div>
 
-            <div className="intro-hint">{t('intro.tapToOpen', lang)}</div>
+            <div className={isDemoMode ? 'intro-cta' : 'intro-hint'}>
+              {isDemoMode ? t('intro.demoTapToOpen', lang) : t('intro.tapToOpen', lang)}
+            </div>
           </div>
         </>
       )}
