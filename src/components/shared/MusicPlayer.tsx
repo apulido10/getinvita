@@ -58,28 +58,18 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
       if (played) return;
       if (!audio.src || audio.src === window.location.href) {
         const url = getTrackUrl(currentTrack, supabaseUrl);
-        if (url) {
-          audio.src = url;
-          audio.load();
-        }
+        if (url) audio.src = url;
       }
-      const attempt = () => {
-        if (played) return;
-        audio
-          .play()
-          .then(() => {
-            played = true;
-            setIsPlaying(true);
-          })
-          .catch(() => {});
-      };
-      if (audio.readyState >= 2) {
-        attempt();
-      } else {
-        audio.addEventListener('canplay', function onCanPlay() {
-          audio.removeEventListener('canplay', onCanPlay);
-          attempt();
-        });
+      // Call play() SYNCHRONOUSLY inside the gesture handler. The browser will
+      // buffer and start playback once the audio is ready. Deferring to a
+      // canplay handler loses the user-activation context and trips autoplay
+      // policy, even when the visitor actually clicked.
+      const p = audio.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => {
+          played = true;
+          setIsPlaying(true);
+        }).catch(() => {});
       }
     }
 
@@ -126,6 +116,7 @@ export default function MusicPlayer({ tracks, supabaseUrl }: Props) {
         onEnded={nextTrack}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        preload="auto"
       />
       <Music className="h-4 w-4 text-purple-400 shrink-0" />
       <div className="flex-1 min-w-0">
