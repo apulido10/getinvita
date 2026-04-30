@@ -1,43 +1,107 @@
 'use client';
 
 import Link from 'next/link';
-import { Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { t, type Lang } from '@/lib/translations';
 
+const DEMOS = [
+  { slug: 'sarah-mike-s-wedding-na2hWl', label: 'Wedding', labelEs: 'Boda' },
+  { slug: 'stephanie-quincenera-tjH8cN', label: 'Quinceañera', labelEs: 'Quinceañera' },
+];
+
 export default function Hero({ lang }: { lang: Lang }) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const currentDemo = DEMOS[selectedIndex];
+  const demoSrc = `/events/${currentDemo.slug}?demo=true&autoplay=1${lang === 'es' ? '&lang=es' : ''}`;
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-violet-950 via-purple-900 to-fuchsia-800 text-white">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djJoLTJ2LTJoMnptMC00aDJ2Mmgt MnYtMnptLTQgOHYtMmgydjJoLTJ6bTQtMTJ2Mmgt MnYtMmgyem0tOCA4djJoLTJ2LTJoMnptLTQtNGgydjJoLTJ2LTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
-      {/* Soft bottom fade into white */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
-      <div className="relative mx-auto max-w-6xl px-6 pt-32 pb-24 sm:pt-36 sm:pb-28 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm backdrop-blur-sm mb-6">
-          <Sparkles className="h-4 w-4 text-yellow-300" />
-          <span>{t('landing.hero.badge', lang)}</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight leading-tight">
-          {t('landing.hero.h1Line1', lang)}
-          <br />
-          <span className="bg-gradient-to-r from-pink-300 via-rose-300 to-yellow-200 bg-clip-text text-transparent">
-            {t('landing.hero.h1Line2', lang)}
-          </span>
-        </h1>
-        <p className="mt-5 text-base sm:text-lg text-purple-200 max-w-2xl mx-auto leading-relaxed">
-          {t('landing.hero.paragraph', lang)}
-        </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/login?redirect=/order"
-            className="inline-flex items-center justify-center rounded-full bg-white text-purple-900 px-8 py-3.5 text-base font-semibold hover:bg-purple-50 transition-colors shadow-xl shadow-purple-900/30"
-          >
-            {t('landing.hero.cta1', lang)}
-          </Link>
-          <a
-            href="#event-types"
-            className="inline-flex items-center justify-center rounded-full border-2 border-white/30 px-8 py-3.5 text-base font-semibold hover:bg-white/10 transition-colors"
-          >
-            {t('landing.hero.cta2', lang)}
-          </a>
+    <section className="relative overflow-hidden bg-cream">
+      {/* Subtle radial accent on top-right (replaces stock video) */}
+      <div
+        className="pointer-events-none absolute -top-32 -right-32 h-[480px] w-[480px] rounded-full opacity-40 blur-3xl"
+        style={{ background: 'radial-gradient(circle, #e9c8d6 0%, transparent 70%)' }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -bottom-24 -left-24 h-[420px] w-[420px] rounded-full opacity-30 blur-3xl"
+        style={{ background: 'radial-gradient(circle, #d8c5e6 0%, transparent 70%)' }}
+        aria-hidden="true"
+      />
+
+      <link rel="prefetch" href={demoSrc} />
+
+      <div className="relative mx-auto max-w-6xl px-6 pt-32 pb-24 sm:pt-36 sm:pb-32 lg:pt-44 lg:pb-40">
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-16 lg:gap-20 items-center">
+          {/* Left: copy */}
+          <div className="text-center lg:text-left">
+            <p className="text-xs font-medium tracking-[0.2em] uppercase text-plum mb-6">
+              {t('landing.hero.badge', lang)}
+            </p>
+
+            <h1 className="font-serif text-[2.5rem] sm:text-5xl lg:text-6xl xl:text-[4.5rem] font-medium tracking-tight leading-[1.05] text-gray-900">
+              {t('landing.hero.h1Line1', lang)}{' '}
+              <span className="italic text-plum">
+                {t('landing.hero.h1Line2', lang)}
+              </span>
+            </h1>
+
+            <p className="mt-7 text-lg lg:text-xl text-gray-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              {t('landing.hero.paragraph', lang)}
+            </p>
+
+            <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-5 items-center justify-center lg:justify-start">
+              <Link
+                href="/login?redirect=/order"
+                className="inline-flex items-center justify-center rounded-full bg-gray-900 text-white px-8 py-4 text-base font-medium hover:bg-gray-800 transition-colors"
+              >
+                {t('landing.hero.cta1', lang)}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+              <a
+                href="#event-types"
+                className="inline-flex items-center justify-center text-base font-medium text-gray-900 underline-offset-4 hover:underline px-2 py-3"
+              >
+                {t('landing.hero.cta2', lang)}
+              </a>
+            </div>
+          </div>
+
+          {/* Right: live phone mockup */}
+          <div className="flex flex-col items-center lg:items-end">
+            {/* Demo type tabs */}
+            <div className="mb-6 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur p-1 ring-1 ring-stone-200 shadow-sm">
+              {DEMOS.map((demo, i) => (
+                <button
+                  key={demo.slug}
+                  onClick={() => setSelectedIndex(i)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    selectedIndex === i
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {lang === 'es' ? demo.labelEs : demo.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-[280px] sm:w-[320px] lg:w-[360px]">
+              <div className="rounded-[2.75rem] border-[10px] border-gray-900 bg-gray-900 shadow-[0_30px_80px_-20px_rgba(58,15,80,0.35)] overflow-hidden">
+                <div className="relative z-10 mx-auto h-6 w-32 rounded-b-2xl bg-gray-900" />
+                <div className="relative bg-white" style={{ height: '600px' }}>
+                  <iframe
+                    key={currentDemo.slug}
+                    src={demoSrc}
+                    className="absolute inset-0 w-full h-full border-0"
+                    allow="autoplay"
+                    title="GetInvita Live Demo"
+                  />
+                </div>
+                <div className="h-1 w-28 mx-auto my-3 rounded-full bg-gray-700" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

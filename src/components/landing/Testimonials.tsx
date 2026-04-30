@@ -1,4 +1,3 @@
-import { Star } from 'lucide-react';
 import { t, type Lang } from '@/lib/translations';
 
 const testimonials = [
@@ -24,34 +23,31 @@ const testimonials = [
 
 export default function Testimonials({ lang }: { lang: Lang }) {
   return (
-    <section className="py-20 sm:py-28 bg-white">
+    <section className="py-24 sm:py-32 bg-white">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+        <div className="text-center mb-20 max-w-2xl mx-auto">
+          <p className="text-xs font-medium tracking-[0.2em] uppercase text-plum mb-4">
             {t('landing.testimonials.heading', lang)}
-          </h2>
-          <p className="mt-4 text-lg text-gray-600">
-            {t('landing.testimonials.subheading', lang)}
           </p>
+          <h2 className="font-serif text-4xl sm:text-5xl font-medium tracking-tight text-gray-900 leading-tight">
+            {t('landing.testimonials.subheading', lang)}
+          </h2>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-3 gap-10 lg:gap-12">
           {testimonials.map((testimonial) => (
-            <div
-              key={testimonial.name}
-              className="rounded-2xl border border-gray-100 bg-gray-50 p-6 sm:p-8"
-            >
-              <div className="flex gap-1 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-              <p className="text-gray-700 leading-relaxed">&ldquo;{testimonial.quote}&rdquo;</p>
-              <div className="mt-6 border-t border-gray-200 pt-4">
-                <p className="font-semibold text-gray-900">{testimonial.name}</p>
+            <figure key={testimonial.name} className="flex flex-col">
+              <span aria-hidden="true" className="font-serif text-6xl leading-none text-plum/40 mb-2">
+                &ldquo;
+              </span>
+              <blockquote className="font-serif text-lg text-gray-800 leading-relaxed flex-1">
+                {testimonial.quote}
+              </blockquote>
+              <figcaption className="mt-6 pt-5 border-t border-stone-200">
+                <p className="font-medium text-gray-900">{testimonial.name}</p>
                 <p className="text-sm text-gray-500">{testimonial.event}</p>
-              </div>
-            </div>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>

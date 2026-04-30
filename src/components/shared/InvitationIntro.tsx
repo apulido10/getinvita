@@ -131,6 +131,85 @@ export default function InvitationIntro({
     }, 1100);
   };
 
+  // Autoplay: open the envelope automatically when ?autoplay=1
+  useEffect(() => {
+    if (!showIntro || envelopeOpened) return;
+    const isAutoplay = new URLSearchParams(window.location.search).get('autoplay') === '1';
+    if (!isAutoplay) return;
+    const id = window.setTimeout(() => handleOpen(), 1800);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showIntro, envelopeOpened]);
+
+  // Autoplay: slowly auto-scroll the page after the intro dismisses, looping at the bottom.
+  // Pauses when the user interacts; resumes after a few seconds of idle.
+  useEffect(() => {
+    if (!mounted || showIntro) return;
+    const isAutoplay = new URLSearchParams(window.location.search).get('autoplay') === '1';
+    if (!isAutoplay) return;
+
+    const SPEED = 55; // px/sec
+    const PAUSE_AFTER_INTERACT_MS = 3500;
+    const PAUSE_AT_END_MS = 2000;
+    const RETURN_GUARD_MS = 4500; // covers the smooth-scroll back to top
+    const START_DELAY_MS = 1400;
+
+    let lastUserInteraction = 0;
+    let pauseUntil = 0;
+    let lastTime = performance.now();
+    let rafId = 0;
+    let startId = 0;
+
+    const onUserInteract = () => {
+      lastUserInteraction = Date.now();
+    };
+
+    const tick = (now: number) => {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      const nowMs = Date.now();
+      if (nowMs - lastUserInteraction < PAUSE_AFTER_INTERACT_MS || nowMs < pauseUntil) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
+
+      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const nextY = window.scrollY + SPEED * dt;
+      if (nextY >= max - 1) {
+        pauseUntil = nowMs + PAUSE_AT_END_MS + RETURN_GUARD_MS;
+        window.setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, PAUSE_AT_END_MS);
+      } else {
+        window.scrollTo(0, nextY);
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    startId = window.setTimeout(() => {
+      lastTime = performance.now();
+      rafId = requestAnimationFrame(tick);
+    }, START_DELAY_MS);
+
+    window.addEventListener('wheel', onUserInteract, { passive: true });
+    window.addEventListener('touchstart', onUserInteract, { passive: true });
+    window.addEventListener('touchmove', onUserInteract, { passive: true });
+    window.addEventListener('keydown', onUserInteract);
+    window.addEventListener('mousedown', onUserInteract);
+
+    return () => {
+      window.clearTimeout(startId);
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener('wheel', onUserInteract);
+      window.removeEventListener('touchstart', onUserInteract);
+      window.removeEventListener('touchmove', onUserInteract);
+      window.removeEventListener('keydown', onUserInteract);
+      window.removeEventListener('mousedown', onUserInteract);
+    };
+  }, [mounted, showIntro]);
+
   // Don't render anything until we've determined whether to show the intro.
   // This prevents the flash of content before the envelope overlay appears.
   if (!mounted) {

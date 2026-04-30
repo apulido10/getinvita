@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif), ui-serif, Georgia, serif;
+  --color-cream: #fbf6ec;
+  --color-ivory: #f7f1e3;
+  --color-plum: #5a1d4f;
+}
+
 * {
   box-sizing: border-box;
 }

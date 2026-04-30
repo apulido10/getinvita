@@ -179,12 +179,6 @@ const translations: Record<string, Record<Lang, string>> = {
   'landing.pricing.feature.customThemedCard': { en: 'Custom themed card page', es: 'Tarjeta con tema personalizado' },
   'landing.pricing.feature.personalizedMessage': { en: 'Personalized message', es: 'Mensaje personalizado' },
 
-  // ── Landing: LiveDemo ──
-  'landing.liveDemo.heading': { en: 'See It in Action', es: 'Míralo en Acción' },
-  'landing.liveDemo.subheading': { en: 'This is a real event site built with GetInvita. Scroll, tap, and turn up the volume.', es: 'Este es un sitio de evento real hecho con GetInvita. Desplázate, toca y sube el volumen.' },
-  'landing.liveDemo.tapToExplore': { en: 'Tap to Explore', es: 'Toca para Explorar' },
-  'landing.liveDemo.interactiveDemo': { en: 'Interactive demo with audio', es: 'Demo interactivo con audio' },
-
   // ── Landing: Footer ──
   'landing.footer.tagline': { en: "Beautiful event websites for life's biggest celebrations.", es: 'Hermosos sitios web para las celebraciones más importantes de tu vida.' },
   'landing.footer.getStarted': { en: 'Get Started', es: 'Comenzar' },
