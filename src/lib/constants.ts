@@ -5,7 +5,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'sweet15',
     label: 'Sweet 15 / Quinceañera',
     description: 'Celebrate this milestone with a stunning rose & gold themed website featuring your court of honor.',
-    price: 12000,
+    price: 4000,
     icon: 'Crown',
     color: 'rose',
     fields: [
@@ -33,7 +33,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'wedding',
     label: 'Wedding',
     description: 'Share your love story with an elegant ivory & sage wedding website with RSVP and registry.',
-    price: 12000,
+    price: 4000,
     icon: 'Heart',
     color: 'emerald',
     fields: [
@@ -61,7 +61,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'birthday',
     label: 'Birthday',
     description: 'Throw the ultimate birthday bash with a vibrant, fun website that puts the spotlight on the guest of honor.',
-    price: 5000,
+    price: 2000,
     icon: 'Cake',
     color: 'violet',
     fields: [
@@ -102,7 +102,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'baby_shower',
     label: 'Baby Shower',
     description: 'Welcome the little one with a soft pastel baby shower page featuring registry and wishes.',
-    price: 5000,
+    price: 2000,
     icon: 'Baby',
     color: 'sky',
     fields: [
@@ -143,7 +143,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'valentines',
     label: "Valentine's Day",
     description: 'Send a sweet Valentine\'s card to someone special with a personalized message.',
-    price: 5000,
+    price: 2000,
     icon: 'Heart',
     color: 'rose',
     fields: [
@@ -179,7 +179,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'mothers_day',
     label: "Mother's Day",
     description: 'Celebrate Mom with a beautiful personalized card she\'ll treasure.',
-    price: 5000,
+    price: 2000,
     icon: 'Heart',
     color: 'pink',
     fields: [
@@ -215,7 +215,7 @@ export const EVENT_TYPES: EventTypeConfig[] = [
     type: 'fathers_day',
     label: "Father's Day",
     description: 'Show Dad some love with a personalized card just for him.',
-    price: 5000,
+    price: 2000,
     icon: 'Gift',
     color: 'blue',
     fields: [
