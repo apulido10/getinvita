@@ -133,7 +133,7 @@ const translations: Record<string, Record<Lang, string>> = {
   'landing.eventTypes.subheading': { en: 'Premium event websites for weddings and quinceañeras — plus cards and sites for every other celebration.', es: 'Sitios web premium para bodas y quinceañeras — más tarjetas y sitios para cada celebración.' },
   'landing.eventTypes.otherCelebrations': { en: 'Other Celebrations', es: 'Otras Celebraciones' },
   'landing.eventTypes.getStarted': { en: 'Get Started', es: 'Comenzar' },
-  'landing.eventTypes.startingAt': { en: 'Starting at $', es: 'Desde $' },
+  'landing.eventTypes.startingAt': { en: 'Starting at ', es: 'Desde ' },
   'landing.eventType.sweet15.label': { en: 'Sweet 15 / Quinceañera', es: 'Quinceañera / XV Años' },
   'landing.eventType.sweet15.description': { en: 'Celebrate this milestone with a stunning rose & gold themed website featuring your court of honor.', es: 'Celebra este momento con un hermoso sitio web en rosa y dorado con tu corte de honor.' },
   'landing.eventType.wedding.label': { en: 'Wedding', es: 'Boda' },
